@@ -95,7 +95,8 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 
 #[derive(OpenApi)]
 #[utoipa_auto_discovery(
-  paths = "crate::rest::test_controller | ./src/rest/test_controller.rs ; crate::rest::test2_controller | ./src/rest/test2_controller.rs")]
+  paths = "crate::rest::test_controller | ./src/rest/test_controller.rs ; crate::rest::test2_controller | ./src/rest/test2_controller.rs"
+  )]
 #[openapi(
     paths(
 
