@@ -156,7 +156,6 @@ pub fn utoipa_auto_discovery(
 
         let attrs = &mut input.attrs;
 
-        //ee.push(new_attr);
         let mut is_ok: bool = false;
         for mut _attr in attrs {
             if _attr.path().is_ident("openapi") {
@@ -173,7 +172,6 @@ pub fn utoipa_auto_discovery(
                     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
                     let mut new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
-                    //println!("{}", new_attr.to_token_stream().to_string());
 
                     _attr = &mut new_attr;
                 } else {
@@ -184,7 +182,6 @@ pub fn utoipa_auto_discovery(
                     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
                     let mut new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
-                    //println!("{}", new_attr.to_token_stream());
                     _attr = &mut new_attr;
                 }
             }
