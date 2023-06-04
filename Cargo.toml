@@ -1,0 +1,23 @@
+[package]
+name = "utoipa_paths_discovery"
+version = "0.1.0"
+edition = "2021"
+authors = ["RxDiscovery"]
+rust-version  = "1.69"
+keywords = ["utoipa","openapi","api","swagger", "path", "paths","auto","discovery"]
+description = "Rust Macros to automate the addition of Paths to Utoipa, simulating Reflection during the compilation phase"
+categories = ["parsing", "development-tools::procedural-macro-helpers"]
+
+
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.28"
+syn = { version ="2.0.18",  features = [ "full" ]}
+proc-macro2 = "1.0.59"
+
+
+
+[build-dependencies]
