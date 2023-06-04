@@ -1,13 +1,15 @@
 [package]
-name = "utoipa_paths_discovery"
+name = "utoipa_auto_discovery"
 version = "0.1.0"
 edition = "2021"
 authors = ["RxDiscovery"]
 rust-version  = "1.69"
 keywords = ["utoipa","openapi","api","swagger", "path", "paths","auto","discovery"]
-description = "Rust Macros to automate the addition of Paths to Utoipa, simulating Reflection during the compilation phase"
+description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
 categories = ["parsing", "development-tools::procedural-macro-helpers"]
-
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/rxdiscovery/utoipa_auto_discovery"
+homepage = "https://github.com/rxdiscovery/utoipa_auto_discovery"
 
 
 [lib]

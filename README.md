@@ -1,7 +1,7 @@
 <div align="center">
   <h1>utoipa_auto_discovery</h1>
   <p>
-    <strong>Rust Macros to automate the addition of Paths/DTO to Utoipa crate, simulating Reflection during the compilation phase</strong>
+    <strong>Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase</strong>
   </p>
   <p>
 
