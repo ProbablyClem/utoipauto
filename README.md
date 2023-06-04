@@ -81,6 +81,9 @@ Here's an example of how to add all the methods contained in the test_controller
 you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
 
 ```rust
+...
+
+use utoipa_auto_discovery::utoipa_auto_discovery;
 
 ...
 
