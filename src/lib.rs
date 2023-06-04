@@ -38,7 +38,15 @@ fn get_all_mod_uto_functions(item: &syn::ItemMod, fns_name: &mut Vec<String>) {
         match it {
             syn::Item::Mod(m) => get_all_mod_uto_functions(m, fns_name),
             syn::Item::Fn(f) => {
-                if !f.attrs.is_empty() {
+                if !f.attrs.is_empty()
+                    && !f.attrs.iter().any(|attr| {
+                        if let Some(name) = attr.path().get_ident() {
+                            name.eq("utoipa_ignore")
+                        } else {
+                            false
+                        }
+                    })
+                {
                     for i in 0..f.attrs.len() {
                         if f.attrs[i]
                             .meta
@@ -69,7 +77,15 @@ fn get_all_uto_functions(src_path: String) -> Vec<String> {
             match i {
                 syn::Item::Mod(m) => get_all_mod_uto_functions(&m, &mut fns_name),
                 syn::Item::Fn(f) => {
-                    if !f.attrs.is_empty() {
+                    if !f.attrs.is_empty()
+                        && !f.attrs.iter().any(|attr| {
+                            if let Some(name) = attr.path().get_ident() {
+                                name.eq("utoipa_ignore")
+                            } else {
+                                false
+                            }
+                        })
+                    {
                         for i in 0..f.attrs.len() {
                             if f.attrs[i]
                                 .meta
@@ -90,6 +106,19 @@ fn get_all_uto_functions(src_path: String) -> Vec<String> {
     }
 
     fns_name
+}
+
+#[proc_macro_attribute]
+pub fn utoipa_ignore(
+    _attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let input = parse_macro_input!(item as syn::Item);
+    let code = quote!(
+          #input
+    );
+
+    TokenStream::from(code)
 }
 
 #[proc_macro_attribute]
