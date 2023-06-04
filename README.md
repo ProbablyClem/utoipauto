@@ -67,7 +67,7 @@ cargo add utoipa_auto_discovery
 
 import macro
 
-```
+```rust
 use utoipa_auto_discovery::utoipa_auto_discovery;
 ```
 
