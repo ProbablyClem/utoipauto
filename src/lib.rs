@@ -97,7 +97,7 @@ pub fn utoipa_auto_discovery(
     attr: proc_macro::TokenStream,
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let mut input: syn::ItemStruct = parse_macro_input!(item as syn::ItemStruct);
+    let mut input = parse_macro_input!(item as syn::ItemStruct);
 
     let mut paths: String = "".to_string();
 
@@ -129,12 +129,16 @@ pub fn utoipa_auto_discovery(
 
     let mut pairs: Vec<(String, String)> = vec![];
 
-    let str_paths = rem_first_and_last(paths.as_str());
+    let str_paths = trim_parentheses(rem_first_and_last(paths.as_str()));
+
+    if str_paths.contains('|') {
+        panic!("Please use the new syntax ! paths=\"(MODULE_TREE_PATH => MODULE_SRC_PATH) ;\"")
+    }
 
     let paths = str_paths.split(';');
 
     for p in paths {
-        let pair = p.split_once('|');
+        let pair = p.split_once("=>");
 
         if let Some(pair) = pair {
             pairs.push((trim_whites(pair.0), trim_whites(pair.1)));
@@ -156,11 +160,19 @@ pub fn utoipa_auto_discovery(
 
         let attrs = &mut input.attrs;
 
+        if !attrs.iter().any(|elm| elm.path().is_ident("derive")) {
+            panic!("Please put utoipa_auto_discovery before #[derive] and #[openapi]");
+        }
+
+        if !attrs.iter().any(|elm| elm.path().is_ident("openapi")) {
+            panic!("Please put utoipa_auto_discovery before #[derive] and #[openapi]");
+        }
+
         let mut is_ok: bool = false;
-        for mut _attr in attrs {
-            if _attr.path().is_ident("openapi") {
+        for i in 0..attrs.len() {
+            if attrs[i].path().is_ident("openapi") {
                 is_ok = true;
-                let mut src_uto_macro = _attr.to_token_stream().to_string();
+                let mut src_uto_macro = attrs[i].to_token_stream().to_string();
 
                 src_uto_macro = src_uto_macro.replace("#[openapi(", "");
                 src_uto_macro = src_uto_macro.replace(")]", "");
@@ -171,9 +183,9 @@ pub fn utoipa_auto_discovery(
 
                     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
-                    let mut new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
+                    let new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
 
-                    _attr = &mut new_attr;
+                    attrs[i] = new_attr;
                 } else {
                     let new_paths = format!("paths({}", uto_paths);
 
@@ -181,8 +193,9 @@ pub fn utoipa_auto_discovery(
 
                     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
-                    let mut new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
-                    _attr = &mut new_attr;
+                    let new_attr: syn::Attribute = syn::parse_quote! { #[openapi( #stream )] };
+
+                    attrs[i] = new_attr;
                 }
             }
         }
@@ -203,6 +216,14 @@ fn trim_whites(str: &str) -> String {
     let s = str.trim();
 
     let s: String = s.replace('\n', "");
+
+    s
+}
+
+fn trim_parentheses(str: &str) -> String {
+    let s = str.trim();
+
+    let s: String = s.replace(['(', ')'], "");
 
     s
 }
