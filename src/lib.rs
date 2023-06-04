@@ -169,6 +169,7 @@ pub fn utoipa_auto_discovery(
         }
 
         let mut is_ok: bool = false;
+        #[warn(clippy::needless_range_loop)]
         for i in 0..attrs.len() {
             if attrs[i].path().is_ident("openapi") {
                 is_ok = true;

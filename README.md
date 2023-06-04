@@ -71,17 +71,21 @@ import macro
 use utoipa_auto_discovery::utoipa_auto_discovery;
 ```
 
-then add the `#[utoipa_auto_discovery]` macro just before the `#[openapi]` macro.
+then add the `#[utoipa_auto_discovery]` macro just before the #[derive(OpenApi)] and `#[openapi]` macros.
+
+## important !!
+
+Put `#[utoipa_auto_discovery]` before #[derive(OpenApi)] and `#[openapi]` macros.
 
 ```rust
-#[utoipa_auto_discovery(paths = "MODULE_TREE::MODULE_NAME | MODULE_SRC_FILE_PATH; MODULE_TREE::MODULE_NAME | MODULE_SRC_FILE_PATH; ... ;")]
+#[utoipa_auto_discovery(paths = "( MODULE_TREE::MODULE_NAME => MODULE_SRC_FILE_PATH ) ; ( MODULE_TREE::MODULE_NAME => MODULE_SRC_FILE_PATH ) ; ... ;")]
 ```
 
 the paths receives a String which must respect this structure :
 
-`"{MODULE_TREE_PATH} | {MODULE_SRC_FILE_PATH} ;"`
+`" ( MODULE_TREE_PATH => MODULE_SRC_FILE_PATH ) ;"`
 
-you can add several pairs (Module Path | Src Path ) by separating them with a semicolon ";".
+you can add several pairs (Module Path => Src Path ) by separating them with a semicolon ";".
 
 Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
 you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
@@ -92,11 +96,10 @@ you can also combine automatic and manual addition, as here we've added a method
 use utoipa_auto_discovery::utoipa_auto_discovery;
 
 ...
-
-#[derive(OpenApi)]
 #[utoipa_auto_discovery(
-  paths = "crate::rest::test_controller | ./src/rest/test_controller.rs ; crate::rest::test2_controller | ./src/rest/test2_controller.rs"
+  paths = "( crate::rest::test_controller => ./src/rest/test_controller.rs ) ; ( crate::rest::test2_controller => ./src/rest/test2_controller.rs )"
   )]
+#[derive(OpenApi)]
 #[openapi(
     paths(
 
