@@ -65,6 +65,12 @@ simply add the crate `utoipa_auto_discovery` to the project
 cargo add utoipa_auto_discovery
 ```
 
+import macro
+
+```
+use utoipa_auto_discovery::utoipa_auto_discovery;
+```
+
 then add the `#[utoipa_auto_discovery]` macro just before the `#[openapi]` macro.
 
 ```rust
