@@ -6,8 +6,9 @@ authors = ["RxDiscovery"]
 rust-version  = "1.69"
 keywords = ["utoipa","openapi","api","swagger", "path", "paths","auto","discovery"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
-categories = ["parsing", "development-tools::procedural-macro-helpers"]
+categories = ["parsing","development-tools::procedural-macro-helpers","web-programming"]
 license = "MIT OR Apache-2.0"
+readme = "README.md"
 repository = "https://github.com/rxdiscovery/utoipa_auto_discovery"
 homepage = "https://github.com/rxdiscovery/utoipa_auto_discovery"
 
