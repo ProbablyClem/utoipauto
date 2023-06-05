@@ -120,6 +120,28 @@ pub struct ApiDoc;
 
 ```
 
+## exclude a method of automatic scanning
+
+you can exclude a function from the Doc Path list by adding the following macro `#[utoipa_ignore]` .
+
+ex:
+
+```rust
+    /// Get all pets from database
+    ///
+    #[utoipa_ignore]  //<============== this Macro
+    #[utoipa::path(
+        responses(
+            (status = 200, description = "List all Pets", body = [ListPetsDTO])
+        )
+    )]
+    #[get("/pets")]
+    async fn get_all_pets(req: HttpRequest, store: web::Data<AppState>) -> impl Responder {
+        // your CODE
+    }
+
+```
+
 ## note
 
 sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
