@@ -1,33 +1,13 @@
 extern crate proc_macro;
+mod file_utils;
+mod string_utils;
 
-use std::{fs::File, io::Read, path::PathBuf};
-
+use file_utils::parse_file;
 use proc_macro::TokenStream;
 
 use quote::{quote, ToTokens};
+use string_utils::{rem_first_and_last, trim_parentheses, trim_whites};
 use syn::parse_macro_input;
-
-fn rem_first_and_last(value: &str) -> &str {
-    let mut chars = value.chars();
-    chars.next();
-    chars.next_back();
-    chars.as_str()
-}
-
-fn parse_file<T: Into<PathBuf>>(filepath: T) -> Result<syn::File, ()> {
-    let pb: PathBuf = filepath.into();
-
-    if pb.is_file() {
-        let mut file = File::open(pb).unwrap();
-        let mut content = String::new();
-        file.read_to_string(&mut content).unwrap();
-
-        let sf = syn::parse_file(&content).unwrap();
-        Ok(sf)
-    } else {
-        Err(())
-    }
-}
 
 fn get_all_mod_uto_functions(item: &syn::ItemMod, fns_name: &mut Vec<String>) {
     let sub_items = &item.content.iter().next().unwrap().1;
@@ -69,7 +49,7 @@ fn get_all_mod_uto_functions(item: &syn::ItemMod, fns_name: &mut Vec<String>) {
 fn get_all_uto_functions(src_path: String) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
 
-    let sc = parse_file(src_path);
+    let sc = parse_file(&src_path);
     if let Ok(sc) = sc {
         let items = sc.items;
 
@@ -240,20 +220,4 @@ pub fn utoipa_auto_discovery(
     );
 
     TokenStream::from(code)
-}
-
-fn trim_whites(str: &str) -> String {
-    let s = str.trim();
-
-    let s: String = s.replace('\n', "");
-
-    s
-}
-
-fn trim_parentheses(str: &str) -> String {
-    let s = str.trim();
-
-    let s: String = s.replace(['(', ')'], "");
-
-    s
 }
