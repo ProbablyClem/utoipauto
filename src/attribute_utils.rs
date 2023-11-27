@@ -17,15 +17,20 @@ pub fn build_new_openapi_attributes(src_uto_macro: String, uto_paths: &String) -
 }
 
 pub fn update_openapi_macro_attributes(macro_attibutes: &mut Vec<Attribute>, uto_paths: &String) {
+    let mut is_ok = false;
     #[warn(clippy::needless_range_loop)]
     for i in 0..macro_attibutes.len() {
         if !macro_attibutes[i].path().is_ident("openapi") {
-            panic!("No utoipa::openapi Macro found !");
+            continue;
         }
+        is_ok = true;
         let mut src_uto_macro = macro_attibutes[i].to_token_stream().to_string();
 
         src_uto_macro = src_uto_macro.replace("#[openapi(", "");
         src_uto_macro = src_uto_macro.replace(")]", "");
         macro_attibutes[i] = build_new_openapi_attributes(src_uto_macro, uto_paths);
+    }
+    if !is_ok {
+        panic!("No utoipa::openapi Macro found !");
     }
 }
