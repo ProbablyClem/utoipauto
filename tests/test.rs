@@ -28,3 +28,14 @@ pub struct SingleControllerApiDocs {}
 fn test_ignored_path() {
     assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 1)
 }
+
+/// Discover from a module root
+#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct ModuleApiDocs {}
+
+#[test]
+fn test_module_import_path() {
+    assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 2)
+}
