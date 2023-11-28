@@ -1,11 +1,11 @@
 mod controllers;
 
 use utoipa::OpenApi;
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipa_auto_macro::utoipa_auto_discovery;
 
 // Discover from multiple controllers
 #[utoipa_auto_discovery(
-    paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs) ; ( crate::controllers::controller2 => ./tests/controllers/controller2.rs )"
+    paths = "( crate::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; ( crate::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs )"
 )]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
@@ -18,7 +18,7 @@ fn test_path_import() {
 
 /// Discover from a single controller
 #[utoipa_auto_discovery(
-    paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs)"
+    paths = "( crate::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs)"
 )]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
@@ -30,7 +30,9 @@ fn test_ignored_path() {
 }
 
 /// Discover from a module root
-#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers/mod.rs)")]
+#[utoipa_auto_discovery(
+    paths = "( crate::controllers => ./utoipa-auto-macro/tests/controllers/mod.rs)"
+)]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct ModuleApiDocs {}
@@ -42,7 +44,7 @@ fn test_module_import_path() {
 }
 
 /// Discover from the crate root
-#[utoipa_auto_discovery(paths = "( crate => ./tests/test.rs)")]
+#[utoipa_auto_discovery(paths = "( crate => ./utoipa-auto-macro/tests/test.rs)")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct CrateApiDocs {}

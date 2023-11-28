@@ -1,32 +1,4 @@
-[package]
+[workspace]
+resolver = "2"
 name = "utoipa_auto_discovery"
-version = "0.3.0"
-edition = "2021"
-authors = ["RxDiscovery"]
-rust-version = "1.69"
-keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
-description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
-categories = [
-    "parsing",
-    "development-tools::procedural-macro-helpers",
-    "web-programming",
-]
-license = "MIT OR Apache-2.0"
-readme = "README.md"
-repository = "https://github.com/rxdiscovery/utoipa_auto_discovery"
-homepage = "https://github.com/rxdiscovery/utoipa_auto_discovery"
-
-
-[lib]
-proc-macro = true
-
-[dependencies]
-quote = "1.0.28"
-syn = { version = "2.0.18", features = ["full"] }
-proc-macro2 = "1.0.59"
-
-
-[build-dependencies]
-
-[dev-dependencies]
-utoipa = { version = "4.1.0", features = ["preserve_path_order"] }
+members = ["utoipa-auto-core", "utoipa-auto-macro"]
