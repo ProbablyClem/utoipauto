@@ -1,133 +1,63 @@
-use syn::{Item, ItemFn, ItemMod};
+use std::fmt::format;
 
-use crate::file_utils::parse_files;
+use syn::{ItemFn, ItemMod};
 
-pub fn get_all_mod_uto_functions(item: &syn::ItemMod, fns_name: &mut Vec<String>) {
-    // if item.content.is_none() {
-    //     return;
-    // }
-
-    let next_items = &item.content.iter().next();
-    let sub_items = match next_items {
-        Some(next) => &next.1,
-        None => return,
-    };
-    let mod_name = item.ident.to_string();
-
-    for it in sub_items {
-        match it {
-            syn::Item::Mod(m) => get_all_mod_uto_functions(m, fns_name),
-            syn::Item::Fn(f) => {
-                if !f.attrs.is_empty()
-                    && !f.attrs.iter().any(|attr| {
-                        if let Some(name) = attr.path().get_ident() {
-                            name.eq("utoipa_ignore")
-                        } else {
-                            false
-                        }
-                    })
-                {
-                    for i in 0..f.attrs.len() {
-                        if f.attrs[i]
-                            .meta
-                            .path()
-                            .segments
-                            .iter()
-                            .any(|item| item.ident.eq("utoipa"))
-                        {
-                            fns_name.push(format!("{}::{}", mod_name, f.sig.ident));
-                        }
-                    }
-                }
-            }
-
-            _ => {}
-        }
-    }
-}
-
-pub fn get_all_uto_functions(src_path: String) -> Vec<String> {
-    let mut fns_name: Vec<String> = vec![];
-
-    let files =
-        parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
-    let items = files
-        .into_iter()
-        .flat_map(|sc| sc.items)
-        .collect::<Vec<Item>>();
-
-    for i in items {
-        match i {
-            syn::Item::Mod(m) => get_all_mod_uto_functions(&m, &mut fns_name),
-            syn::Item::Fn(f) => {
-                if !f.attrs.is_empty()
-                    && !f.attrs.iter().any(|attr| {
-                        if let Some(name) = attr.path().get_ident() {
-                            name.eq("utoipa_ignore")
-                        } else {
-                            false
-                        }
-                    })
-                {
-                    for i in 0..f.attrs.len() {
-                        if f.attrs[i]
-                            .meta
-                            .path()
-                            .segments
-                            .iter()
-                            .any(|item| item.ident.eq("utoipa"))
-                        {
-                            fns_name.push(f.sig.ident.to_string());
-                        }
-                    }
-                }
-            }
-
-            _ => {}
-        }
-    }
-
-    fns_name
-}
-
+use crate::file_utils::{extract_module_name_from_path, parse_files};
 // refactoring the previous methodes by iterating instead of recursing
 pub fn get_all_uto_functions_iter(src_path: String) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
-
+    println!("src_path: {:?}", src_path);
     let files =
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
-    let items = files
-        .into_iter()
-        .flat_map(|sc| sc.items)
-        .collect::<Vec<Item>>();
 
-    for i in items {
-        match i {
-            syn::Item::Mod(m) => fns_name.append(&mut parse_module(&m)),
-            syn::Item::Fn(f) => fns_name.append(&mut parse_function(&f)),
-            _ => {}
+    for file in files {
+        let filename = file.0;
+        let file = file.1;
+        for i in file.items {
+            let fn_names = match i {
+                syn::Item::Mod(m) => parse_module(&m),
+                syn::Item::Fn(f) => parse_function(&f),
+                _ => vec![],
+            };
+            for fn_name in fn_names {
+                fns_name.push(build_path(&filename, &fn_name));
+            }
         }
     }
+    println!("fns_name: {:?}", fns_name);
     fns_name
+}
+
+fn build_path(file_name: &String, fn_name: &String) -> String {
+    format!("{}::{}", extract_module_name_from_path(file_name), fn_name)
 }
 
 fn parse_module(m: &ItemMod) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
     if let Some((_, items)) = &m.content {
+        println!("mod content len: {:?}", items.len());
         for it in items {
             match it {
                 syn::Item::Mod(m) => fns_name.append(&mut parse_module(m)),
-                syn::Item::Fn(f) => fns_name.append(&mut parse_function(f)),
+                syn::Item::Fn(f) => fns_name.append(
+                    &mut parse_function(f)
+                        .into_iter()
+                        .map(|item| format!("{}::{}", m.ident, item))
+                        .collect::<Vec<String>>(),
+                ),
 
                 _ => {}
             }
         }
+    } else {
+        println!("mod content is none");
     }
     fns_name
 }
 
 fn parse_function(f: &ItemFn) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
+    println!("fn: {:?}", f.sig.ident);
     if should_parse_fn(f) {
         for i in 0..f.attrs.len() {
             if f.attrs[i]
