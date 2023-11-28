@@ -30,12 +30,24 @@ fn test_ignored_path() {
 }
 
 /// Discover from a module root
-#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
+#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers/mod.rs)")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct ModuleApiDocs {}
 
 #[test]
 fn test_module_import_path() {
+    println!("{:#?}", SingleControllerApiDocs::openapi().to_json());
+    assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 2)
+}
+
+/// Discover from the crate root
+#[utoipa_auto_discovery(paths = "( crate => ./tests/test.rs)")]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct CrateApiDocs {}
+
+#[test]
+fn test_crate_import_path() {
     assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 2)
 }
