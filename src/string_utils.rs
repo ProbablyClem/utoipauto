@@ -1,4 +1,4 @@
-use crate::discover::get_all_uto_functions;
+use crate::discover::{get_all_uto_functions, get_all_uto_functions_iter};
 
 pub fn rem_first_and_last(value: &str) -> &str {
     let mut chars = value.chars();
@@ -50,7 +50,7 @@ pub fn extract_pairs(paths: String) -> Vec<(String, String)> {
 pub fn discover_paths(pairs: Vec<(String, String)>) -> String {
     let mut uto_paths: String = String::new();
     for p in pairs {
-        let list_fn = get_all_uto_functions(p.1);
+        let list_fn = get_all_uto_functions_iter(p.1);
 
         if !list_fn.is_empty() {
             for i in list_fn {
