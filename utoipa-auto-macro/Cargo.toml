@@ -21,6 +21,7 @@ homepage = "https://github.com/rxdiscovery/utoipa_auto_discovery"
 proc-macro = true
 
 [dependencies]
+utoipa-auto-core = { version = "0.1.0", path = "../utoipa-auto-core" }
 quote = "1.0.28"
 syn = { version = "2.0.18", features = ["full"] }
 proc-macro2 = "1.0.59"

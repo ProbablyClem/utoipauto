@@ -1,9 +1,4 @@
 extern crate proc_macro;
-mod attribute_utils;
-mod discover;
-mod file_utils;
-mod string_utils;
-mod token_utils;
 
 use attribute_utils::update_openapi_macro_attributes;
 use proc_macro::TokenStream;
@@ -12,6 +7,7 @@ use quote::quote;
 use string_utils::{discover_paths, extract_pairs};
 use syn::parse_macro_input;
 use token_utils::{check_macro_placement, extract_paths, output_macro};
+use utoipa_auto_core::{attribute_utils, string_utils, token_utils};
 
 /// Macro to automatically discover all the functions with the #[utoipa] attribute
 #[proc_macro_attribute]
