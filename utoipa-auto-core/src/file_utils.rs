@@ -23,12 +23,15 @@ pub fn parse_files<T: Into<PathBuf>>(path: T) -> Result<Vec<(String, syn::File)>
 
     let pb: PathBuf = path.into();
     if pb.is_file() {
-        files.push((pb.to_str().unwrap().to_string(), parse_file(pb)?));
+        // we only parse rust files
+        if is_rust_file(&pb) {
+            files.push((pb.to_str().unwrap().to_string(), parse_file(pb)?));
+        }
     } else {
         for entry in fs::read_dir(pb)? {
             let entry = entry?;
             let path = entry.path();
-            if path.is_file() {
+            if path.is_file() && is_rust_file(&path) {
                 files.push((path.to_str().unwrap().to_string(), parse_file(path)?));
             } else {
                 files.append(&mut parse_files(path)?);
@@ -36,6 +39,10 @@ pub fn parse_files<T: Into<PathBuf>>(path: T) -> Result<Vec<(String, syn::File)>
         }
     }
     Ok(files)
+}
+
+fn is_rust_file(path: &PathBuf) -> bool {
+    path.is_file() && path.extension().unwrap().to_str().unwrap().eq("rs")
 }
 
 pub fn extract_module_name_from_path(path: &String) -> String {

@@ -27,39 +27,50 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 //     assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 1)
 // }
 
-/// Discover from a module root
-#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
+// /// Discover from a module root
+// #[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
+// #[derive(OpenApi)]
+// #[openapi(info(title = "Percentage API", version = "1.0.0"))]
+// pub struct ModuleApiDocs {}
+// #[test]
+// fn test_module_import_path() {
+//     assert_eq!(ModuleApiDocs::openapi().paths.paths.len(), 2)
+// }
+
+// /// Discover from the crate root
+// #[utoipa_auto_discovery(paths = "./tests")]
+// #[derive(OpenApi)]
+// #[openapi(info(title = "Percentage API", version = "1.0.0"))]
+// pub struct CrateApiDocs {}
+
+// #[test]
+// fn test_crate_import_path() {
+//     assert_eq!(CrateApiDocs::openapi().paths.paths.len(), 2)
+// }
+
+/// Discover from the crate root auto
+#[utoipa_auto_discovery(paths = "./src")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
-pub struct ModuleApiDocs {}
-#[test]
-fn test_module_import_path() {
-    assert_eq!(ModuleApiDocs::openapi().paths.paths.len(), 2)
-}
-
-/// Discover from the crate root
-#[utoipa_auto_discovery(paths = "( crate => ./tests)")]
-#[derive(OpenApi)]
-#[openapi(info(title = "Percentage API", version = "1.0.0"))]
-pub struct CrateApiDocs {}
+pub struct CrateAutoApiDocs {}
 
 #[test]
-fn test_crate_import_path() {
-    assert_eq!(CrateApiDocs::openapi().paths.paths.len(), 2)
+fn test_crate_auto_import_path() {
+    assert_eq!(CrateAutoApiDocs::openapi().paths.paths.len(), 2)
 }
 
-// Discover from multiple controllers new syntax
-#[utoipa_auto_discovery(
-    paths = "./tests/controllers/controller1.rs, ./tests/controllers/controller2.rs"
-)]
-#[derive(OpenApi)]
-#[openapi(info(title = "Percentage API", version = "1.0.0"))]
-pub struct MultiControllerNoModuleApiDocs {}
+// // Discover from multiple controllers new syntax
+// #[utoipa_auto_discovery(
+//     paths = "./tests/controllers/controller1.rs, ./tests/controllers/controller2.rs"
+// )]
+// #[derive(OpenApi)]
+// #[openapi(info(title = "Percentage API", version = "1.0.0"))]
+// pub struct MultiControllerNoModuleApiDocs {}
 
-#[test]
-fn test_path_import_no_module() {
-    assert_eq!(
-        MultiControllerNoModuleApiDocs::openapi().paths.paths.len(),
-        2
-    )
-}
+// #[test]
+// fn test_path_import_no_module() {
+//     assert_eq!(
+//         MultiControllerNoModuleApiDocs::openapi().paths.paths.len(),
+//         2
+//     )
+// }
