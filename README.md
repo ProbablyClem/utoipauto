@@ -87,10 +87,10 @@ the paths receives a String which must respect this structure :
 
 you can add several paths by separating them with a coma ",".
 
-### Import from filename
+### Import from src folder
 
-Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
-you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
+If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro.
+Here's an example of how to add all the methods contained in the rest module.
 
 ```rust
 ...
@@ -98,15 +98,9 @@ you can also combine automatic and manual addition, as here we've added a method
 use utoipa_auto_discovery::utoipa_auto_discovery;
 
 ...
-#[utoipa_auto_discovery(
-  paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
-  )]
+#[utoipa_auto_discovery]
 #[derive(OpenApi)]
 #[openapi(
-    paths(
-
-        crate::rest::other_controller::get_users,
-    ),
     components(
         schemas(TestDTO)
     ),
@@ -152,6 +146,41 @@ pub struct ApiDoc;
 
 ```
 
+### Import from filename
+
+Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
+you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
+
+```rust
+...
+
+use utoipa_auto_discovery::utoipa_auto_discovery;
+
+...
+#[utoipa_auto_discovery(
+  paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
+  )]
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+
+        crate::rest::other_controller::get_users,
+    ),
+    components(
+        schemas(TestDTO)
+    ),
+    tags(
+        (name = "todo", description = "Todo management endpoints.")
+    ),
+    modifiers(&SecurityAddon)
+)]
+
+pub struct ApiDoc;
+
+...
+
+```
+
 ## exclude a method of automatic scanning
 
 you can exclude a function from the Doc Path list by adding the following macro `#[utoipa_ignore]` .
@@ -182,4 +211,5 @@ sub-modules within a module containing methods tagged with utoipa::path are also
 
 - [x] automatic path detection
 - [x] automatic import from module
+- [x] automatic import from src folder
 - [ ] automatic schema detection (in progress)
