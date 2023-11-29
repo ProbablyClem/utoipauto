@@ -25,7 +25,6 @@ pub fn trim_parentheses(str: &str) -> String {
 
 pub fn extract_paths(attributes: String) -> Vec<String> {
     let paths;
-    println!("attributes: {:?}", attributes);
     let attributes = trim_parentheses(rem_first_and_last(&attributes.as_str()));
 
     if attributes.contains('|') {
@@ -74,14 +73,11 @@ pub fn discover_paths(paths: Vec<String>) -> String {
     let mut uto_paths: String = String::new();
     for p in paths {
         let list_fn = get_all_uto_functions_iter(p);
-        println!("list_fn: {:?}", list_fn);
-
         for i in list_fn {
             // uto_paths.push_str(format!("{}::{},", p.0, i).as_str());
             uto_paths.push_str(format!("{},", i).as_str());
         }
     }
-    println!("uto_paths: {:?}", uto_paths);
     uto_paths
 }
 
