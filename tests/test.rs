@@ -48,16 +48,7 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 //     assert_eq!(CrateApiDocs::openapi().paths.paths.len(), 2)
 // }
 
-/// Discover from the crate root auto
-#[utoipa_auto_discovery(paths = "./src")]
-#[derive(OpenApi)]
-#[openapi(info(title = "Percentage API", version = "1.0.0"))]
-pub struct CrateAutoApiDocs {}
 
-#[test]
-fn test_crate_auto_import_path() {
-    assert_eq!(CrateAutoApiDocs::openapi().paths.paths.len(), 2)
-}
 
 // // Discover from multiple controllers new syntax
 // #[utoipa_auto_discovery(

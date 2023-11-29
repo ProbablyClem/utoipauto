@@ -53,10 +53,17 @@ pub fn extract_module_name_from_path(path: &String) -> String {
     if path.ends_with("/mod") {
         path = path.replace("/mod", "");
     }
+    if path.ends_with("/lib") {
+        path = path.replace("/lib", "");
+    }
+    if path.ends_with("/main") {
+        path = path.replace("/main", "");
+    }
     path = path.replace("./", "");
     //remove first word
-    path = path.split('/').collect::<Vec<&str>>()[1..].join("::");
-    "crate::".to_string() + path.as_str()
+    let mut path_vec = path.split('/').collect::<Vec<&str>>();
+    path_vec[0] = "crate";
+    path_vec.join("::")
 }
 
 #[cfg(test)]
@@ -80,6 +87,22 @@ mod tests {
                 &"./utoipa-auto-macro/tests/controllers/mod.rs".to_string()
             ),
             "crate::tests::controllers"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_lib() {
+        assert_eq!(
+            extract_module_name_from_path(&"./src/lib.rs".to_string()),
+            "crate"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_main() {
+        assert_eq!(
+            extract_module_name_from_path(&"./src/main.rs".to_string()),
+            "crate"
         );
     }
 }

@@ -4,12 +4,14 @@ use syn::Attribute;
 /// Extract the paths string attribute from the proc_macro::TokenStream
 pub fn extract_attributes(stream: proc_macro::TokenStream) -> String {
     let mut paths: String = "".to_string();
+    let mut has_paths = false;
     if !stream.is_empty() {
         let mut it = stream.into_iter();
         let tok = it.next();
 
         if let Some(proc_macro::TokenTree::Ident(ident)) = tok {
             if ident.to_string().eq("paths") {
+                has_paths = true;
                 let tok = it.next();
                 if let Some(proc_macro::TokenTree::Punct(punct)) = tok {
                     if punct.to_string().eq("=") {
@@ -29,7 +31,12 @@ pub fn extract_attributes(stream: proc_macro::TokenStream) -> String {
             }
         }
     }
-    paths
+    // if no paths specified, we use the default path "./src"
+    if !has_paths {
+        "\"./src\"".to_string()
+    } else {
+        paths
+    }
 }
 
 /// Check if the macro is placed before the #[derive] and #[openapi] attributes
