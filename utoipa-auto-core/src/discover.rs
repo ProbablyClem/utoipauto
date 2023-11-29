@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use syn::{ItemFn, ItemMod};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
