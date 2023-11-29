@@ -78,14 +78,16 @@ then add the `#[utoipa_auto_discovery]` macro just before the #[derive(OpenApi)]
 Put `#[utoipa_auto_discovery]` before #[derive(OpenApi)] and `#[openapi]` macros.
 
 ```rust
-#[utoipa_auto_discovery(paths = "( MODULE_TREE::MODULE_NAME => MODULE_SRC_FILE_PATH ) ; ( MODULE_TREE::MODULE_NAME => MODULE_SRC_FILE_PATH ) ; ... ;")]
+#[utoipa_auto_discovery(paths = "MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...")]
 ```
 
 the paths receives a String which must respect this structure :
 
-`" ( MODULE_TREE_PATH => MODULE_SRC_FILE_PATH ) ;"`
+`MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...`"`
 
-you can add several pairs (Module Path => Src Path ) by separating them with a semicolon ";".
+you can add several paths by separating them with a coma ",".
+
+### Import from filename
 
 Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
 you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
@@ -97,7 +99,7 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 
 ...
 #[utoipa_auto_discovery(
-  paths = "( crate::rest::test_controller => ./src/rest/test_controller.rs ) ; ( crate::rest::test2_controller => ./src/rest/test2_controller.rs )"
+  paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
   )]
 #[derive(OpenApi)]
 #[openapi(
@@ -105,6 +107,36 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 
         crate::rest::other_controller::get_users,
     ),
+    components(
+        schemas(TestDTO)
+    ),
+    tags(
+        (name = "todo", description = "Todo management endpoints.")
+    ),
+    modifiers(&SecurityAddon)
+)]
+
+pub struct ApiDoc;
+
+...
+
+```
+
+### Import from module
+
+Here's an example of how to add all the methods contained in the rest module.
+
+```rust
+...
+
+use utoipa_auto_discovery::utoipa_auto_discovery;
+
+...
+#[utoipa_auto_discovery(
+  paths = "./src/rest"
+  )]
+#[derive(OpenApi)]
+#[openapi(
     components(
         schemas(TestDTO)
     ),
@@ -149,4 +181,5 @@ sub-modules within a module containing methods tagged with utoipa::path are also
 # Features
 
 - [x] automatic path detection
+- [x] automatic import from module
 - [ ] automatic schema detection (in progress)
