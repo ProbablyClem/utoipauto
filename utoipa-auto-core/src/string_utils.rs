@@ -52,8 +52,10 @@ pub fn discover_paths(pairs: Vec<(String, String)>) -> String {
     for p in pairs {
         let list_fn = get_all_uto_functions_iter(p.1);
         println!("list_fn: {:?}", list_fn);
+
         for i in list_fn {
-            uto_paths.push_str(format!("{}::{},", p.0, i).as_str());
+            // uto_paths.push_str(format!("{}::{},", p.0, i).as_str());
+            uto_paths.push_str(format!("{},", i).as_str());
         }
     }
     println!("uto_paths: {:?}", uto_paths);

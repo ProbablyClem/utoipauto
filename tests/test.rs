@@ -34,17 +34,16 @@ fn test_ignored_path() {
 pub struct ModuleApiDocs {}
 #[test]
 fn test_module_import_path() {
-    println!("{:#?}", ModuleApiDocs::openapi().to_json());
     assert_eq!(ModuleApiDocs::openapi().paths.paths.len(), 2)
 }
 
-// /// Discover from the crate root
-// #[utoipa_auto_discovery(paths = "( crate => ./tests)")]
-// #[derive(OpenApi)]
-// #[openapi(info(title = "Percentage API", version = "1.0.0"))]
-// pub struct CrateApiDocs {}
+/// Discover from the crate root
+#[utoipa_auto_discovery(paths = "( crate => ./tests)")]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct CrateApiDocs {}
 
-// #[test]
-// fn test_crate_import_path() {
-//     assert_eq!(CrateApiDocs::openapi().paths.paths.len(), 2)
-// }
+#[test]
+fn test_crate_import_path() {
+    assert_eq!(CrateApiDocs::openapi().paths.paths.len(), 2)
+}
