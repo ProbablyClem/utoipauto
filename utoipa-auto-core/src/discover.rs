@@ -9,6 +9,7 @@ pub fn get_all_uto_functions_iter(src_path: String) -> Vec<String> {
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
     for file in files {
+        println!("file: {:?}", file.0);
         let filename = file.0;
         let file = file.1;
         for i in file.items {

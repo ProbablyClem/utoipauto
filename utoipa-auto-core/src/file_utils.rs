@@ -30,6 +30,8 @@ pub fn parse_files<T: Into<PathBuf>>(path: T) -> Result<Vec<(String, syn::File)>
             let path = entry.path();
             if path.is_file() {
                 files.push((path.to_str().unwrap().to_string(), parse_file(path)?));
+            } else {
+                files.append(&mut parse_files(path)?);
             }
         }
     }
