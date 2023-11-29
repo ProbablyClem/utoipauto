@@ -90,7 +90,7 @@ you can add several paths by separating them with a coma ",".
 ### Import from src folder
 
 If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro.
-Here's an example of how to add all the methods contained in the rest module.
+Here's an example of how to add all the methods contained in the src folder.
 
 ```rust
 ...
