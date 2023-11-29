@@ -23,34 +23,57 @@ pub fn trim_parentheses(str: &str) -> String {
     s
 }
 
-pub fn extract_pairs(paths: String) -> Vec<(String, String)> {
-    let mut pairs: Vec<(String, String)> = vec![];
-    let str_paths = trim_parentheses(rem_first_and_last(paths.as_str()));
+pub fn extract_paths(attributes: String) -> Vec<String> {
+    let paths;
+    println!("attributes: {:?}", attributes);
+    let attributes = trim_parentheses(rem_first_and_last(&attributes.as_str()));
 
-    if str_paths.contains('|') {
+    if attributes.contains('|') {
         panic!("Please use the new syntax ! paths=\"(MODULE_TREE_PATH => MODULE_SRC_PATH) ;\"")
     }
+    if attributes.contains("=>") {
+        paths = extract_paths_arrow(attributes);
+    } else {
+        paths = extract_paths_coma(attributes);
+    }
+    if paths.is_empty() {
+        panic!("utoipa_auto_discovery: No paths specified !")
+    }
+    paths
+}
 
-    let paths = str_paths.split(';');
+// (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ;
+// extract the paths from the string
+// Here for legacy support
+fn extract_paths_arrow(attributes: String) -> Vec<String> {
+    let mut paths: Vec<String> = vec![];
+    let attributes = attributes.split(';');
 
-    for p in paths {
+    for p in attributes {
         let pair = p.split_once("=>");
 
         if let Some(pair) = pair {
-            pairs.push((trim_whites(pair.0), trim_whites(pair.1)));
+            paths.push(trim_whites(pair.1));
         }
     }
-
-    if pairs.is_empty() {
-        panic!("utoipa_auto_discovery: No paths specified !")
-    }
-    pairs
+    paths
 }
 
-pub fn discover_paths(pairs: Vec<(String, String)>) -> String {
+// MODULE_SRC_PATH, MODULE_SRC_PATH
+fn extract_paths_coma(attributes: String) -> Vec<String> {
+    let mut paths: Vec<String> = vec![];
+    let attributes = attributes.split(',');
+
+    for p in attributes {
+        paths.push(trim_whites(p));
+    }
+    paths
+}
+
+pub fn discover_paths(paths: Vec<String>) -> String {
     let mut uto_paths: String = String::new();
-    for p in pairs {
-        let list_fn = get_all_uto_functions_iter(p.1);
+    for p in paths {
+        let list_fn = get_all_uto_functions_iter(p);
         println!("list_fn: {:?}", list_fn);
 
         for i in list_fn {
@@ -60,4 +83,35 @@ pub fn discover_paths(pairs: Vec<(String, String)>) -> String {
     }
     println!("uto_paths: {:?}", uto_paths);
     uto_paths
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_extract_paths_arrow() {
+        assert_eq!(
+            super::extract_paths(
+                "\"(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)\""
+                    .to_string()
+            ),
+            vec![
+                "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
+                "./utoipa-auto-macro/tests/controllers/controller2.rs".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn test_extract_paths_coma() {
+        assert_eq!(
+            super::extract_paths(
+                "\"./utoipa-auto-macro/tests/controllers/controller1.rs, ./utoipa-auto-macro/tests/controllers/controller2.rs\""
+                    .to_string()
+            ),
+            vec![
+                "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
+                "./utoipa-auto-macro/tests/controllers/controller2.rs".to_string()
+            ]
+        );
+    }
 }

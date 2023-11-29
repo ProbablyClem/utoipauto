@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::Attribute;
 /// Extract the paths string attribute from the proc_macro::TokenStream
-pub fn extract_paths(stream: proc_macro::TokenStream) -> String {
+pub fn extract_attributes(stream: proc_macro::TokenStream) -> String {
     let mut paths: String = "".to_string();
     if !stream.is_empty() {
         let mut it = stream.into_iter();
