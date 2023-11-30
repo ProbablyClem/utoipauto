@@ -27,6 +27,25 @@ fn test_ignored_path() {
     assert_eq!(SingleControllerApiDocs::openapi().paths.paths.len(), 1)
 }
 
+/// Discover with manual path
+#[utoipa_auto_discovery(paths = "./tests/controllers/controller1.rs")]
+#[derive(OpenApi)]
+#[openapi(
+    info(title = "Percentage API", version = "1.0.0"),
+    paths(controllers::controller2::route3)
+)]
+pub struct SingleControllerManualPathApiDocs {}
+
+#[test]
+fn test_manual_path() {
+    assert_eq!(
+        SingleControllerManualPathApiDocs::openapi()
+            .paths
+            .paths
+            .len(),
+        2
+    )
+}
 /// Discover from a module root
 #[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
 #[derive(OpenApi)]
