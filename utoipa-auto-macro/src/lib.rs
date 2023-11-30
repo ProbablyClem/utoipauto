@@ -24,7 +24,7 @@ pub fn utoipa_auto_discovery(
     let mut openapi_macro = parse_macro_input!(item as syn::ItemStruct);
 
     // Discover all the functions with the #[utoipa] attribute
-    let uto_paths: String = discover_paths(paths);
+    let (uto_paths, uto_models, uto_reponses): (String, String, String) = discover_paths(paths);
 
     // extract the openapi macro attributes : #[openapi(openapi_macro_attibutes)]
     let openapi_macro_attibutes = &mut openapi_macro.attrs;
@@ -33,7 +33,12 @@ pub fn utoipa_auto_discovery(
     check_macro_placement(openapi_macro_attibutes.clone());
 
     // Update the openapi macro attributes with the newly discovered paths
-    update_openapi_macro_attributes(openapi_macro_attibutes, &uto_paths);
+    update_openapi_macro_attributes(
+        openapi_macro_attibutes,
+        &uto_paths,
+        &uto_models,
+        &uto_reponses,
+    );
 
     // Output the macro back to the compiler
     output_macro(openapi_macro)

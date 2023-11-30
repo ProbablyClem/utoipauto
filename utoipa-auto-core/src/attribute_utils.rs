@@ -1,7 +1,12 @@
 use quote::ToTokens;
 use syn::Attribute;
 
-pub fn update_openapi_macro_attributes(macro_attibutes: &mut Vec<Attribute>, uto_paths: &String) {
+pub fn update_openapi_macro_attributes(
+    macro_attibutes: &mut Vec<Attribute>,
+    uto_paths: &String,
+    uto_models: &String,
+    uto_reponses: &String,
+) {
     let mut is_ok = false;
     #[warn(clippy::needless_range_loop)]
     for i in 0..macro_attibutes.len() {
@@ -13,12 +18,8 @@ pub fn update_openapi_macro_attributes(macro_attibutes: &mut Vec<Attribute>, uto
 
         src_uto_macro = src_uto_macro.replace("#[openapi(", "");
         src_uto_macro = src_uto_macro.replace(")]", "");
-        macro_attibutes[i] = build_new_openapi_attributes(
-            src_uto_macro,
-            uto_paths,
-            &"".to_string(),
-            &"".to_string(),
-        );
+        macro_attibutes[i] =
+            build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_reponses);
     }
     if !is_ok {
         panic!("No utoipa::openapi Macro found !");

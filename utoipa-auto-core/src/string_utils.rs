@@ -69,16 +69,23 @@ fn extract_paths_coma(attributes: String) -> Vec<String> {
     paths
 }
 
-pub fn discover_paths(paths: Vec<String>) -> String {
+pub fn discover_paths(paths: Vec<String>) -> (String, String, String) {
     let mut uto_paths: String = String::new();
+    let mut uto_models: String = String::new();
+    let mut uto_reponses: String = String::new();
     for p in paths {
-        let list_fn = get_all_uto_functions_iter(p);
+        let (list_fn, list_model, list_reponse) = get_all_uto_functions_iter(p);
         for i in list_fn {
-            // uto_paths.push_str(format!("{}::{},", p.0, i).as_str());
             uto_paths.push_str(format!("{},", i).as_str());
         }
+        for i in list_model {
+            uto_models.push_str(format!("{},", i).as_str());
+        }
+        for i in list_reponse {
+            uto_reponses.push_str(format!("{},", i).as_str());
+        }
     }
-    uto_paths
+    (uto_paths, uto_models, uto_reponses)
 }
 
 #[cfg(test)]

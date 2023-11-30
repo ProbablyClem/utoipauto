@@ -1,9 +1,13 @@
-use syn::{ItemFn, ItemMod};
+use std::vec;
+
+use syn::{ItemFn, ItemMod, ItemTrait};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 // refactoring the previous methodes by iterating instead of recursing
-pub fn get_all_uto_functions_iter(src_path: String) -> Vec<String> {
+pub fn get_all_uto_functions_iter(src_path: String) -> (Vec<String>, Vec<String>, Vec<String>) {
     let mut fns_name: Vec<String> = vec![];
+    let mut models_name: Vec<String> = vec![];
+    let mut responses_name: Vec<String> = vec![];
     let files =
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
@@ -11,21 +15,39 @@ pub fn get_all_uto_functions_iter(src_path: String) -> Vec<String> {
         let filename = file.0;
         let file = file.1;
         for i in file.items {
-            let fn_names = match i {
+            let fns = match &i {
                 syn::Item::Mod(m) => parse_module(&m),
                 syn::Item::Fn(f) => parse_function(&f),
                 _ => vec![],
             };
-            for fn_name in fn_names {
+            let (models, reponses) = match i {
+                syn::Item::Trait(t) => parse_trait(&t),
+                _ => (vec![], vec![]),
+            };
+            for fn_name in fns {
                 fns_name.push(build_path(&filename, &fn_name));
+            }
+            for model_name in models {
+                models_name.push(build_path(&filename, &model_name));
+            }
+            for response_name in reponses {
+                responses_name.push(build_path(&filename, &response_name));
             }
         }
     }
-    fns_name
+    (fns_name, models_name, responses_name)
 }
 
 fn build_path(file_name: &String, fn_name: &String) -> String {
     format!("{}::{}", extract_module_name_from_path(file_name), fn_name)
+}
+
+/// Search for ToSchema and ToResponse implementations
+fn parse_trait(t: &ItemTrait) -> (Vec<String>, Vec<String>) {
+    let mut models_name: Vec<String> = vec![];
+    let mut responses_name: Vec<String> = vec![];
+
+    (models_name, responses_name)
 }
 
 fn parse_module(m: &ItemMod) -> Vec<String> {
