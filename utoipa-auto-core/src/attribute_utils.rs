@@ -62,4 +62,88 @@ mod test {
             "#[openapi(paths(./src,p1))]".to_string()
         );
     }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components() {
+        assert_eq!(
+            super::build_new_openapi_attributes("paths(p1)".to_string(), &"./src,".to_string())
+                .to_token_stream()
+                .to_string()
+                .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(schemas(model)))]".to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components_schemas_replace() {
+        assert_eq!(
+            super::build_new_openapi_attributes(
+                "paths(p1), components(schemas(m1))".to_string(),
+                &"./src,".to_string()
+            )
+            .to_token_stream()
+            .to_string()
+            .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(schemas(model, m1)))]".to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components_responses_replace() {
+        assert_eq!(
+            super::build_new_openapi_attributes(
+                "paths(p1), components(responses(r1))".to_string(),
+                &"./src,".to_string()
+            )
+            .to_token_stream()
+            .to_string()
+            .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(responses(response, r1)))]".to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components_responses_schemas_replace() {
+        assert_eq!(
+            super::build_new_openapi_attributes(
+                "paths(p1), components(responses(r1), schemas(m1))".to_string(),
+                &"./src,".to_string()
+            )
+            .to_token_stream()
+            .to_string()
+            .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(responses(response, r1), schemas(model, m1)))]"
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components_responses_schemas() {
+        assert_eq!(
+            super::build_new_openapi_attributes(
+                "paths(p1), components(responses(r1), schemas(m1))".to_string(),
+                &"./src,".to_string()
+            )
+            .to_token_stream()
+            .to_string()
+            .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(responses(response, r1), schemas(m1)))]"
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_components_schemas_reponses() {
+        assert_eq!(
+            super::build_new_openapi_attributes(
+                "paths(p1), components(schemas(m1), responses(r1))".to_string(),
+                &"./src,".to_string()
+            )
+            .to_token_stream()
+            .to_string()
+            .replace(" ", ""),
+            "#[openapi(paths(./src,p1), components(responses(r1), schemas(model, m1)))]"
+                .to_string()
+        );
+    }
 }
