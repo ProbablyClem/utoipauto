@@ -11,6 +11,8 @@ pub fn build_new_openapi_attributes(src_uto_macro: String, uto_paths: &String) -
         src_uto_macro.replace("paths(", new_paths.as_str())
     };
 
+    // let new_dto_schema = format!("schema({}", dto_paths);
+
     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
     syn::parse_quote! { #[openapi( #stream )] }
@@ -32,5 +34,32 @@ pub fn update_openapi_macro_attributes(macro_attibutes: &mut Vec<Attribute>, uto
     }
     if !is_ok {
         panic!("No utoipa::openapi Macro found !");
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use quote::ToTokens;
+
+    #[test]
+    fn test_build_new_openapi_attributes() {
+        assert_eq!(
+            super::build_new_openapi_attributes("".to_string(), &"./src".to_string())
+                .to_token_stream()
+                .to_string()
+                .replace(" ", ""),
+            "#[openapi(paths(./src),)]".to_string()
+        );
+    }
+
+    #[test]
+    fn test_build_new_openapi_attributes_path_replace() {
+        assert_eq!(
+            super::build_new_openapi_attributes("paths(p1)".to_string(), &"./src,".to_string())
+                .to_token_stream()
+                .to_string()
+                .replace(" ", ""),
+            "#[openapi(paths(./src,p1))]".to_string()
+        );
     }
 }
