@@ -1,6 +1,6 @@
 [package]
 name = "utoipauto-macro"
-version = "0.0.3"
+version = "0.0.4"
 edition = "2021"
 authors = ["probablyclem", "RxDiscovery"]
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
@@ -19,7 +19,7 @@ repository = "https://github.com/probablyclem/utoipauto"
 proc-macro = true
 
 [dependencies]
-utoipauto-core = "0.0.3"
+utoipauto-core = "0.0.4"
 quote = "1.0.28"
 syn = { version = "2.0.18", features = ["full"] }
 proc-macro2 = "1.0.59"
