@@ -1,3 +1,4 @@
+#![allow(dead_code)] // This code is used in the tests
 use utoipa_auto_macro::utoipa_ignore;
 
 #[utoipa::path(post, path = "/route1")]
