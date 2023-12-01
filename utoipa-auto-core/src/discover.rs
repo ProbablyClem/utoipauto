@@ -3,8 +3,9 @@ use std::vec;
 use syn::{punctuated::Punctuated, ItemFn, ItemMod, ItemStruct, Meta, Token};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
-// refactoring the previous methodes by iterating instead of recursing
-pub fn get_all_uto_functions_iter(src_path: String) -> (Vec<String>, Vec<String>, Vec<String>) {
+
+/// Discover everything from a file, will explore folder recursively
+pub fn discover_from_file(src_path: String) -> (Vec<String>, Vec<String>, Vec<String>) {
     let mut fns_name: Vec<String> = vec![];
     let mut models_name: Vec<String> = vec![];
     let mut responses_name: Vec<String> = vec![];

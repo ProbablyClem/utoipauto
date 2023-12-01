@@ -2,6 +2,8 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::Attribute;
 /// Extract the paths string attribute from the proc_macro::TokenStream
+///
+/// If none is specified, we use the default path "./src"
 pub fn extract_attributes(stream: proc_macro2::TokenStream) -> String {
     let mut paths: String = "".to_string();
     let mut has_paths = false;

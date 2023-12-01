@@ -4,12 +4,13 @@ use attribute_utils::update_openapi_macro_attributes;
 use proc_macro::TokenStream;
 
 use quote::quote;
-use string_utils::{discover_paths, extract_paths};
+use string_utils::{discover, extract_paths};
 use syn::parse_macro_input;
 use token_utils::{check_macro_placement, extract_attributes, output_macro};
 use utoipa_auto_core::{attribute_utils, string_utils, token_utils};
 
 /// Macro to automatically discover all the functions with the #[utoipa] attribute
+/// And the struct deriving ToSchema and ToResponse
 #[proc_macro_attribute]
 pub fn utoipa_auto_discovery(
     attributes: proc_macro::TokenStream, // #[utoipa_auto_discovery(paths = "(MODULE_TREE_PATH => MODULE_SRC_PATH) ;")]
@@ -24,7 +25,7 @@ pub fn utoipa_auto_discovery(
     let mut openapi_macro = parse_macro_input!(item as syn::ItemStruct);
 
     // Discover all the functions with the #[utoipa] attribute
-    let (uto_paths, uto_models, uto_reponses): (String, String, String) = discover_paths(paths);
+    let (uto_paths, uto_models, uto_reponses): (String, String, String) = discover(paths);
 
     // extract the openapi macro attributes : #[openapi(openapi_macro_attibutes)]
     let openapi_macro_attibutes = &mut openapi_macro.attrs;

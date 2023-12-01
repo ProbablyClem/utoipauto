@@ -18,6 +18,7 @@ pub fn parse_file<T: Into<PathBuf>>(filepath: T) -> Result<syn::File, io::Error>
     Ok(syn::parse_file(&content).unwrap_or_else(move |_| panic!("Failed to parse file {:?}", pb)))
 }
 
+/// Parse all the files in the given path
 pub fn parse_files<T: Into<PathBuf>>(path: T) -> Result<Vec<(String, syn::File)>, io::Error> {
     let mut files: Vec<(String, syn::File)> = vec![];
 
@@ -45,6 +46,17 @@ fn is_rust_file(path: &PathBuf) -> bool {
     path.is_file() && path.extension().unwrap().to_str().unwrap().eq("rs")
 }
 
+/// Extract the module name from the file path
+/// # Example
+/// ```
+/// let module_name = extract_module_name_from_path(
+///    &"./utoipa-auto-macro/tests/controllers/controller1.rs".to_string()
+/// );
+/// assert_eq!(
+///  module_name,
+/// "crate::tests::controllers::controller1".to_string()
+/// );
+/// ```
 pub fn extract_module_name_from_path(path: &String) -> String {
     let mut path = path.to_string();
     if path.ends_with(".rs") {

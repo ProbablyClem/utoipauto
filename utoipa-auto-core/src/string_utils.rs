@@ -1,4 +1,4 @@
-use crate::discover::get_all_uto_functions_iter;
+use crate::discover::discover_from_file;
 
 pub fn rem_first_and_last(value: &str) -> &str {
     let mut chars = value.chars();
@@ -23,6 +23,24 @@ pub fn trim_parentheses(str: &str) -> String {
     s
 }
 
+/// Extract the file paths from the attributes
+/// Support the old syntax (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ;
+/// and the new syntax MODULE_SRC_PATH, MODULE_SRC_PATH
+///
+/// # Example
+/// ```
+/// let paths = extract_paths(
+///    "\"(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)\""
+///       .to_string()
+/// );
+/// assert_eq!(
+///   paths,
+///  vec![
+///    "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
+///   "./utoipa-auto-macro/tests/controllers/controller2.rs".to_string()
+/// ]   
+/// );
+/// ```
 pub fn extract_paths(attributes: String) -> Vec<String> {
     let paths;
     let attributes = trim_parentheses(rem_first_and_last(&attributes.as_str()));
@@ -69,12 +87,16 @@ fn extract_paths_coma(attributes: String) -> Vec<String> {
     paths
 }
 
-pub fn discover_paths(paths: Vec<String>) -> (String, String, String) {
+/// Return the list of all the functions with the #[utoipa] attribute
+/// and the list of all the structs with the #[derive(ToSchema)] attribute
+/// and the list of all the structs with the #[derive(ToResponse)] attribute
+pub fn discover(paths: Vec<String>) -> (String, String, String) {
     let mut uto_paths: String = String::new();
     let mut uto_models: String = String::new();
     let mut uto_reponses: String = String::new();
     for p in paths {
-        let (list_fn, list_model, list_reponse) = get_all_uto_functions_iter(p);
+        let (list_fn, list_model, list_reponse) = discover_from_file(p);
+        // We need to add a coma after each path
         for i in list_fn {
             uto_paths.push_str(format!("{},", i).as_str());
         }
