@@ -6,19 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  utoipa-core:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        package:
-          - crate: utoipauto-core
-            path: utoipauto-core
-          - crate: utoipauto-macro
-            path: utoipauto-macro
-          - crate: utoipauto
-            path:
     steps:
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -28,11 +17,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get releasing version
-        working-directory: ${{ matrix.package.path }}
+        working-directory: utoipauto-core
         run: echo NEXT_VERSION=$(sed -nE 's/^\s*version = "(.*?)"/\1/p' Cargo.toml) >> $GITHUB_ENV
 
       - name: Check published version
-        run: echo PREV_VERSION=$(cargo search ${{ matrix.package.crate }} --limit 1 | sed -nE 's/^[^"]*"//; s/".*//1p' -) >> $GITHUB_ENV
+        run: echo PREV_VERSION=$(cargo search utoipauto-core --limit 1 | sed -nE 's/^[^"]*"//; s/".*//1p' -) >> $GITHUB_ENV
 
       - name: Cargo login
         if: env.NEXT_VERSION != env.PREV_VERSION
@@ -40,16 +29,92 @@ jobs:
 
       - name: Cargo package
         if: env.NEXT_VERSION != env.PREV_VERSION
-        working-directory: ${{ matrix.package.path }}
+        working-directory: utoipauto-core
         run: |
           echo "Releasing version: $NEXT_VERSION"
           echo "Published version: $PREV_VERSION"
           echo "Cargo Packaging..."
           cargo package
 
-      - name: Publish ${{ matrix.package.name }}
+      - name: Publish utoipauto-core
         if: env.NEXT_VERSION != env.PREV_VERSION
-        working-directory: ${{ matrix.package.path }}
+        working-directory: utoipauto-core
+        run: |
+          echo "Cargo Publishing..."
+          cargo publish --no-verify
+          echo "New version $NEXT_VERSION has been published"
+
+  utoipa-macro:
+    needs: utoipa-core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get releasing version
+        working-directory: utoipauto-macro
+        run: echo NEXT_VERSION=$(sed -nE 's/^\s*version = "(.*?)"/\1/p' Cargo.toml) >> $GITHUB_ENV
+
+      - name: Check published version
+        run: echo PREV_VERSION=$(cargo search utoipauto-macro --limit 1 | sed -nE 's/^[^"]*"//; s/".*//1p' -) >> $GITHUB_ENV
+
+      - name: Cargo login
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        run: cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Cargo package
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        working-directory: utoipauto-macro
+        run: |
+          echo "Releasing version: $NEXT_VERSION"
+          echo "Published version: $PREV_VERSION"
+          echo "Cargo Packaging..."
+          cargo package
+
+      - name: Publish utoipauto-macro
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        working-directory: utoipauto-macro
+        run: |
+          echo "Cargo Publishing..."
+          cargo publish --no-verify
+          echo "New version $NEXT_VERSION has been published"
+
+  utoipa:
+    needs: utoipa-macro
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get releasing version
+        run: echo NEXT_VERSION=$(sed -nE 's/^\s*version = "(.*?)"/\1/p' Cargo.toml) >> $GITHUB_ENV
+
+      - name: Check published version
+        run: echo PREV_VERSION=$(cargo search utoipauto --limit 1 | sed -nE 's/^[^"]*"//; s/".*//1p' -) >> $GITHUB_ENV
+
+      - name: Cargo login
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        run: cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Cargo package
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        run: |
+          echo "Releasing version: $NEXT_VERSION"
+          echo "Published version: $PREV_VERSION"
+          echo "Cargo Packaging..."
+          cargo package
+
+      - name: Publish utoipauto
+        if: env.NEXT_VERSION != env.PREV_VERSION
+        working-directory: utoipauto
         run: |
           echo "Cargo Publishing..."
           cargo publish --no-verify
