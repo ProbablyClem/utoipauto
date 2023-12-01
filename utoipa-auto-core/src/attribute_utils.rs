@@ -51,7 +51,7 @@ pub fn build_new_openapi_attributes(
     .replace(",,", ",");
 
     // let new_dto_schema = format!("schema({}", dto_paths);
-
+    println!("src_uto_macro: {}", src_uto_macro);
     let stream: proc_macro2::TokenStream = src_uto_macro.parse().unwrap();
 
     syn::parse_quote! { #[openapi( #stream )] }

@@ -24,3 +24,4 @@ utoipa-auto-macro = { version = "0.4.0", path = "./utoipa-auto-macro" }
 
 [dev-dependencies]
 utoipa = { version = "4.1.0", features = ["preserve_path_order"] }
+syn = { version = "2.0.39", features = ["extra-traits", "full"] }

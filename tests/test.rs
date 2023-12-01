@@ -1,4 +1,5 @@
 mod controllers;
+mod models;
 use utoipa::OpenApi;
 use utoipa_auto_discovery::utoipa_auto_discovery;
 // Discover from multiple controllers
@@ -80,5 +81,41 @@ fn test_path_import_no_module() {
     assert_eq!(
         MultiControllerNoModuleApiDocs::openapi().paths.paths.len(),
         2
+    )
+}
+
+// Discover from multiple controllers new syntax
+#[utoipa_auto_discovery(paths = "./tests/models.rs")]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct ModelsImportApiDocs {}
+
+#[test]
+fn test_path_import_schema() {
+    assert_eq!(
+        ModelsImportApiDocs::openapi()
+            .components
+            .expect("no components")
+            .schemas
+            .len(),
+        1
+    )
+}
+
+// Discover from multiple controllers new syntax
+#[utoipa_auto_discovery(paths = "./tests/models.rs")]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct ResponsesImportApiDocs {}
+
+#[test]
+fn test_path_import_responses() {
+    assert_eq!(
+        ResponsesImportApiDocs::openapi()
+            .components
+            .expect("no components")
+            .responses
+            .len(),
+        1
     )
 }

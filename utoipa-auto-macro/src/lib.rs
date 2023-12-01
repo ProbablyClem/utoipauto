@@ -16,7 +16,7 @@ pub fn utoipa_auto_discovery(
     item: proc_macro::TokenStream,       // #[openapi(paths = "")]
 ) -> proc_macro::TokenStream {
     // (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ; ...
-    let paths: String = extract_attributes(attributes);
+    let paths: String = extract_attributes(attributes.into());
     // [(MODULE_TREE_PATH, MODULE_SRC_PATH)]
     let paths: Vec<String> = extract_paths(paths);
 

@@ -2,23 +2,23 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::Attribute;
 /// Extract the paths string attribute from the proc_macro::TokenStream
-pub fn extract_attributes(stream: proc_macro::TokenStream) -> String {
+pub fn extract_attributes(stream: proc_macro2::TokenStream) -> String {
     let mut paths: String = "".to_string();
     let mut has_paths = false;
     if !stream.is_empty() {
         let mut it = stream.into_iter();
         let tok = it.next();
 
-        if let Some(proc_macro::TokenTree::Ident(ident)) = tok {
+        if let Some(proc_macro2::TokenTree::Ident(ident)) = tok {
             if ident.to_string().eq("paths") {
                 has_paths = true;
                 let tok = it.next();
-                if let Some(proc_macro::TokenTree::Punct(punct)) = tok {
+                if let Some(proc_macro2::TokenTree::Punct(punct)) = tok {
                     if punct.to_string().eq("=") {
                         let tok = it.next();
                         if let Some(tok) = tok {
                             match tok {
-                                proc_macro::TokenTree::Literal(lit) => {
+                                proc_macro2::TokenTree::Literal(lit) => {
                                     paths = lit.to_string();
                                 }
                                 _ => {
