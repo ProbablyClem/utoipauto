@@ -1,11 +1,11 @@
 #![allow(dead_code)] // This code is used in the tests
 
-pub use utoipa_auto_macro::*;
+pub use utoipauto_macro::*;
 
 #[cfg(test)]
 mod test {
     use utoipa::OpenApi;
-    use utoipa_auto_macro::utoipauto;
+    use utoipauto_macro::utoipauto;
 
     #[utoipa::path(post, path = "/route1")]
     pub fn route1() {}

@@ -7,7 +7,7 @@ use quote::quote;
 use string_utils::{discover, extract_paths};
 use syn::parse_macro_input;
 use token_utils::{check_macro_placement, extract_attributes, output_macro};
-use utoipa_auto_core::{attribute_utils, string_utils, token_utils};
+use utoipauto_core::{attribute_utils, string_utils, token_utils};
 
 /// Macro to automatically discover all the functions with the #[utoipa] attribute
 /// And the struct deriving ToSchema and ToResponse

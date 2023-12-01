@@ -1,8 +1,8 @@
 [package]
-name = "utoipauto"
-authors = ["ProbablyClem", "RxDiscovery"]
+name = "utoipauto-macro"
 version = "0.1.0"
 edition = "2021"
+authors = ["probablyclem", "RxDiscovery"]
 rust-version = "1.69"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
@@ -13,15 +13,14 @@ categories = [
 ]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/rxdiscovery/utoipauto"
-homepage = "https://github.com/rxdiscovery/utoipauto"
-[lib]
+repository = "https://github.com/probablyclem/utoipauto"
 
+
+[lib]
+proc-macro = true
 
 [dependencies]
-utoipauto-macro = { version = "0.1.0", path = "./utoipauto-macro" }
-
-
-[dev-dependencies]
-utoipa = { version = "4.1.0", features = ["preserve_path_order"] }
-syn = { version = "2.0.39", features = ["extra-traits", "full"] }
+utoipauto-core = { version = "0.1.0", path = "../utoipauto-core" }
+quote = "1.0.28"
+syn = { version = "2.0.18", features = ["full"] }
+proc-macro2 = "1.0.59"
