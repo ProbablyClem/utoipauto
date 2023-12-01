@@ -1,5 +1,5 @@
-use utoipa::{OpenApi, ToResponse, ToSchema};
-use utoipa_auto_macro::utoipa_auto_discovery;
+#![allow(dead_code)] // This code is used in the tests
+use utoipa::{ToResponse, ToSchema};
 
 #[derive(ToSchema)]
 pub struct ModelSchema;

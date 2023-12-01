@@ -1,3 +1,5 @@
+#![allow(dead_code)] // This code is used in the tests
+
 pub use utoipa_auto_macro::*;
 
 #[cfg(test)]
