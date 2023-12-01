@@ -212,3 +212,7 @@ ex:
 ## Note
 
 Sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
+
+## Contributing
+
+Contributions are welcomed, feel free to submit a PR or an issue.
