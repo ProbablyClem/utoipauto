@@ -50,6 +50,9 @@ fn parse_struct(t: &ItemStruct) -> (Vec<String>, Vec<String>) {
     let attrs = &t.attrs;
     for attr in attrs {
         let meta = &attr.meta;
+        if meta.path().is_ident("utoipa_ignore") {
+            return (vec![], vec![]);
+        }
         if meta.path().is_ident("derive") {
             let nested = attr
                 .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
@@ -129,10 +132,10 @@ fn parse_function(f: &ItemFn) -> Vec<String> {
 }
 
 fn should_parse_fn(f: &ItemFn) -> bool {
-    !f.attrs.is_empty() && !is_fn_ignored(f)
+    !f.attrs.is_empty() && !is_ignored(f)
 }
 
-fn is_fn_ignored(f: &ItemFn) -> bool {
+fn is_ignored(f: &ItemFn) -> bool {
     f.attrs.iter().any(|attr| {
         if let Some(name) = attr.path().get_ident() {
             name.eq("utoipa_ignore")
