@@ -1,8 +1,8 @@
 [package]
 name = "utoipauto-core"
-version = "0.0.4"
+version = "0.1.0"
 edition = "2021"
-authors = ["probablyclem", "RxDiscovery"]
+authors = ["ProbablyClem", "RxDiscovery"]
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
 categories = [
