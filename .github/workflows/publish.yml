@@ -18,6 +18,7 @@ jobs:
           - crate: utoipauto-macro
             path: utoipauto-macro
           - crate: utoipauto
+            path:
     steps:
       - uses: dtolnay/rust-toolchain@stable
         with:
