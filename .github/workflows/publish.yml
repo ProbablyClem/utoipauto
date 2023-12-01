@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  utoipa-core:
+  utoipauto-core:
     runs-on: ubuntu-latest
     steps:
       - uses: dtolnay/rust-toolchain@stable
@@ -44,8 +44,8 @@ jobs:
           cargo publish --no-verify
           echo "New version $NEXT_VERSION has been published"
 
-  utoipa-macro:
-    needs: utoipa-core
+  utoipauto-macro:
+    needs: utoipauto-core
     runs-on: ubuntu-latest
     steps:
       - uses: dtolnay/rust-toolchain@stable
@@ -83,8 +83,8 @@ jobs:
           cargo publish --no-verify
           echo "New version $NEXT_VERSION has been published"
 
-  utoipa:
-    needs: utoipa-macro
+  utoipauto:
+    needs: utoipauto-macro
     runs-on: ubuntu-latest
     steps:
       - uses: dtolnay/rust-toolchain@stable
@@ -114,7 +114,6 @@ jobs:
 
       - name: Publish utoipauto
         if: env.NEXT_VERSION != env.PREV_VERSION
-        working-directory: utoipauto
         run: |
           echo "Cargo Publishing..."
           cargo publish --no-verify
