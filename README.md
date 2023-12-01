@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>utoipa_auto_discovery</h1>
+<h1>Utoipauto</h1>
   <p>
     <strong>Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase</strong>
   </p>
@@ -65,26 +65,26 @@ It also detects struct that derive `ToSchema` for the `components(schemas)` sect
 
 # How to use it
 
-Simply add the crate `utoipa_auto_discovery` to the project
+Simply add the crate `utoipauto` to the project
 
 ```
-cargo add utoipa_auto_discovery
+cargo add utoipauto
 ```
 
 Import macro
 
 ```rust
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipauto::utoipauto;
 ```
 
-Then add the `#[utoipa_auto_discovery]` macro just before the #[derive(OpenApi)] and `#[openapi]` macros.
+Then add the `#[utoipauto]` macro just before the #[derive(OpenApi)] and `#[openapi]` macros.
 
 ## Important !!
 
-Put `#[utoipa_auto_discovery]` before `#[derive(OpenApi)] `and `#[openapi]` macros.
+Put `#[utoipauto]` before `#[derive(OpenApi)] `and `#[openapi]` macros.
 
 ```rust
-#[utoipa_auto_discovery(paths = "MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...")]
+#[utoipauto(paths = "MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...")]
 ```
 
 The paths receives a String which must respect this structure :
@@ -101,10 +101,10 @@ Here's an example of how to add all the methods contained in the src code.
 ```rust
 ...
 
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipauto::utoipauto;
 
 ...
-#[utoipa_auto_discovery]
+#[utoipauto]
 #[derive(OpenApi)]
 #[openapi(
     tags(
@@ -125,9 +125,9 @@ Here's an example of how to add all the methods and structs contained in the res
 
 ```rust
 
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipauto::utoipauto;
 
-#[utoipa_auto_discovery(
+#[utoipauto(
   paths = "./src/rest"
   )]
 #[derive(OpenApi)]
@@ -149,9 +149,9 @@ you can also combine automatic and manual addition, as here we've added a method
 
 ```rust
 
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipauto::utoipauto;
 
-#[utoipa_auto_discovery(
+#[utoipauto(
   paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
   )]
 #[derive(OpenApi)]

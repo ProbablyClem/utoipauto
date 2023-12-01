@@ -54,7 +54,7 @@ pub fn extract_paths(attributes: String) -> Vec<String> {
         paths = extract_paths_coma(attributes);
     }
     if paths.is_empty() {
-        panic!("utoipa_auto_discovery: No paths specified !")
+        panic!("utoipauto: No paths specified !")
     }
     paths
 }

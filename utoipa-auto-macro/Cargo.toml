@@ -13,8 +13,8 @@ categories = [
 ]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/rxdiscovery/utoipa_auto_discovery"
-homepage = "https://github.com/rxdiscovery/utoipa_auto_discovery"
+repository = "https://github.com/rxdiscovery/utoipauto"
+homepage = "https://github.com/rxdiscovery/utoipauto"
 
 
 [lib]

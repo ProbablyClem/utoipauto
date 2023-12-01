@@ -1,9 +1,9 @@
 mod controllers;
 mod models;
 use utoipa::OpenApi;
-use utoipa_auto_discovery::utoipa_auto_discovery;
+use utoipauto::utoipauto;
 // Discover from multiple controllers
-#[utoipa_auto_discovery(
+#[utoipauto(
     paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs) ; ( crate::controllers::controller2 => ./tests/controllers/controller2.rs )"
 )]
 #[derive(OpenApi)]
@@ -16,9 +16,7 @@ fn test_path_import() {
 }
 
 /// Discover from a single controller
-#[utoipa_auto_discovery(
-    paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs)"
-)]
+#[utoipauto(paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs)")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct SingleControllerApiDocs {}
@@ -29,7 +27,7 @@ fn test_ignored_path() {
 }
 
 /// Discover with manual path
-#[utoipa_auto_discovery(paths = "./tests/controllers/controller1.rs")]
+#[utoipauto(paths = "./tests/controllers/controller1.rs")]
 #[derive(OpenApi)]
 #[openapi(
     info(title = "Percentage API", version = "1.0.0"),
@@ -48,7 +46,7 @@ fn test_manual_path() {
     )
 }
 /// Discover from a module root
-#[utoipa_auto_discovery(paths = "( crate::controllers => ./tests/controllers)")]
+#[utoipauto(paths = "( crate::controllers => ./tests/controllers)")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct ModuleApiDocs {}
@@ -58,7 +56,7 @@ fn test_module_import_path() {
 }
 
 /// Discover from the crate root
-#[utoipa_auto_discovery(paths = "./tests")]
+#[utoipauto(paths = "./tests")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct CrateApiDocs {}
@@ -69,9 +67,7 @@ fn test_crate_import_path() {
 }
 
 // Discover from multiple controllers new syntax
-#[utoipa_auto_discovery(
-    paths = "./tests/controllers/controller1.rs, ./tests/controllers/controller2.rs"
-)]
+#[utoipauto(paths = "./tests/controllers/controller1.rs, ./tests/controllers/controller2.rs")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct MultiControllerNoModuleApiDocs {}
@@ -85,7 +81,7 @@ fn test_path_import_no_module() {
 }
 
 // Discover from multiple controllers new syntax
-#[utoipa_auto_discovery(paths = "./tests/models.rs")]
+#[utoipauto(paths = "./tests/models.rs")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct ModelsImportApiDocs {}
@@ -103,7 +99,7 @@ fn test_path_import_schema() {
 }
 
 // Discover from multiple controllers new syntax
-#[utoipa_auto_discovery(paths = "./tests/models.rs")]
+#[utoipauto(paths = "./tests/models.rs")]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct ResponsesImportApiDocs {}

@@ -12,8 +12,8 @@ use utoipa_auto_core::{attribute_utils, string_utils, token_utils};
 /// Macro to automatically discover all the functions with the #[utoipa] attribute
 /// And the struct deriving ToSchema and ToResponse
 #[proc_macro_attribute]
-pub fn utoipa_auto_discovery(
-    attributes: proc_macro::TokenStream, // #[utoipa_auto_discovery(paths = "(MODULE_TREE_PATH => MODULE_SRC_PATH) ;")]
+pub fn utoipauto(
+    attributes: proc_macro::TokenStream, // #[utoipauto(paths = "(MODULE_TREE_PATH => MODULE_SRC_PATH) ;")]
     item: proc_macro::TokenStream,       // #[openapi(paths = "")]
 ) -> proc_macro::TokenStream {
     // (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ; ...

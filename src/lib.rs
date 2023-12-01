@@ -5,7 +5,7 @@ pub use utoipa_auto_macro::*;
 #[cfg(test)]
 mod test {
     use utoipa::OpenApi;
-    use utoipa_auto_macro::utoipa_auto_discovery;
+    use utoipa_auto_macro::utoipauto;
 
     #[utoipa::path(post, path = "/route1")]
     pub fn route1() {}
@@ -17,7 +17,7 @@ mod test {
     pub fn route3() {}
 
     /// Discover from the crate root auto
-    #[utoipa_auto_discovery]
+    #[utoipauto]
     #[derive(OpenApi)]
     #[openapi(info(title = "Percentage API", version = "1.0.0"))]
     pub struct CrateAutoApiDocs {}

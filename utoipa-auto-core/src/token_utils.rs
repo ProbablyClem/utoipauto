@@ -45,11 +45,11 @@ pub fn extract_attributes(stream: proc_macro2::TokenStream) -> String {
 /// Otherwise, panic!
 pub fn check_macro_placement(attrs: Vec<Attribute>) {
     if !attrs.iter().any(|elm| elm.path().is_ident("derive")) {
-        panic!("Please put utoipa_auto_discovery before #[derive] and #[openapi]");
+        panic!("Please put utoipauto before #[derive] and #[openapi]");
     }
 
     if !attrs.iter().any(|elm| elm.path().is_ident("openapi")) {
-        panic!("Please put utoipa_auto_discovery before #[derive] and #[openapi]");
+        panic!("Please put utoipauto before #[derive] and #[openapi]");
     }
 }
 
