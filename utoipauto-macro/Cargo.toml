@@ -1,6 +1,6 @@
 [package]
 name = "utoipauto-macro"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["ProbablyClem", "RxDiscovery"]
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
@@ -12,14 +12,15 @@ categories = [
 ]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/probablyclem/utoipauto"
-
+repository = "https://github.com/ProbablyClem/utoipauto"
+homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-utoipauto-core = "0.1.0"
+utoipauto-core = "0.1.1"
+
 quote = "1.0.28"
 syn = { version = "2.0.18", features = ["full"] }
 proc-macro2 = "1.0.59"

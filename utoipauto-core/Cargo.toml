@@ -1,8 +1,8 @@
 [package]
 name = "utoipauto-core"
-version = "0.1.0"
-edition = "2021"
 authors = ["ProbablyClem", "RxDiscovery"]
+version = "0.1.1"
+edition = "2021"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
 categories = [
@@ -12,7 +12,8 @@ categories = [
 ]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/probablyclem/utoipauto"
+repository = "https://github.com/ProbablyClem/utoipauto"
+homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [lib]
 
