@@ -16,20 +16,18 @@ Utoipa is a great crate for generating documentation (openapi/swagger) via sourc
 
 But since Rust is a static programming language, we don't have the possibility of automatically discovering paths and dto in runtime and adding them to the documentation,
 
-for APIs with just a few endpoints, it's not that much trouble to add controller functions one by one, and DTOs one by one.
+For APIs with just a few endpoints, it's not that much trouble to add controller functions one by one, and DTOs one by one.
 
-if you have hundreds or even thousands of endpoints, the code becomes very verbose and difficult to maintain.
+But, if you have hundreds or even thousands of endpoints, the code becomes very verbose and difficult to maintain.
 
-ex :
+Ex :
 
 ```rust
-
-...
 
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        // <================================ all functions  1 to N
+        // <================================ All functions  1 to N
         test_controller::service::func_get_1,
         test_controller::service::func_get_2,
         test_controller::service::func_get_3,
@@ -51,46 +49,54 @@ ex :
 )]
 pub struct ApiDoc;
 
-...
-
 ```
 
-The aim of crate **utoipa_auto_discovery** is to propose a macro that automates the detection of methods carrying Utoipa macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
+The goal of this crate is to propose a macro that automates the detection of methods carrying Utoipa macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
 
-# how to use it
+It also detects struct that derive `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
 
-simply add the crate `utoipa_auto_discovery` to the project
+# Features
+
+- [x] Automatic recursive path detection
+- [x] Automatic import from module
+- [x] Automatic import from src folder
+- [x] Automatic model detection
+- [x] Automatic response detection
+
+# How to use it
+
+Simply add the crate `utoipa_auto_discovery` to the project
 
 ```
 cargo add utoipa_auto_discovery
 ```
 
-import macro
+Import macro
 
 ```rust
 use utoipa_auto_discovery::utoipa_auto_discovery;
 ```
 
-then add the `#[utoipa_auto_discovery]` macro just before the #[derive(OpenApi)] and `#[openapi]` macros.
+Then add the `#[utoipa_auto_discovery]` macro just before the #[derive(OpenApi)] and `#[openapi]` macros.
 
-## important !!
+## Important !!
 
-Put `#[utoipa_auto_discovery]` before #[derive(OpenApi)] and `#[openapi]` macros.
+Put `#[utoipa_auto_discovery]` before `#[derive(OpenApi)] `and `#[openapi]` macros.
 
 ```rust
 #[utoipa_auto_discovery(paths = "MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...")]
 ```
 
-the paths receives a String which must respect this structure :
+The paths receives a String which must respect this structure :
 
-`MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ...`"`
+`"MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ..."`
 
-you can add several paths by separating them with a coma ",".
+You can add several paths by separating them with a coma `","`.
 
 ### Import from src folder
 
-If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro.
-Here's an example of how to add all the methods contained in the src folder.
+If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
+Here's an example of how to add all the methods contained in the src code.
 
 ```rust
 ...
@@ -101,9 +107,6 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 #[utoipa_auto_discovery]
 #[derive(OpenApi)]
 #[openapi(
-    components(
-        schemas(TestDTO)
-    ),
     tags(
         (name = "todo", description = "Todo management endpoints.")
     ),
@@ -118,22 +121,17 @@ pub struct ApiDoc;
 
 ### Import from module
 
-Here's an example of how to add all the methods contained in the rest module.
+Here's an example of how to add all the methods and structs contained in the rest module.
 
 ```rust
-...
 
 use utoipa_auto_discovery::utoipa_auto_discovery;
 
-...
 #[utoipa_auto_discovery(
   paths = "./src/rest"
   )]
 #[derive(OpenApi)]
 #[openapi(
-    components(
-        schemas(TestDTO)
-    ),
     tags(
         (name = "todo", description = "Todo management endpoints.")
     ),
@@ -142,21 +140,17 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 
 pub struct ApiDoc;
 
-...
-
 ```
 
 ### Import from filename
 
 Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
-you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users".
+you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users", and a schema "TestDTO".
 
 ```rust
-...
 
 use utoipa_auto_discovery::utoipa_auto_discovery;
 
-...
 #[utoipa_auto_discovery(
   paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
   )]
@@ -177,11 +171,11 @@ use utoipa_auto_discovery::utoipa_auto_discovery;
 
 pub struct ApiDoc;
 
-...
+
 
 ```
 
-## exclude a method of automatic scanning
+## Exclude a method from automatic scanning
 
 you can exclude a function from the Doc Path list by adding the following macro `#[utoipa_ignore]` .
 
@@ -203,13 +197,21 @@ ex:
 
 ```
 
-## note
+## Exclude a struct from automatic scanning
 
-sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
+you can also exclude a struct from the models and reponses list by adding the following macro `#[utoipa_ignore]` .
 
-# Features
+ex:
 
-- [x] automatic path detection
-- [x] automatic import from module
-- [x] automatic import from src folder
-- [ ] automatic schema detection (in progress)
+```rust
+    #[utoipa_ignore]  //<============== this Macro
+    #[derive(ToSchema)]
+    struct ModelToIgnore {
+        // your CODE
+    }
+
+```
+
+## Note
+
+Sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
