@@ -4,9 +4,6 @@
     <strong>Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase</strong>
   </p>
   <p>
-
-![MSRV](https://img.shields.io/badge/rustc-1.69+-ab6000.svg)
-
   </p>
 </div>
 

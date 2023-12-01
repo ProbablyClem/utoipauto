@@ -3,7 +3,6 @@ name = "utoipauto"
 authors = ["ProbablyClem", "RxDiscovery"]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.69"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
 categories = [
