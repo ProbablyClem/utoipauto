@@ -41,7 +41,7 @@ checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
 name = "utoipauto-core"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c09625208a48389a48da5ade858fafcd7c9974a467e5b215cc76bec7dfaa166c"
+checksum = "9e52c7644e664370aa8481c2bed74e7da516db8d50cb5cd87d0bbf79aa182df8"
 dependencies = [
  "proc-macro2",
  "quote",
