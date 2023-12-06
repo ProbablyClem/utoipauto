@@ -29,6 +29,7 @@ pub fn trim_parentheses(str: &str) -> String {
 ///
 /// # Example
 /// ```
+/// use utoipauto_core::string_utils::extract_paths;
 /// let paths = extract_paths(
 ///    "\"(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)\""
 ///       .to_string()

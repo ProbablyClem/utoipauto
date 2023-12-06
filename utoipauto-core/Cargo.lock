@@ -150,16 +150,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "utoipa-auto-core"
-version = "0.4.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.39",
- "utoipa",
-]
-
-[[package]]
 name = "utoipa-gen"
 version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -169,6 +159,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.39",
+]
+
+[[package]]
+name = "utoipauto-core"
+version = "0.1.1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.39",
+ "utoipa",
 ]
 
 [[package]]

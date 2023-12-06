@@ -49,6 +49,7 @@ fn is_rust_file(path: &PathBuf) -> bool {
 /// Extract the module name from the file path
 /// # Example
 /// ```
+/// use utoipauto_core::file_utils::extract_module_name_from_path;
 /// let module_name = extract_module_name_from_path(
 ///    &"./utoipa-auto-macro/tests/controllers/controller1.rs".to_string()
 /// );
@@ -71,6 +72,7 @@ pub fn extract_module_name_from_path(path: &String) -> String {
     if path.ends_with("/main") {
         path = path.replace("/main", "");
     }
+    path = path.replace("/src", "");
     path = path.replace("./", "");
     //remove first word
     let mut path_vec = path.split('/').collect::<Vec<&str>>();
@@ -115,6 +117,14 @@ mod tests {
         assert_eq!(
             extract_module_name_from_path(&"./src/main.rs".to_string()),
             "crate"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_workspace() {
+        assert_eq!(
+            extract_module_name_from_path(&"./server/src/routes/asset.rs".to_string()),
+            "crate::routes::asset"
         );
     }
 }
