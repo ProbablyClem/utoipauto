@@ -72,11 +72,21 @@ pub fn extract_module_name_from_path(path: &String) -> String {
     if path.ends_with("/main") {
         path = path.replace("/main", "");
     }
-    path = path.replace("/src", "");
     path = path.replace("./", "");
     //remove first word
-    let mut path_vec = path.split('/').collect::<Vec<&str>>();
-    path_vec[0] = "crate";
+    let path_vec = path
+        .split('/')
+        .enumerate()
+        .filter_map(|(idx, segment)| match (idx, segment) {
+            // Remove first segment and replace with `crate`, so that 'root/thing' becomes
+            // `crate::thing` in the end
+            (0, _) => Some("crate"),
+            // When using cargo workspaces, paths look like  './subcrate/src/my/module',
+            // so we need to remove the 'src' to produce `crate::my::module`
+            (1, "src") => None,
+            (_, segment) => Some(segment),
+        })
+        .collect::<Vec<&str>>();
     path_vec.join("::")
 }
 
@@ -125,6 +135,14 @@ mod tests {
         assert_eq!(
             extract_module_name_from_path(&"./server/src/routes/asset.rs".to_string()),
             "crate::routes::asset"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_folders() {
+        assert_eq!(
+            extract_module_name_from_path(&"./src/routing/api/audio.rs".to_string()),
+            "crate::routing::api::audio"
         );
     }
 }
