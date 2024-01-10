@@ -72,7 +72,7 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
     out
 }
 
-fn parse_module_items(module_name: &String, items: Vec<Item>) -> Vec<DiscoverType> {
+fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverType> {
     items
         .into_iter()
         .filter(|e| match e {
@@ -83,17 +83,17 @@ fn parse_module_items(module_name: &String, items: Vec<Item>) -> Vec<DiscoverTyp
         })
         .map(|v| match v {
             syn::Item::Mod(m) => m.content.map_or(Vec::<DiscoverType>::new(), |cs| {
-                parse_module_items(&build_path(module_name, &m.ident.to_string()), cs.1)
+                parse_module_items(&build_path(module_path, &m.ident.to_string()), cs.1)
             }),
             syn::Item::Fn(f) => parse_function(&f)
                 .into_iter()
-                .map(|item| DiscoverType::Fn(build_path(&module_name, &item)))
+                .map(|item| DiscoverType::Fn(build_path(&module_path, &item)))
                 .collect(),
             syn::Item::Struct(s) => {
-                parse_from_attr(&s.attrs, &build_path(&module_name, &s.ident.to_string()))
+                parse_from_attr(&s.attrs, &build_path(&module_path, &s.ident.to_string()))
             }
             syn::Item::Enum(e) => {
-                parse_from_attr(&e.attrs, &build_path(&module_name, &e.ident.to_string()))
+                parse_from_attr(&e.attrs, &build_path(&module_path, &e.ident.to_string()))
             }
             _ => vec![],
         })
