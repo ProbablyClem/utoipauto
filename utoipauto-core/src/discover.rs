@@ -1,58 +1,85 @@
 use std::vec;
 
-use syn::{punctuated::Punctuated, ItemFn, ItemMod, ItemStruct, Meta, Token};
+use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
 /// Discover everything from a file, will explore folder recursively
 pub fn discover_from_file(src_path: String) -> (Vec<String>, Vec<String>, Vec<String>) {
-    let mut fns_name: Vec<String> = vec![];
-    let mut models_name: Vec<String> = vec![];
-    let mut responses_name: Vec<String> = vec![];
     let files =
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
-    for file in files {
-        let filename = file.0;
-        let file = file.1;
-        for i in file.items {
-            let fns = match &i {
-                syn::Item::Mod(m) => parse_module_fns(&m),
-                syn::Item::Fn(f) => parse_function(&f),
-                _ => vec![],
-            };
-            let (models, reponses) = match i {
-                syn::Item::Mod(m) => parse_module_structs(&m),
-                syn::Item::Struct(s) => parse_struct(&s),
-                _ => (vec![], vec![]),
-            };
-            for fn_name in fns {
-                fns_name.push(build_path(&filename, &fn_name));
-            }
-            for model_name in models {
-                models_name.push(build_path(&filename, &model_name));
-            }
-            for response_name in reponses {
-                responses_name.push(build_path(&filename, &response_name));
-            }
-        }
-    }
-    (fns_name, models_name, responses_name)
+    files
+        .into_iter()
+        .map(|e| parse_module_items(&extract_module_name_from_path(&e.0), e.1.items))
+        .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
+            acc.append(&mut v);
+            acc
+        })
+        .into_iter()
+        .fold(
+            (
+                Vec::<String>::new(),
+                Vec::<String>::new(),
+                Vec::<String>::new(),
+            ),
+            |mut acc, v| {
+                match v {
+                    DiscoverType::Fn(n) => acc.0.push(n),
+                    DiscoverType::Model(n) => acc.1.push(n),
+                    DiscoverType::Response(n) => acc.2.push(n),
+                };
+
+                acc
+            },
+        )
 }
 
-fn build_path(file_name: &String, fn_name: &String) -> String {
-    format!("{}::{}", extract_module_name_from_path(file_name), fn_name)
+enum DiscoverType {
+    Fn(String),
+    Model(String),
+    Response(String),
 }
 
-/// Search for ToSchema and ToResponse implementations
-fn parse_struct(t: &ItemStruct) -> (Vec<String>, Vec<String>) {
-    let mut models_name: Vec<String> = vec![];
-    let mut responses_name: Vec<String> = vec![];
-    let attrs = &t.attrs;
-    for attr in attrs {
+fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverType> {
+    items
+        .into_iter()
+        .filter(|e| match e {
+            syn::Item::Mod(_) | syn::Item::Fn(_) | syn::Item::Struct(_) | syn::Item::Enum(_) => {
+                true
+            }
+            _ => false,
+        })
+        .map(|v| match v {
+            syn::Item::Mod(m) => m.content.map_or(Vec::<DiscoverType>::new(), |cs| {
+                parse_module_items(&build_path(module_path, &m.ident.to_string()), cs.1)
+            }),
+            syn::Item::Fn(f) => parse_function(&f)
+                .into_iter()
+                .map(|item| DiscoverType::Fn(build_path(&module_path, &item)))
+                .collect(),
+            syn::Item::Struct(s) => {
+                parse_from_attr(&s.attrs, &build_path(&module_path, &s.ident.to_string()))
+            }
+            syn::Item::Enum(e) => {
+                parse_from_attr(&e.attrs, &build_path(&module_path, &e.ident.to_string()))
+            }
+            _ => vec![],
+        })
+        .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
+            acc.append(&mut v);
+            acc
+        })
+}
+
+/// Search for ToSchema and ToResponse implementations in attr
+fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
+    let mut out: Vec<DiscoverType> = vec![];
+
+    for attr in a {
         let meta = &attr.meta;
         if meta.path().is_ident("utoipa_ignore") {
-            return (vec![], vec![]);
+            return vec![];
         }
         if meta.path().is_ident("derive") {
             let nested = attr
@@ -60,58 +87,16 @@ fn parse_struct(t: &ItemStruct) -> (Vec<String>, Vec<String>) {
                 .unwrap();
             for nested_meta in nested {
                 if nested_meta.path().is_ident("ToSchema") {
-                    models_name.push(t.ident.to_string());
+                    out.push(DiscoverType::Model(name.clone()));
                 }
                 if nested_meta.path().is_ident("ToResponse") {
-                    responses_name.push(t.ident.to_string());
+                    out.push(DiscoverType::Response(name.clone()));
                 }
             }
         }
     }
 
-    (models_name, responses_name)
-}
-
-fn parse_module_fns(m: &ItemMod) -> Vec<String> {
-    let mut fns_name: Vec<String> = vec![];
-    if let Some((_, items)) = &m.content {
-        for it in items {
-            match it {
-                syn::Item::Mod(m) => fns_name.append(&mut parse_module_fns(m)),
-                syn::Item::Fn(f) => fns_name.append(
-                    &mut parse_function(f)
-                        .into_iter()
-                        .map(|item| format!("{}::{}", m.ident, item))
-                        .collect::<Vec<String>>(),
-                ),
-
-                _ => {}
-            }
-        }
-    }
-    fns_name
-}
-
-fn parse_module_structs(m: &ItemMod) -> (Vec<String>, Vec<String>) {
-    let mut models_name: Vec<String> = vec![];
-    let mut responses_name: Vec<String> = vec![];
-    if let Some((_, items)) = &m.content {
-        for it in items {
-            let (models, reponses) = match it {
-                syn::Item::Mod(m) => parse_module_structs(m),
-                syn::Item::Struct(s) => parse_struct(s),
-
-                _ => (vec![], vec![]),
-            };
-            for model_name in models {
-                models_name.push(format!("{}::{}", m.ident, model_name));
-            }
-            for response_name in reponses {
-                responses_name.push(format!("{}::{}", m.ident, response_name));
-            }
-        }
-    }
-    (models_name, responses_name)
+    out
 }
 
 fn parse_function(f: &ItemFn) -> Vec<String> {
@@ -144,4 +129,8 @@ fn is_ignored(f: &ItemFn) -> bool {
             false
         }
     })
+}
+
+fn build_path(file_name: &String, fn_name: &String) -> String {
+    format!("{}::{}", file_name, fn_name)
 }
