@@ -41,37 +41,6 @@ enum DiscoverType {
     Response(String),
 }
 
-fn build_path(file_name: &String, fn_name: &String) -> String {
-    format!("{}::{}", file_name, fn_name)
-}
-
-/// Search for ToSchema and ToResponse implementations in attr
-fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
-    let mut out: Vec<DiscoverType> = vec![];
-
-    for attr in a {
-        let meta = &attr.meta;
-        if meta.path().is_ident("utoipa_ignore") {
-            return vec![];
-        }
-        if meta.path().is_ident("derive") {
-            let nested = attr
-                .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
-                .unwrap();
-            for nested_meta in nested {
-                if nested_meta.path().is_ident("ToSchema") {
-                    out.push(DiscoverType::Model(name.clone()));
-                }
-                if nested_meta.path().is_ident("ToResponse") {
-                    out.push(DiscoverType::Response(name.clone()));
-                }
-            }
-        }
-    }
-
-    out
-}
-
 fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverType> {
     items
         .into_iter()
@@ -101,6 +70,33 @@ fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverTyp
             acc.append(&mut v);
             acc
         })
+}
+
+/// Search for ToSchema and ToResponse implementations in attr
+fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
+    let mut out: Vec<DiscoverType> = vec![];
+
+    for attr in a {
+        let meta = &attr.meta;
+        if meta.path().is_ident("utoipa_ignore") {
+            return vec![];
+        }
+        if meta.path().is_ident("derive") {
+            let nested = attr
+                .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
+                .unwrap();
+            for nested_meta in nested {
+                if nested_meta.path().is_ident("ToSchema") {
+                    out.push(DiscoverType::Model(name.clone()));
+                }
+                if nested_meta.path().is_ident("ToResponse") {
+                    out.push(DiscoverType::Response(name.clone()));
+                }
+            }
+        }
+    }
+
+    out
 }
 
 fn parse_function(f: &ItemFn) -> Vec<String> {
@@ -133,4 +129,8 @@ fn is_ignored(f: &ItemFn) -> bool {
             false
         }
     })
+}
+
+fn build_path(file_name: &String, fn_name: &String) -> String {
+    format!("{}::{}", file_name, fn_name)
 }
