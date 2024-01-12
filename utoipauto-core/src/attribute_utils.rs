@@ -8,18 +8,16 @@ pub fn update_openapi_macro_attributes(
     uto_reponses: &String,
 ) {
     let mut is_ok = false;
-    #[warn(clippy::needless_range_loop)]
-    for i in 0..macro_attibutes.len() {
-        if !macro_attibutes[i].path().is_ident("openapi") {
+    for attr in macro_attibutes {
+        if !attr.path().is_ident("openapi") {
             continue;
         }
         is_ok = true;
-        let mut src_uto_macro = macro_attibutes[i].to_token_stream().to_string();
+        let mut src_uto_macro = attr.to_token_stream().to_string();
 
         src_uto_macro = src_uto_macro.replace("#[openapi(", "");
         src_uto_macro = src_uto_macro.replace(")]", "");
-        macro_attibutes[i] =
-            build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_reponses);
+        *attr = build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_reponses);
     }
     if !is_ok {
         panic!("No utoipa::openapi Macro found !");
@@ -58,7 +56,7 @@ pub fn build_new_openapi_attributes(
 fn remove_paths(src_uto_macro: String) -> String {
     if src_uto_macro.contains("paths(") {
         let paths = src_uto_macro.split("paths(").collect::<Vec<&str>>()[1];
-        let paths = paths.split(")").collect::<Vec<&str>>()[0];
+        let paths = paths.split(')').collect::<Vec<&str>>()[0];
         src_uto_macro
             .replace(format!("paths({})", paths).as_str(), "")
             .replace(",,", ",")
@@ -70,7 +68,7 @@ fn remove_paths(src_uto_macro: String) -> String {
 fn remove_schemas(src_uto_macro: String) -> String {
     if src_uto_macro.contains("schemas(") {
         let schemas = src_uto_macro.split("schemas(").collect::<Vec<&str>>()[1];
-        let schemas = schemas.split(")").collect::<Vec<&str>>()[0];
+        let schemas = schemas.split(')').collect::<Vec<&str>>()[0];
         src_uto_macro
             .replace(format!("schemas({})", schemas).as_str(), "")
             .replace(",,", ",")
@@ -82,7 +80,7 @@ fn remove_schemas(src_uto_macro: String) -> String {
 fn remove_components(src_uto_macro: String) -> String {
     if src_uto_macro.contains("components(") {
         let components = src_uto_macro.split("components(").collect::<Vec<&str>>()[1];
-        let components = components.split(")").collect::<Vec<&str>>()[0];
+        let components = components.split(')').collect::<Vec<&str>>()[0];
         src_uto_macro
             .replace(format!("components({})", components).as_str(), "")
             .replace(",,", ",")
@@ -94,7 +92,7 @@ fn remove_components(src_uto_macro: String) -> String {
 fn remove_responses(src_uto_macro: String) -> String {
     if src_uto_macro.contains("responses(") {
         let responses = src_uto_macro.split("responses(").collect::<Vec<&str>>()[1];
-        let responses = responses.split(")").collect::<Vec<&str>>()[0];
+        let responses = responses.split(')').collect::<Vec<&str>>()[0];
         src_uto_macro
             .replace(format!("responses({})", responses).as_str(), "")
             .replace(",,", ",")
@@ -106,7 +104,7 @@ fn remove_responses(src_uto_macro: String) -> String {
 fn extract_paths(src_uto_macro: String) -> String {
     if src_uto_macro.contains("paths(") {
         let paths = src_uto_macro.split("paths(").collect::<Vec<&str>>()[1];
-        let paths = paths.split(")").collect::<Vec<&str>>()[0];
+        let paths = paths.split(')').collect::<Vec<&str>>()[0];
         paths.to_string()
     } else {
         "".to_string()
@@ -116,7 +114,7 @@ fn extract_paths(src_uto_macro: String) -> String {
 fn extract_schemas(src_uto_macro: String) -> String {
     if src_uto_macro.contains("schemas(") {
         let schemas = src_uto_macro.split("schemas(").collect::<Vec<&str>>()[1];
-        let schemas = schemas.split(")").collect::<Vec<&str>>()[0];
+        let schemas = schemas.split(')').collect::<Vec<&str>>()[0];
         schemas.to_string()
     } else {
         "".to_string()
@@ -126,7 +124,7 @@ fn extract_schemas(src_uto_macro: String) -> String {
 fn extract_responses(src_uto_macro: String) -> String {
     if src_uto_macro.contains("responses(") {
         let responses = src_uto_macro.split("responses(").collect::<Vec<&str>>()[1];
-        let responses = responses.split(")").collect::<Vec<&str>>()[0];
+        let responses = responses.split(')').collect::<Vec<&str>>()[0];
         responses.to_string()
     } else {
         "".to_string()
@@ -168,7 +166,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src),components(schemas(),responses()),)]".to_string()
         );
     }
@@ -184,7 +182,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(),responses()),)]".to_string()
         );
     }
@@ -200,7 +198,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(model),responses()),)]".to_string()
         );
     }
@@ -216,7 +214,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(model,m1),responses()),)]".to_string()
         );
     }
@@ -232,7 +230,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(),responses(response,r1)),)]".to_string()
         );
     }
@@ -248,7 +246,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(model,m1),responses(response,r1)),)]"
                 .to_string()
         );
@@ -265,7 +263,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(m1),responses(response,r1)),)]"
                 .to_string()
         );
@@ -282,7 +280,7 @@ mod test {
             )
             .to_token_stream()
             .to_string()
-            .replace(" ", ""),
+            .replace(' ', ""),
             "#[openapi(paths(./src,p1),components(schemas(model,m1),responses(r1)),)]".to_string()
         );
     }

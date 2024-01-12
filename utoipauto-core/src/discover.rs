@@ -41,14 +41,14 @@ enum DiscoverType {
     Response(String),
 }
 
-fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverType> {
+fn parse_module_items(module_path: &str, items: Vec<Item>) -> Vec<DiscoverType> {
     items
         .into_iter()
-        .filter(|e| match e {
-            syn::Item::Mod(_) | syn::Item::Fn(_) | syn::Item::Struct(_) | syn::Item::Enum(_) => {
-                true
-            }
-            _ => false,
+        .filter(|e| {
+            matches!(
+                e,
+                syn::Item::Mod(_) | syn::Item::Fn(_) | syn::Item::Struct(_) | syn::Item::Enum(_)
+            )
         })
         .map(|v| match v {
             syn::Item::Mod(m) => m.content.map_or(Vec::<DiscoverType>::new(), |cs| {
@@ -56,13 +56,13 @@ fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverTyp
             }),
             syn::Item::Fn(f) => parse_function(&f)
                 .into_iter()
-                .map(|item| DiscoverType::Fn(build_path(&module_path, &item)))
+                .map(|item| DiscoverType::Fn(build_path(module_path, &item)))
                 .collect(),
             syn::Item::Struct(s) => {
-                parse_from_attr(&s.attrs, &build_path(&module_path, &s.ident.to_string()))
+                parse_from_attr(&s.attrs, &build_path(module_path, &s.ident.to_string()))
             }
             syn::Item::Enum(e) => {
-                parse_from_attr(&e.attrs, &build_path(&module_path, &e.ident.to_string()))
+                parse_from_attr(&e.attrs, &build_path(module_path, &e.ident.to_string()))
             }
             _ => vec![],
         })
@@ -73,7 +73,7 @@ fn parse_module_items(module_path: &String, items: Vec<Item>) -> Vec<DiscoverTyp
 }
 
 /// Search for ToSchema and ToResponse implementations in attr
-fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
+fn parse_from_attr(a: &Vec<Attribute>, name: &str) -> Vec<DiscoverType> {
     let mut out: Vec<DiscoverType> = vec![];
 
     for attr in a {
@@ -87,10 +87,10 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &String) -> Vec<DiscoverType> {
                 .unwrap();
             for nested_meta in nested {
                 if nested_meta.path().is_ident("ToSchema") {
-                    out.push(DiscoverType::Model(name.clone()));
+                    out.push(DiscoverType::Model(name.to_string()));
                 }
                 if nested_meta.path().is_ident("ToResponse") {
-                    out.push(DiscoverType::Response(name.clone()));
+                    out.push(DiscoverType::Response(name.to_string()));
                 }
             }
         }
@@ -131,6 +131,6 @@ fn is_ignored(f: &ItemFn) -> bool {
     })
 }
 
-fn build_path(file_name: &String, fn_name: &String) -> String {
+fn build_path(file_name: &str, fn_name: &str) -> String {
     format!("{}::{}", file_name, fn_name)
 }
