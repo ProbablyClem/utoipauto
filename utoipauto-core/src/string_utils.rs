@@ -43,17 +43,16 @@ pub fn trim_parentheses(str: &str) -> String {
 /// );
 /// ```
 pub fn extract_paths(attributes: String) -> Vec<String> {
-    let paths;
-    let attributes = trim_parentheses(rem_first_and_last(&attributes.as_str()));
+    let attributes = trim_parentheses(rem_first_and_last(&attributes));
 
     if attributes.contains('|') {
         panic!("Please use the new syntax ! paths=\"(MODULE_TREE_PATH => MODULE_SRC_PATH) ;\"")
     }
-    if attributes.contains("=>") {
-        paths = extract_paths_arrow(attributes);
+    let paths = if attributes.contains("=>") {
+        extract_paths_arrow(attributes)
     } else {
-        paths = extract_paths_coma(attributes);
-    }
+        extract_paths_coma(attributes)
+    };
     if paths.is_empty() {
         panic!("utoipauto: No paths specified !")
     }
