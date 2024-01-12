@@ -94,7 +94,7 @@ fn test_path_import_schema() {
             .expect("no components")
             .schemas
             .len(),
-        1
+        2
     )
 }
 
