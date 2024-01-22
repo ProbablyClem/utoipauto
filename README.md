@@ -90,6 +90,16 @@ The paths receives a String which must respect this structure :
 
 You can add several paths by separating them with a coma `","`.
 
+## Usage with workspaces
+
+If you are using a workspace, you must specify the name of the crate in the path.
+<br>
+This applies even if you are using `#[utoipauto]` in the same crate.
+
+```rust
+#[utoipauto(paths = "./utoipauto/src")]
+```
+
 ### Import from src folder
 
 If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
