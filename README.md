@@ -101,6 +101,8 @@ Here's an example of how to add all the methods contained in the src code.
 use utoipauto::utoipauto;
 
 ...
+/// On Workspace remember to add the crate name. Ex:
+/// #[utoipauto(paths = "./utoipauto/src")]
 #[utoipauto]
 #[derive(OpenApi)]
 #[openapi(
@@ -124,6 +126,8 @@ Here's an example of how to add all the methods and structs contained in the res
 
 use utoipauto::utoipauto;
 
+/// On Workspace remember to add the crate name. Ex:
+/// #[utoipauto(paths = "./utoipauto/src/rest")]
 #[utoipauto(
   paths = "./src/rest"
   )]
@@ -148,6 +152,8 @@ you can also combine automatic and manual addition, as here we've added a method
 
 use utoipauto::utoipauto;
 
+/// On Workspace remember to add the crate name. Ex:
+/// #[utoipauto(paths = "./utoipauto/src/rest/test_controlloer.rs,./utoipauto/src/rest/test2_controller.rs)]
 #[utoipauto(
   paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
   )]

@@ -1,3 +1,6 @@
+# IDE
+/.idea
+
 *target
 /Cargo.lock
 git_cmd.md
