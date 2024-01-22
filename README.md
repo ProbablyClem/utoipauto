@@ -90,6 +90,16 @@ The paths receives a String which must respect this structure :
 
 You can add several paths by separating them with a coma `","`.
 
+## Usage with workspaces
+
+If you are using a workspace, you must specify the name of the crate in the path.
+<br>
+This applies even if you are using `#[utoipauto]` in the same crate.
+
+```rust
+#[utoipauto(paths = "./utoipauto/src")]
+```
+
 ### Import from src folder
 
 If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
@@ -101,8 +111,6 @@ Here's an example of how to add all the methods contained in the src code.
 use utoipauto::utoipauto;
 
 ...
-/// On Workspace remember to add the crate name. Ex:
-/// #[utoipauto(paths = "./utoipauto/src")]
 #[utoipauto]
 #[derive(OpenApi)]
 #[openapi(
@@ -126,8 +134,6 @@ Here's an example of how to add all the methods and structs contained in the res
 
 use utoipauto::utoipauto;
 
-/// On Workspace remember to add the crate name. Ex:
-/// #[utoipauto(paths = "./utoipauto/src/rest")]
 #[utoipauto(
   paths = "./src/rest"
   )]
@@ -152,8 +158,6 @@ you can also combine automatic and manual addition, as here we've added a method
 
 use utoipauto::utoipauto;
 
-/// On Workspace remember to add the crate name. Ex:
-/// #[utoipauto(paths = "./utoipauto/src/rest/test_controlloer.rs,./utoipauto/src/rest/test2_controller.rs)]
 #[utoipauto(
   paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
   )]
