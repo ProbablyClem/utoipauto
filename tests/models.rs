@@ -55,7 +55,7 @@ impl<'s> ToResponse<'s> for ModelResponseImpl {
 // Manual implementation of utoipa::ToResponse
 pub struct ModelResponseImplFullName;
 
-impl<'s> ToResponse<'s> for ModelResponseImplFullName {
+impl<'s> utoipa::ToResponse<'s> for ModelResponseImplFullName {
     fn response() -> (&'s str, RefOr<Response>) {
         (
             "string",
