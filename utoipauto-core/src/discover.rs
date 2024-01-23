@@ -29,7 +29,8 @@ pub fn discover_from_file(src_path: String) -> (Vec<String>, Vec<String>, Vec<St
                     DiscoverType::Fn(n) => acc.0.push(n),
                     DiscoverType::Model(n) => acc.1.push(n),
                     DiscoverType::Response(n) => acc.2.push(n),
-                    DiscoverType::CustomImpl(n) => acc.1.push(n),
+                    DiscoverType::CustomModelImpl(n) => acc.1.push(n),
+                    DiscoverType::CustomResponseImpl(n) => acc.2.push(n),
                 };
 
                 acc
@@ -41,7 +42,8 @@ enum DiscoverType {
     Fn(String),
     Model(String),
     Response(String),
-    CustomImpl(String),
+    CustomModelImpl(String),
+    CustomResponseImpl(String),
 }
 
 fn parse_module_items(module_path: &str, items: Vec<Item>) -> Vec<DiscoverType> {
@@ -71,9 +73,7 @@ fn parse_module_items(module_path: &str, items: Vec<Item>) -> Vec<DiscoverType> 
             syn::Item::Enum(e) => {
                 parse_from_attr(&e.attrs, &build_path(module_path, &e.ident.to_string()))
             }
-            syn::Item::Impl(im) => {
-                parse_from_impl(&im, module_path)
-            },
+            syn::Item::Impl(im) => parse_from_impl(&im, module_path),
             _ => vec![],
         })
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
@@ -112,23 +112,26 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &str) -> Vec<DiscoverType> {
 fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
-        .and_then(|trt| trt.1.segments.last().cloned())
-        .and_then(|tname| {
-            tname
-                .to_token_stream()
-                .to_string()
-                .starts_with("ToSchema")
-                .then_some(im.self_ty.to_token_stream().to_string())
+        .and_then(|trt| {
+            trt.1.segments.last().map(|p| p.ident.to_string())
         })
-        .map(|valid_impl| {
-            vec![DiscoverType::CustomImpl(build_path(
-                module_base_path,
-                &valid_impl,
-            ))]
+        .and_then(|impl_name| {
+            if impl_name.eq("ToSchema") {
+                Some(vec![DiscoverType::CustomModelImpl(build_path(
+                    module_base_path,
+                    &im.self_ty.to_token_stream().to_string(),
+                ))])
+            } else if impl_name.eq("ToResponse") {
+                Some(vec![DiscoverType::CustomResponseImpl(build_path(
+                    module_base_path,
+                    &im.self_ty.to_token_stream().to_string(),
+                ))])
+            } else {
+                None
+            }
         })
         .unwrap_or(vec![])
 }
-
 
 fn parse_function(f: &ItemFn) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
