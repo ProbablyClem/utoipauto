@@ -226,3 +226,7 @@ Sub-modules within a module containing methods tagged with utoipa::path are also
 ## Contributing
 
 Contributions are welcomed, feel free to submit a PR or an issue.
+
+## Inspiration
+
+Inspired by [utoipa_auto_discovery](https://github.com/rxdiscovery/utoipa_auto_discovery)
