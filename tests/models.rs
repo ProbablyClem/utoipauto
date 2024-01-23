@@ -20,7 +20,7 @@ pub struct ModelSchemaImpl;
 impl<'s> ToSchema<'s> for ModelSchemaImpl {
     fn schema() -> (&'s str, RefOr<Schema>) {
         (
-            "string",
+            "ModelSchemaImpl",
             ObjectBuilder::new().schema_type(SchemaType::String).into(),
         )
     }
@@ -32,7 +32,7 @@ pub struct ModelSchemaImplFullName;
 impl<'s> utoipa::ToSchema<'s> for ModelSchemaImplFullName {
     fn schema() -> (&'s str, RefOr<Schema>) {
         (
-            "string",
+            "ModelSchemaImplFullName",
             ObjectBuilder::new().schema_type(SchemaType::String).into(),
         )
     }
@@ -44,7 +44,7 @@ pub struct ModelResponseImpl;
 impl<'s> ToResponse<'s> for ModelResponseImpl {
     fn response() -> (&'s str, RefOr<Response>) {
         (
-            "string",
+            "ModelResponseImpl",
             ResponseBuilder::new()
                 .description("A manual response")
                 .into(),
@@ -58,7 +58,7 @@ pub struct ModelResponseImplFullName;
 impl<'s> utoipa::ToResponse<'s> for ModelResponseImplFullName {
     fn response() -> (&'s str, RefOr<Response>) {
         (
-            "string",
+            "ModelResponseImplFullName",
             ResponseBuilder::new()
                 .description("A manual response")
                 .into(),
