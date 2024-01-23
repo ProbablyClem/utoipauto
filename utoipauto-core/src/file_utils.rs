@@ -60,6 +60,7 @@ fn is_rust_file(path: &Path) -> bool {
 /// );
 /// ```
 pub fn extract_module_name_from_path(path: &str) -> String {
+    let path = path.replace('\\', "/");
     let path = path
         .trim_end_matches(".rs")
         .trim_end_matches("/mod")
@@ -93,6 +94,16 @@ mod tests {
     fn test_extract_module_name_from_path() {
         assert_eq!(
             extract_module_name_from_path("./utoipa-auto-macro/tests/controllers/controller1.rs"),
+            "crate::controllers::controller1"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_path_windows() {
+        assert_eq!(
+            extract_module_name_from_path(
+                ".\\utoipa-auto-macro\\tests\\controllers\\controller1.rs"
+            ),
             "crate::controllers::controller1"
         );
     }
