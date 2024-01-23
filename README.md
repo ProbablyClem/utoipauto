@@ -50,7 +50,7 @@ pub struct ApiDoc;
 
 The goal of this crate is to propose a macro that automates the detection of methods carrying Utoipa macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
 
-It also detects struct that derive `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
+It also detects struct that derive or implement `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
 
 # Features
 
