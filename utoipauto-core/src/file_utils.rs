@@ -73,9 +73,10 @@ pub fn extract_module_name_from_path(path: &str) -> String {
     // When using cargo workspaces, paths may look like `./subcrate/src/my/module`,
     // `./crates/subcrate/src/my/module`, etc., so we need to remove anything up to `src`
     // (or `tests`) to still produce `crate::my::module`.
+    // So we split the segments by the last occurrence of `src` or `tests` and take the last part.
     let segments_inside_crate = match segments
         .iter()
-        .position(|&segment| segment == "src" || segment == "tests")
+        .rposition(|&segment| segment == "src" || segment == "tests")
     {
         Some(idx) => &segments[(idx + 1)..],
         None => &segments,
@@ -147,6 +148,14 @@ mod tests {
         assert_eq!(
             extract_module_name_from_path("./src/routing/api/audio.rs"),
             "crate::routing::api::audio"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_folders_nested() {
+        assert_eq!(
+            extract_module_name_from_path("./src/applications/src/retail_api/controllers/mod.rs"),
+            "crate::retail_api::controllers"
         );
     }
 }
