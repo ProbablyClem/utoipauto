@@ -18,7 +18,7 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 
 [dependencies]
-utoipauto-macro = "0.1.8"
+utoipauto-macro = "0.1.9"
 
 
 [dev-dependencies]
