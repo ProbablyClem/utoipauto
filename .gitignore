@@ -4,3 +4,4 @@
 *target
 /Cargo.lock
 git_cmd.md
+.vscode/settings.json

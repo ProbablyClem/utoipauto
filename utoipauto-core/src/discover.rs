@@ -6,13 +6,16 @@ use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token};
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
 /// Discover everything from a file, will explore folder recursively
-pub fn discover_from_file(src_path: String) -> (Vec<String>, Vec<String>, Vec<String>) {
+pub fn discover_from_file(
+    src_path: String,
+    crate_name: String,
+) -> (Vec<String>, Vec<String>, Vec<String>) {
     let files =
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
     files
         .into_iter()
-        .map(|e| parse_module_items(&extract_module_name_from_path(&e.0), e.1.items))
+        .map(|e| parse_module_items(&extract_module_name_from_path(&e.0, &crate_name), e.1.items))
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
             acc.append(&mut v);
             acc
@@ -112,9 +115,7 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &str) -> Vec<DiscoverType> {
 fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
-        .and_then(|trt| {
-            trt.1.segments.last().map(|p| p.ident.to_string())
-        })
+        .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
         .and_then(|impl_name| {
             if impl_name.eq("ToSchema") {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(

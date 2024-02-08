@@ -52,14 +52,15 @@ fn is_rust_file(path: &Path) -> bool {
 /// ```
 /// use utoipauto_core::file_utils::extract_module_name_from_path;
 /// let module_name = extract_module_name_from_path(
-///    &"./utoipa-auto-macro/tests/controllers/controller1.rs".to_string()
+///    &"./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
+/// "crate"
 /// );
 /// assert_eq!(
 ///  module_name,
 /// "crate::controllers::controller1".to_string()
 /// );
 /// ```
-pub fn extract_module_name_from_path(path: &str) -> String {
+pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     let path = path.replace('\\', "/");
     let path = path
         .trim_end_matches(".rs")
@@ -81,7 +82,7 @@ pub fn extract_module_name_from_path(path: &str) -> String {
         Some(idx) => &segments[(idx + 1)..],
         None => &segments,
     };
-    let full_crate_path: Vec<_> = iter::once("crate")
+    let full_crate_path: Vec<_> = iter::once(crate_name)
         .chain(segments_inside_crate.iter().copied())
         .collect();
     full_crate_path.join("::")
@@ -94,7 +95,10 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_path() {
         assert_eq!(
-            extract_module_name_from_path("./utoipa-auto-macro/tests/controllers/controller1.rs"),
+            extract_module_name_from_path(
+                "./utoipa-auto-macro/tests/controllers/controller1.rs",
+                "crate"
+            ),
             "crate::controllers::controller1"
         );
     }
@@ -103,7 +107,8 @@ mod tests {
     fn test_extract_module_name_from_path_windows() {
         assert_eq!(
             extract_module_name_from_path(
-                ".\\utoipa-auto-macro\\tests\\controllers\\controller1.rs"
+                ".\\utoipa-auto-macro\\tests\\controllers\\controller1.rs",
+                "crate"
             ),
             "crate::controllers::controller1"
         );
@@ -112,25 +117,31 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_mod() {
         assert_eq!(
-            extract_module_name_from_path("./utoipa-auto-macro/tests/controllers/mod.rs"),
+            extract_module_name_from_path("./utoipa-auto-macro/tests/controllers/mod.rs", "crate"),
             "crate::controllers"
         );
     }
 
     #[test]
     fn test_extract_module_name_from_lib() {
-        assert_eq!(extract_module_name_from_path("./src/lib.rs"), "crate");
+        assert_eq!(
+            extract_module_name_from_path("./src/lib.rs", "crate"),
+            "crate"
+        );
     }
 
     #[test]
     fn test_extract_module_name_from_main() {
-        assert_eq!(extract_module_name_from_path("./src/main.rs"), "crate");
+        assert_eq!(
+            extract_module_name_from_path("./src/main.rs", "crate"),
+            "crate"
+        );
     }
 
     #[test]
     fn test_extract_module_name_from_workspace() {
         assert_eq!(
-            extract_module_name_from_path("./server/src/routes/asset.rs"),
+            extract_module_name_from_path("./server/src/routes/asset.rs", "crate"),
             "crate::routes::asset"
         );
     }
@@ -138,7 +149,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_workspace_nested() {
         assert_eq!(
-            extract_module_name_from_path("./crates/server/src/routes/asset.rs"),
+            extract_module_name_from_path("./crates/server/src/routes/asset.rs", "crate"),
             "crate::routes::asset"
         );
     }
@@ -146,7 +157,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_folders() {
         assert_eq!(
-            extract_module_name_from_path("./src/routing/api/audio.rs"),
+            extract_module_name_from_path("./src/routing/api/audio.rs", "crate"),
             "crate::routing::api::audio"
         );
     }
@@ -154,8 +165,22 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_folders_nested() {
         assert_eq!(
-            extract_module_name_from_path("./src/applications/src/retail_api/controllers/mod.rs"),
+            extract_module_name_from_path(
+                "./src/applications/src/retail_api/controllers/mod.rs",
+                "crate"
+            ),
             "crate::retail_api::controllers"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_folders_nested_external_crate() {
+        assert_eq!(
+            extract_module_name_from_path(
+                "./src/applications/src/retail_api/controllers/mod.rs",
+                "other_crate"
+            ),
+            "other_crate::retail_api::controllers"
         );
     }
 }

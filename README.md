@@ -59,6 +59,7 @@ It also detects struct that derive or implement `ToSchema` for the `components(s
 - [x] Automatic import from src folder
 - [x] Automatic model detection
 - [x] Automatic response detection
+- [x] Works with workspaces
 
 # How to use it
 
@@ -98,6 +99,12 @@ This applies even if you are using `#[utoipauto]` in the same crate.
 
 ```rust
 #[utoipauto(paths = "./utoipauto/src")]
+```
+
+You can specify that the specified paths are from another crate by using the from key work.
+
+```rust
+#[utoipauto(paths = "./utoipauto/src from utoipauto")]
 ```
 
 ### Import from src folder
