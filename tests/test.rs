@@ -95,7 +95,7 @@ fn test_path_import_schema() {
             .expect("no components")
             .schemas
             .len(),
-        3, // 1 derive, 1 manual, 1 manual with utoipa::ToSchema
+        4, // 1 derive, 1 manual, 1 manual with utoipa::ToSchema
     )
 }
 
