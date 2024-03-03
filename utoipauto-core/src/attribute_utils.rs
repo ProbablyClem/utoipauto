@@ -7,21 +7,16 @@ pub fn update_openapi_macro_attributes(
     uto_models: &String,
     uto_responses: &String,
 ) {
-    let mut is_ok = false;
     for attr in macro_attibutes {
         if !attr.path().is_ident("openapi") {
             continue;
         }
-        is_ok = true;
         let mut src_uto_macro = attr.to_token_stream().to_string();
 
         src_uto_macro = src_uto_macro.replace("#[openapi()]", "");
         src_uto_macro = src_uto_macro.replace("#[openapi(", "");
         src_uto_macro = src_uto_macro.replace(")]", "");
         *attr = build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_responses);
-    }
-    if !is_ok {
-        panic!("No utoipa::openapi Macro found !");
     }
 }
 
