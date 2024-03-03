@@ -93,7 +93,7 @@ fn extract_paths_coma(attributes: String) -> Vec<String> {
 pub fn discover(paths: Vec<String>) -> (String, String, String) {
     let mut uto_paths: String = String::new();
     let mut uto_models: String = String::new();
-    let mut uto_reponses: String = String::new();
+    let mut uto_responses: String = String::new();
     for p in paths {
         let path = extract_crate_name(p);
         let (list_fn, list_model, list_reponse) = discover_from_file(path.paths, path.crate_name);
@@ -105,10 +105,10 @@ pub fn discover(paths: Vec<String>) -> (String, String, String) {
             uto_models.push_str(format!("{},", i).as_str());
         }
         for i in list_reponse {
-            uto_reponses.push_str(format!("{},", i).as_str());
+            uto_responses.push_str(format!("{},", i).as_str());
         }
     }
-    (uto_paths, uto_models, uto_reponses)
+    (uto_paths, uto_models, uto_responses)
 }
 
 #[derive(Debug, PartialEq)]
