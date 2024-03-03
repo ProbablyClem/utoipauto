@@ -19,7 +19,7 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 proc-macro = true
 
 [dependencies]
-utoipauto-core = "0.1.9"
+utoipauto-core = {path = "../utoipauto-core"}
 
 quote = "1.0.35"
 syn = { version = "2.0.52", features = ["full"] }
