@@ -1,7 +1,7 @@
 use std::vec;
 
 use quote::ToTokens;
-use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token};
+use syn::{Attribute, Item, ItemFn, Meta, punctuated::Punctuated, Token, Type};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
@@ -71,10 +71,12 @@ fn parse_module_items(module_path: &str, items: Vec<Item>) -> Vec<DiscoverType> 
                 .map(|item| DiscoverType::Fn(build_path(module_path, &item)))
                 .collect(),
             syn::Item::Struct(s) => {
-                parse_from_attr(&s.attrs, &build_path(module_path, &s.ident.to_string()))
+                let is_generic = s.generics.params.len() > 0;
+                parse_from_attr(&s.attrs, &build_path(module_path, &s.ident.to_string()), is_generic)
             }
             syn::Item::Enum(e) => {
-                parse_from_attr(&e.attrs, &build_path(module_path, &e.ident.to_string()))
+                let is_generic = e.generics.params.len() > 0;
+                parse_from_attr(&e.attrs, &build_path(module_path, &e.ident.to_string()), is_generic)
             }
             syn::Item::Impl(im) => parse_from_impl(&im, module_path),
             _ => vec![],
@@ -86,7 +88,7 @@ fn parse_module_items(module_path: &str, items: Vec<Item>) -> Vec<DiscoverType> 
 }
 
 /// Search for ToSchema and ToResponse implementations in attr
-fn parse_from_attr(a: &Vec<Attribute>, name: &str) -> Vec<DiscoverType> {
+fn parse_from_attr(a: &Vec<Attribute>, name: &str, is_generic: bool) -> Vec<DiscoverType> {
     let mut out: Vec<DiscoverType> = vec![];
 
     for attr in a {
@@ -100,12 +102,27 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &str) -> Vec<DiscoverType> {
                 .unwrap();
             for nested_meta in nested {
                 if nested_meta.path().is_ident("ToSchema") {
-                    out.push(DiscoverType::Model(name.to_string()));
+                    if !is_generic {
+                        out.push(DiscoverType::Model(name.to_string()));
+                    }
                 }
                 if nested_meta.path().is_ident("ToResponse") {
                     out.push(DiscoverType::Response(name.to_string()));
                 }
             }
+        }
+        if is_generic && attr.path().is_ident("aliases") {
+            let _ = attr.parse_nested_meta(|meta| {
+                let value = meta.value().unwrap();   // this parses the `=`
+                let s: Type = value.parse().unwrap();
+                let string = s.into_token_stream().to_string();
+                // get generic type
+                let generic_type = string.split('<').nth(1).unwrap_or("").to_string();
+                let generic_type = name.to_string() + "<" + &generic_type;
+                out.push(DiscoverType::Model(generic_type));
+
+                Ok(())
+            });
         }
     }
 

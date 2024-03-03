@@ -16,7 +16,9 @@ pub struct IgnoredModelSchema;
 
 #[derive(ToSchema)]
 #[aliases(GenricModelSchema = GenericSchema<ModelSchema>)]
-pub struct GenericSchema<T>;
+pub struct GenericSchema<T> {
+    data: T,
+}
 
 // Manual implementation of ToSchema
 pub struct ModelSchemaImpl;

@@ -1,5 +1,6 @@
 mod controllers;
 mod models;
+use crate::models::ModelSchema;
 use utoipa::OpenApi;
 use utoipauto::utoipauto;
 // Discover from multiple controllers
