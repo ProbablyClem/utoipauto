@@ -21,6 +21,6 @@ proc-macro = true
 [dependencies]
 utoipauto-core = "0.1.9"
 
-quote = "1.0.28"
-syn = { version = "2.0.18", features = ["full"] }
-proc-macro2 = "1.0.59"
+quote = "1.0.35"
+syn = { version = "2.0.52", features = ["full"] }
+proc-macro2 = "1.0.78"

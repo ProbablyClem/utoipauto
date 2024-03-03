@@ -22,5 +22,5 @@ utoipauto-macro = "0.1.9"
 
 
 [dev-dependencies]
-utoipa = { version = "4.1.0", features = ["preserve_path_order"] }
-syn = { version = "2.0.39", features = ["extra-traits", "full"] }
+utoipa = { version = "4.2.0", features = ["preserve_path_order"] }
+syn = { version = "2.0.52", features = ["extra-traits", "full"] }
