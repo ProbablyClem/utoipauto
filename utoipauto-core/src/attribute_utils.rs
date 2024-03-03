@@ -5,7 +5,7 @@ pub fn update_openapi_macro_attributes(
     macro_attibutes: &mut Vec<Attribute>,
     uto_paths: &String,
     uto_models: &String,
-    uto_reponses: &String,
+    uto_responses: &String,
 ) {
     let mut is_ok = false;
     for attr in macro_attibutes {
@@ -15,9 +15,10 @@ pub fn update_openapi_macro_attributes(
         is_ok = true;
         let mut src_uto_macro = attr.to_token_stream().to_string();
 
+        src_uto_macro = src_uto_macro.replace("#[openapi()]", "");
         src_uto_macro = src_uto_macro.replace("#[openapi(", "");
         src_uto_macro = src_uto_macro.replace(")]", "");
-        *attr = build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_reponses);
+        *attr = build_new_openapi_attributes(src_uto_macro, uto_paths, uto_models, uto_responses);
     }
     if !is_ok {
         panic!("No utoipa::openapi Macro found !");
@@ -29,7 +30,7 @@ pub fn build_new_openapi_attributes(
     src_uto_macro: String,
     uto_paths: &String,
     uto_models: &String,
-    uto_reponses: &String,
+    uto_responses: &String,
 ) -> Attribute {
     let paths = extract_paths(src_uto_macro.clone());
     let schemas = extract_schemas(src_uto_macro.clone());
@@ -41,7 +42,7 @@ pub fn build_new_openapi_attributes(
 
     let paths = format!("{}{}", uto_paths, paths);
     let schemas = format!("{}{}", uto_models, schemas);
-    let responses = format!("{}{}", uto_reponses, responses);
+    let responses = format!("{}{}", uto_responses, responses);
     let src_uto_macro = format!(
         "paths({}),components(schemas({}),responses({})),{}",
         paths, schemas, responses, src_uto_macro
