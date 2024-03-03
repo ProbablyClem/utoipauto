@@ -114,12 +114,12 @@ fn parse_from_attr(a: &Vec<Attribute>, name: &str, is_generic: bool) -> Vec<Disc
         if is_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
                 let value = meta.value().unwrap();   // this parses the `=`
-                let s: Type = value.parse().unwrap();
-                let string = s.into_token_stream().to_string();
+                let generic_type: Type = value.parse().unwrap();
+                let type_as_string = generic_type.into_token_stream().to_string();
                 // get generic type
-                let generic_type = string.split('<').nth(1).unwrap_or("").to_string();
-                let generic_type = name.to_string() + "<" + &generic_type;
-                out.push(DiscoverType::Model(generic_type));
+                let spllitet_type = type_as_string.split('<').nth(1).unwrap_or("").to_string();
+                let generic_type_with_module_path = name.to_string() + "<" + &spllitet_type;
+                out.push(DiscoverType::Model(generic_type_with_module_path));
 
                 Ok(())
             });
