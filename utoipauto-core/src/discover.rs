@@ -2,6 +2,7 @@ use std::vec;
 
 use quote::ToTokens;
 use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
+use syn::meta::ParseNestedMeta;
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
@@ -144,47 +145,7 @@ fn parse_from_attr(
         }
         if is_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
-                let value = meta.value().unwrap(); // this parses the `=`
-                let generic_type: Type = value.parse().unwrap();
-                let type_as_string = generic_type.into_token_stream().to_string();
-                // get generic type
-                let spllitet_type = type_as_string.split('<').nth(1).unwrap_or("").to_string();
-                #[cfg(feature = "generic_full_path")]
-                {
-                    let generic_parts: Vec<&str> = spllitet_type.split("::").collect();
-                    let mut processed_parts = Vec::new();
-
-                    for part in generic_parts {
-                        if part.contains("<") {
-                            // Handle nested generics
-                            let nested_parts: Vec<&str> = part.split("<").collect();
-                            let nested_generic = find_import(
-                                imports.clone(),
-                                get_current_module_from_name(name).as_str(),
-                                nested_parts[0],
-                            ) + "<"
-                                + nested_parts[1];
-                            processed_parts.push(nested_generic);
-                        } else {
-                            // Normal type, find the full path
-                            let full_path = find_import(
-                                imports.clone(),
-                                get_current_module_from_name(name).as_str(),
-                                part,
-                            );
-                            processed_parts.push(full_path);
-                        }
-                    }
-                    let generic_type_with_module_path =
-                        name.to_string() + "<" + &processed_parts.join("::");
-                    println!("Output: {:?}", generic_type_with_module_path);
-                    out.push(DiscoverType::Model(generic_type_with_module_path));
-                }
-                #[cfg(not(feature = "generic_full_path"))]
-                {
-                    let generic_type_with_module_path = name.to_string() + "<" + &spllitet_type;
-                    out.push(DiscoverType::Model(generic_type_with_module_path));
-                }
+                out.push(DiscoverType::Model(parse_generic(meta, name, imports.clone())));
 
                 Ok(())
             });
@@ -192,6 +153,59 @@ fn parse_from_attr(
     }
 
     out
+}
+
+#[cfg(not(feature = "generic_full_path"))]
+fn parse_generic(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> String {
+    let splited_type = split_type(meta);
+    let generic_type_with_module_path = name.to_string() + "<" + &splited_type;
+
+    generic_type_with_module_path
+}
+
+#[cfg(feature = "generic_full_path")]
+fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
+    println!("Imports: {:?}", imports);
+    let splited_type = split_type(meta);
+
+    let generic_parts: Vec<&str> = splited_type.split("::").collect();
+    let mut processed_parts = Vec::new();
+
+    for part in generic_parts {
+        if part.contains("<") {
+            // Handle nested generics
+            let nested_parts: Vec<&str> = part.split("<").collect();
+            let nested_generic = find_import(
+                imports.clone(),
+                get_current_module_from_name(name).as_str(),
+                nested_parts[0],
+            ) + "<"
+                + nested_parts[1];
+            processed_parts.push(nested_generic);
+        } else {
+            // Normal type, find the full path
+            let full_path = find_import(
+                imports.clone(),
+                get_current_module_from_name(name).as_str(),
+                part,
+            );
+            processed_parts.push(full_path);
+        }
+    }
+    let generic_type_with_module_path =
+        name.to_string() + "<" + &processed_parts.join("::");
+
+    generic_type_with_module_path
+}
+
+pub fn split_type(meta: ParseNestedMeta) -> String {
+    let value = meta.value().unwrap(); // this parses the `=`
+    let generic_type: Type = value.parse().unwrap();
+    let type_as_string = generic_type.into_token_stream().to_string();
+    // get generic type
+    let splited_type = type_as_string.split('<').nth(1).unwrap_or("").to_string();
+
+    splited_type
 }
 
 fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverType> {

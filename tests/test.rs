@@ -1,7 +1,12 @@
 mod controllers;
 mod models;
+mod generics;
+
 use utoipa::OpenApi;
 use utoipauto::utoipauto;
+use crate::generics::NonGenericSchema;
+use crate::generics::NonImportedSchema;
+
 // Discover from multiple controllers
 #[utoipauto(
     paths = "( crate::controllers::controller1 => ./tests/controllers/controller1.rs) ; ( crate::controllers::controller2 => ./tests/controllers/controller2.rs )"
@@ -94,7 +99,7 @@ fn test_path_import_schema() {
             .expect("no components")
             .schemas
             .len(),
-        5, // 1 derive, 1 manual, 1 manual with utoipa::ToSchema, 1 derive (generic), 1 derive (multiple generics)
+        3, // 1 derive, 1 manual, 1 manual with utoipa::ToSchema
     )
 }
 

@@ -14,19 +14,6 @@ pub struct ModelResponse;
 #[derive(ToSchema)]
 pub struct IgnoredModelSchema;
 
-#[derive(ToSchema)]
-#[aliases(GenricModelSchema = GenericSchema<ModelSchema>)]
-pub struct GenericSchema<T> {
-    data: T,
-}
-
-#[derive(ToSchema)]
-#[aliases(MultipleGenericModelSchema = MultipleGenericSchema<ModelSchema, ModelSchema>)]
-pub struct MultipleGenericSchema<T, U> {
-    data: T,
-    data2: U,
-}
-
 // Manual implementation of ToSchema
 pub struct ModelSchemaImpl;
 
