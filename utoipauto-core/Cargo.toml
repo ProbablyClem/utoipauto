@@ -17,6 +17,9 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [lib]
 
+[features]
+generic_full_path = []
+
 
 [dependencies]
 quote = "1.0.35"

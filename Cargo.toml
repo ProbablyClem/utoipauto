@@ -14,8 +14,11 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/ProbablyClem/utoipauto"
 homepage = "https://github.com/ProbablyClem/utoipauto"
+
 [lib]
 
+[features]
+generic_full_path = ["utoipauto-macro/generic_full_path"]
 
 [dependencies]
 utoipauto-macro = { path = "utoipauto-macro"}

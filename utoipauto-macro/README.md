@@ -94,6 +94,34 @@ The paths receives a String which must respect this structure :
 
 You can add several paths by separating them with a coma `","`.
 
+## Support for generic schemas
+
+We support generic schemas, but with a few drawbacks.
+<br>
+If you want to use generics, you have three ways to do it.
+
+1. use the full path
+
+```rust
+#[aliases(GenericSchema = path::to::Generic<path::to::Schema>)]
+```
+
+2. Import where utoipauto lives
+
+```rust
+use path::to::schema;
+```
+
+3. use experimental `generic_full_path` feature
+
+Please keep in mind that this is an experimental feature and causes more build-time overhead.
+<br>
+Higher RAM usage and longer compile times are the consequences.
+
+```toml
+utoipauto = { version = "0.2.0", feature = ["generic_full_path"] }
+```
+
 ### Import from src folder
 
 If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
