@@ -1,11 +1,11 @@
 mod controllers;
-mod models;
 mod generics;
+mod models;
 
-use utoipa::OpenApi;
-use utoipauto::utoipauto;
 use crate::generics::NonGenericSchema;
 use crate::generics::NonImportedSchema;
+use utoipa::OpenApi;
+use utoipauto::utoipauto;
 
 // Discover from multiple controllers
 #[utoipauto(
