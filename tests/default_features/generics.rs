@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 pub struct NonGenericSchema;
 
 #[derive(ToSchema)]
-pub struct NonImportedSchema;
+pub struct NonGenericSchema2;
 
 #[derive(ToSchema)]
 #[aliases(GenricModelSchema = GenericSchema < NonGenericSchema >)]
@@ -13,7 +13,7 @@ pub struct GenericSchema<T> {
 }
 
 #[derive(ToSchema)]
-#[aliases(MultipleGenericModelSchema = MultipleGenericSchema < NonGenericSchema, NonImportedSchema >)]
+#[aliases(MultipleGenericModelSchema = MultipleGenericSchema < NonGenericSchema, NonGenericSchema2 >)]
 pub struct MultipleGenericSchema<T, U> {
     _data: T,
     _data2: U,
@@ -22,7 +22,7 @@ pub struct MultipleGenericSchema<T, U> {
 #[derive(ToSchema)]
 #[aliases(
 MultipleAlaises1 = MultipleAliasesSchema < NonGenericSchema >,
-MultipleAlaises2 = MultipleAliasesSchema < NonImportedSchema >
+MultipleAlaises2 = MultipleAliasesSchema < NonGenericSchema2 >
 )]
 pub struct MultipleAliasesSchema<T> {
     _data: T,

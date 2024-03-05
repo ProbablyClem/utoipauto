@@ -159,13 +159,14 @@ fn parse_from_attr(
 fn parse_generic(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> String {
     let splited_type = split_type(meta);
     let generic_type_with_module_path = name.to_string() + "<" + &splited_type;
+    let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
 
     generic_type_with_module_path
 }
 
 #[cfg(feature = "generic_full_path")]
+#[cfg(feature = "generic_full_path")]
 fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
-    println!("Imports: {:?}", imports);
     let splited_type = split_type(meta);
 
     let generic_parts: Vec<&str> = splited_type.split("::").collect();
@@ -195,6 +196,11 @@ fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> Str
     let generic_type_with_module_path =
         name.to_string() + "<" + &processed_parts.join("::");
 
+    // Add the `>` character back to the generic type
+    let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
+
+    println!("Generic type with module path: {:?}", generic_type_with_module_path);
+
     generic_type_with_module_path
 }
 
@@ -203,7 +209,7 @@ pub fn split_type(meta: ParseNestedMeta) -> String {
     let generic_type: Type = value.parse().unwrap();
     let type_as_string = generic_type.into_token_stream().to_string();
     // get generic type
-    let splited_type = type_as_string.split('<').nth(1).unwrap_or("").to_string();
+    let splited_type = type_as_string.split('<').nth(1).unwrap_or("").split('>').nth(0).unwrap_or("").to_string();
 
     splited_type
 }
@@ -268,6 +274,7 @@ fn build_path(file_name: &str, fn_name: &str) -> String {
 
 #[cfg(feature = "generic_full_path")]
 fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
+    println!("Extracting use statements from file: {:?}", file_path);
     let file = std::fs::read_to_string(file_path).unwrap();
     let mut out: Vec<String> = vec![];
     let mut multiline_import = String::new();
@@ -324,8 +331,10 @@ fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
 
 #[cfg(feature = "generic_full_path")]
 fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String {
+    println!("Imports: {:?}", imports);
+    println!("Name: {:?}", name);
     for import in imports {
-        if import.ends_with(name) {
+        if import.contains(name) {
             return import;
         }
     }
