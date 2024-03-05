@@ -339,6 +339,7 @@ fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String
     let name = name.trim();
     for import in imports {
         if import.contains(name) {
+            let import = import.split(" as ").next().unwrap_or(&import).trim().to_string();
             return import;
         }
     }
