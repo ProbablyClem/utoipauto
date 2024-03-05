@@ -199,8 +199,6 @@ fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> Str
     // Add the `>` character back to the generic type
     let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
 
-    println!("Generic type with module path: {:?}", generic_type_with_module_path);
-
     generic_type_with_module_path
 }
 
@@ -274,7 +272,6 @@ fn build_path(file_name: &str, fn_name: &str) -> String {
 
 #[cfg(feature = "generic_full_path")]
 fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
-    println!("Extracting use statements from file: {:?}", file_path);
     let file = std::fs::read_to_string(file_path).unwrap();
     let mut out: Vec<String> = vec![];
     let mut multiline_import = String::new();

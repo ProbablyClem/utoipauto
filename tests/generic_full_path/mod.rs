@@ -1,8 +1,8 @@
 use utoipa::OpenApi;
 use utoipauto_macro::utoipauto;
 
-mod schemas;
 mod more_schemas;
+mod schemas;
 
 #[utoipauto(paths = "./tests/generic_full_path")]
 #[derive(OpenApi)]

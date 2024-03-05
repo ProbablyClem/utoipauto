@@ -21,7 +21,9 @@ fn test_path_import() {
 }
 
 /// Discover from a single controller
-#[utoipauto(paths = "( crate::controllers::controller1 => ./tests/default_features/controllers/controller1.rs)")]
+#[utoipauto(
+    paths = "( crate::controllers::controller1 => ./tests/default_features/controllers/controller1.rs)"
+)]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct SingleControllerApiDocs {}
@@ -72,7 +74,9 @@ fn test_crate_import_path() {
 }
 
 // Discover from multiple controllers new syntax
-#[utoipauto(paths = "./tests/default_features/controllers/controller1.rs, ./tests/default_features/controllers/controller2.rs")]
+#[utoipauto(
+    paths = "./tests/default_features/controllers/controller1.rs, ./tests/default_features/controllers/controller2.rs"
+)]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]
 pub struct MultiControllerNoModuleApiDocs {}
