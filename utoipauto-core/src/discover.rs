@@ -1,8 +1,8 @@
 use std::vec;
 
 use quote::ToTokens;
-use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
 use syn::meta::ParseNestedMeta;
+use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
@@ -145,7 +145,11 @@ fn parse_from_attr(
         }
         if is_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
-                out.push(DiscoverType::Model(parse_generic(meta, name, imports.clone())));
+                out.push(DiscoverType::Model(parse_generic(
+                    meta,
+                    name,
+                    imports.clone(),
+                )));
 
                 Ok(())
             });
@@ -193,8 +197,7 @@ fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> Str
             processed_parts.push(full_path);
         }
     }
-    let generic_type_with_module_path =
-        name.to_string() + "<" + &processed_parts.join("::");
+    let generic_type_with_module_path = name.to_string() + "<" + &processed_parts.join("::");
 
     // Add the `>` character back to the generic type
     let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
@@ -207,7 +210,14 @@ pub fn split_type(meta: ParseNestedMeta) -> String {
     let generic_type: Type = value.parse().unwrap();
     let type_as_string = generic_type.into_token_stream().to_string();
     // get generic type
-    let splited_type = type_as_string.split('<').nth(1).unwrap_or("").split('>').nth(0).unwrap_or("").to_string();
+    let splited_type = type_as_string
+        .split('<')
+        .nth(1)
+        .unwrap_or("")
+        .split('>')
+        .nth(0)
+        .unwrap_or("")
+        .to_string();
 
     splited_type
 }
@@ -328,8 +338,7 @@ fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
 
 #[cfg(feature = "generic_full_path")]
 fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String {
-    println!("Imports: {:?}", imports);
-    println!("Name: {:?}", name);
+    let name = name.trim();
     for import in imports {
         if import.contains(name) {
             return import;
