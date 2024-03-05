@@ -169,36 +169,38 @@ fn parse_generic(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> St
 }
 
 #[cfg(feature = "generic_full_path")]
-#[cfg(feature = "generic_full_path")]
 fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
     let splitted_type = split_type(meta);
-    let part = splitted_type.as_str();
+    let parts: Vec<&str> = splitted_type.split(",").collect();
 
-    let mut processed_parts = Vec::new();
+    let mut generics = Vec::new();
 
-    if part.contains("<") {
-        // Handle nested generics
-        let nested_parts: Vec<&str> = part.split("<").collect();
-        let nested_generic = find_import(
-            imports.clone(),
-            get_current_module_from_name(name).as_str(),
-            nested_parts[0],
-        ) + "<"
-            + nested_parts[1];
-        processed_parts.push(nested_generic);
-    } else {
-        // Normal type, find the full path
-        let full_path = find_import(
-            imports.clone(),
-            get_current_module_from_name(name).as_str(),
-            part,
-        );
-        processed_parts.push(full_path);
+    for part in parts {
+        let mut processed_parts = Vec::new();
+
+        if part.contains("<") {
+            // Handle nested generics
+            let nested_parts: Vec<&str> = part.split("<").collect();
+            let nested_generic = find_import(
+                imports.clone(),
+                get_current_module_from_name(name).as_str(),
+                nested_parts[0],
+            ) + "<"
+                + nested_parts[1];
+            processed_parts.push(nested_generic);
+        } else {
+            // Normal type, find the full path
+            let full_path = find_import(
+                imports.clone(),
+                get_current_module_from_name(name).as_str(),
+                part,
+            );
+            processed_parts.push(full_path);
+        }
+        generics.push(processed_parts.join("::"));
     }
-    let generic_type_with_module_path = name.to_string() + "<" + &processed_parts.join("::");
 
-    // Add the `>` character back to the generic type
-    let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
+    let generic_type_with_module_path = name.to_string() + "<" + &generics.join(", ") + ">";
 
     generic_type_with_module_path
 }
