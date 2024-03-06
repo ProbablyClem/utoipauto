@@ -21,7 +21,7 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 generic_full_path = ["utoipauto-macro/generic_full_path"]
 
 [dependencies]
-utoipauto-macro = { path = "utoipauto-macro"}
+utoipauto-macro = { path = "utoipauto-macro", version = "0.1.9"}
 
 
 [dev-dependencies]
