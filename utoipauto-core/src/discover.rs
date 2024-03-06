@@ -1,8 +1,8 @@
 use std::vec;
 
 use quote::ToTokens;
+use syn::{Attribute, Item, ItemFn, Meta, punctuated::Punctuated, Token, Type};
 use syn::meta::ParseNestedMeta;
-use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 
@@ -18,9 +18,9 @@ pub fn discover_from_file(
         .into_iter()
         .map(|e| {
             #[cfg(feature = "generic_full_path")]
-            let imports = extract_use_statements(&e.0, &crate_name);
+                let imports = extract_use_statements(&e.0, &crate_name);
             #[cfg(not(feature = "generic_full_path"))]
-            let imports = vec![];
+                let imports = vec![];
             parse_module_items(
                 &extract_module_name_from_path(&e.0, &crate_name),
                 e.1.items,
@@ -412,4 +412,118 @@ fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String
 fn get_current_module_from_name(name: &str) -> String {
     let parts: Vec<&str> = name.split("::").collect();
     parts[..parts.len() - 1].join("::")
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_process_one_generic_nested_generics() {
+        let part = "Generic<Inner>";
+        let name = "module::name";
+        let imports = vec![
+            "module::Generic".to_string(),
+            "module::Inner".to_string(),
+        ];
+        let expected = "module::Generic<module::Inner>";
+        let result = process_one_generic(part, name, imports);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_process_one_generic_no_nested_generics() {
+        let part = "Generic";
+        let name = "module::name";
+        let imports = vec![
+            "module::Generic".to_string(),
+        ];
+        let expected = "module::Generic";
+        let result = process_one_generic(part, name, imports);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_process_one_generic_no_generics() {
+        let part = "NonGeneric";
+        let name = "module::name";
+        let imports = vec![
+            "module::NonGeneric".to_string(),
+        ];
+        let expected = "module::NonGeneric";
+        let result = process_one_generic(part, name, imports);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_find_import_multiple_modules() {
+        let imports = vec![
+            "module1::module2::name".to_string(),
+            "module1::module2::other_name".to_string(),
+        ];
+        let current_module = "module1::module2";
+        let name = "name";
+        let expected = "module1::module2::name";
+        let result = find_import(imports, current_module, name);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_find_import_single_module() {
+        let imports = vec![
+            "module1::name".to_string(),
+            "module1::other_name".to_string(),
+        ];
+        let current_module = "module1";
+        let name = "name";
+        let expected = "module1::name";
+        let result = find_import(imports, current_module, name);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_find_import_no_module() {
+        let imports = vec![
+            "name".to_string(),
+            "other_name".to_string(),
+        ];
+        let current_module = "";
+        let name = "name";
+        let expected = "name";
+        let result = find_import(imports, current_module, name);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_get_current_module_from_name_multiple_modules() {
+        let name = "module1::module2::name";
+        let expected = "module1::module2";
+        let result = get_current_module_from_name(name);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_get_current_module_from_name_single_module() {
+        let name = "module1::name";
+        let expected = "module1";
+        let result = get_current_module_from_name(name);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_get_current_module_from_name_no_module() {
+        let name = "name";
+        let expected = "";
+        let result = get_current_module_from_name(name);
+        assert_eq!(result, expected);
+    }
 }

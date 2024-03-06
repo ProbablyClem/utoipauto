@@ -25,6 +25,8 @@ jobs:
         run: cargo test --verbose
       - name: Run tests with all features
         run: cargo test --all-features --verbose
+      - name: Run utoipauto-core tests
+        run: cargo test --manifest-path utoipauto-core/Cargo.toml --verbose --all-features
 
   format:
     name: Format
