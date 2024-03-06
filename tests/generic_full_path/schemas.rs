@@ -24,8 +24,8 @@ pub struct MultipleGenerics<T, U> {
     _data2: U,
 }
 
-// #[derive(ToSchema)]
-// #[aliases(NestedGenericsSchema = NestedGenerics < MoreGenericSchema < MoreSchema > >)]
-// pub struct NestedGenerics<T> {
-//     _data: T,
-// }
+#[derive(ToSchema)]
+#[aliases(NestedGenericsSchema = NestedGenerics < MoreGenericSchema < MoreSchema > >)]
+pub struct NestedGenerics<T> {
+    _data: T,
+}

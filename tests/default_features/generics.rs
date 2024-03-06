@@ -27,3 +27,9 @@ MultipleAlaises2 = MultipleAliasesSchema < NonGenericSchema2 >
 pub struct MultipleAliasesSchema<T> {
     _data: T,
 }
+
+#[derive(ToSchema)]
+#[aliases(NestedGenericsSchema = NestedGenerics < GenericSchema < NonGenericSchema > >)]
+pub struct NestedGenerics<T> {
+    _data: T,
+}

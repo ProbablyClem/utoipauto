@@ -145,7 +145,7 @@ fn parse_from_attr(
         }
         if is_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
-                out.push(DiscoverType::Model(parse_generic(
+                out.push(DiscoverType::Model(parse_generic_schema(
                     meta,
                     name,
                     imports.clone(),
@@ -160,26 +160,45 @@ fn parse_from_attr(
 }
 
 #[cfg(not(feature = "generic_full_path"))]
-fn parse_generic(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> String {
-    let splited_type = split_type(meta);
-    let generic_type_with_module_path = name.to_string() + "<" + &splited_type;
-    let generic_type_with_module_path = format!("{}>", generic_type_with_module_path);
+fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> String {
+    let splited_types = split_type(meta);
+    let mut nested_generics = Vec::new();
 
-    generic_type_with_module_path
+    for spl_type in splited_types {
+        let parts: Vec<&str> = spl_type.split(',').collect();
+        let mut generics = Vec::new();
+
+        for part in parts {
+            generics.push(part);
+        }
+
+        nested_generics.push(generics.join(", "));
+    }
+
+    let generics = merge_nested_generics(nested_generics);
+    let generic_type = name.to_string() + &generics;
+
+    generic_type
 }
 
 #[cfg(feature = "generic_full_path")]
-fn parse_generic(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
-    let splitted_type = split_type(meta);
-    let parts: Vec<&str> = splitted_type.split(",").collect();
+fn parse_generic_schema(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
+    let splitted_types = split_type(meta);
+    let mut nested_generics = Vec::new();
 
-    let mut generics = Vec::new();
+    for spl_type in splitted_types {
+        let parts: Vec<&str> = spl_type.split(",").collect();
+        let mut generics = Vec::new();
 
-    for part in parts {
-        generics.push(process_one_generic(part, name, imports.clone()));
+        for part in parts {
+            generics.push(process_one_generic(part, name, imports.clone()));
+        }
+
+        nested_generics.push(generics.join(", "));
     }
 
-    let generic_type_with_module_path = name.to_string() + "<" + &generics.join(", ") + ">";
+    let generics = merge_nested_generics(nested_generics);
+    let generic_type_with_module_path = name.to_string() + &generics;
 
     generic_type_with_module_path
 }
@@ -190,20 +209,20 @@ fn process_one_generic(part: &str, name: &str, imports: Vec<String>) -> String {
 
     if part.contains("<") {
         // Handle nested generics
-        let nested_parts: Vec<&str> = part.split("<").collect();
+        let nested_parts: Vec<&str> = part.splitn(2, "<").collect();
         let nested_generic = find_import(
             imports.clone(),
             get_current_module_from_name(name).as_str(),
-            nested_parts[0],
+            nested_parts[0].trim(),
         ) + "<"
-            + nested_parts[1];
+            + &process_one_generic(nested_parts[1].trim(), name, imports.clone());
         processed_parts.push(nested_generic);
     } else {
         // Normal type, find the full path
         let full_path = find_import(
             imports.clone(),
             get_current_module_from_name(name).as_str(),
-            part,
+            part.trim(),
         );
         processed_parts.push(full_path);
     }
@@ -211,21 +230,40 @@ fn process_one_generic(part: &str, name: &str, imports: Vec<String>) -> String {
     processed_parts.join("::")
 }
 
-pub fn split_type(meta: ParseNestedMeta) -> String {
+pub fn split_type(meta: ParseNestedMeta) -> Vec<String> {
     let value = meta.value().unwrap(); // this parses the `=`
     let generic_type: Type = value.parse().unwrap();
     let type_as_string = generic_type.into_token_stream().to_string();
     // get generic type
-    let splited_type = type_as_string
-        .split('<')
-        .nth(1)
-        .unwrap_or("")
-        .split('>')
-        .next()
-        .unwrap()
-        .to_string();
+    let start = type_as_string.find('<').unwrap_or(0) + 1;
+    let end = type_as_string.rfind('>').unwrap_or(type_as_string.len());
+    let splited_type = type_as_string[start..end].to_string();
 
-    splited_type
+    let types: Vec<String> = splited_type
+        .split('<')
+        .map(|s| s.split('>').next().unwrap_or("").to_string())
+        .collect();
+
+    types
+}
+
+fn merge_nested_generics(nested_generics: Vec<String>) -> String {
+    let mut generics = String::from("<");
+    if nested_generics.len() == 1 {
+        generics = generics + nested_generics.first().unwrap() + ">";
+    } else {
+        for (i, gen) in nested_generics.iter().enumerate() {
+            generics.push_str(gen.trim());
+            if i != nested_generics.len() - 1 {
+                generics.push('<');
+            }
+        }
+        for _ in 0..nested_generics.len() {
+            generics.push('>');
+        }
+    }
+
+    generics
 }
 
 fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverType> {

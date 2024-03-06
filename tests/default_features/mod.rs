@@ -2,6 +2,7 @@ pub mod controllers;
 pub mod generics;
 pub mod models;
 
+use crate::default_features::generics::GenericSchema;
 use crate::default_features::generics::NonGenericSchema;
 use crate::default_features::generics::NonGenericSchema2;
 use utoipa::OpenApi;
