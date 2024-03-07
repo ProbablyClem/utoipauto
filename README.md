@@ -91,6 +91,42 @@ The paths receives a String which must respect this structure :
 
 You can add several paths by separating them with a coma `","`.
 
+## Support for generic schemas
+
+We support generic schemas, but with a few drawbacks.
+<br>
+If you want to use generics, you have three ways to do it.
+
+1. use the full path
+
+```rust
+#[aliases(GenericSchema = path::to::Generic<path::to::Schema>)]
+```
+
+2. Import where utoipauto lives
+
+```rust
+use path::to::schema;
+```
+
+3. use experimental `generic_full_path` feature
+
+Please keep in mind that this is an experimental feature and causes more build-time overhead.
+<br>
+Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
+<br>
+Also we currently do not support "partial" imports. The following is **NOT** supported:
+```rust
+use path::to::generic;
+
+#[aliases(GenericSchema = generic::Schema)]
+```
+Please use the full path instead or the `as` keyword to rename the imported schemas.
+
+```toml
+utoipauto = { version = "0.2.0", feature = ["generic_full_path"] }
+```
+
 ## Usage with workspaces
 
 If you are using a workspace, you must specify the name of the crate in the path.
