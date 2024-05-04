@@ -137,9 +137,9 @@ fn parse_from_attr(
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
                     if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
-                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema" {
+                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema" && !is_generic {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse" {
+                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse" && !is_generic {
                             out.push(DiscoverType::Response(name.to_string()));
                         }
                     }
