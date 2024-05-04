@@ -21,7 +21,7 @@ pub fn discover_from_file(
                 let imports = extract_use_statements(&e.0, &crate_name);
             #[cfg(not(feature = "generic_full_path"))]
                 let imports = vec![];
-            parse_module_items(`
+            parse_module_items(
                 &extract_module_name_from_path(&e.0, &crate_name),
                 e.1.items,
                 imports,
