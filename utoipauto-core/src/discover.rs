@@ -135,7 +135,15 @@ fn parse_from_attr(
                 .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
                 .unwrap();
             for nested_meta in nested {
-                if nested_meta.path().is_ident("ToSchema") && !is_generic {
+                if nested_meta.path().segments.len() == 2 {
+                    if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
+                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema" && !is_generic {
+                            out.push(DiscoverType::Model(name.to_string()));
+                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse" && !is_generic {
+                            out.push(DiscoverType::Response(name.to_string()));
+                        }
+                    }
+                } else if nested_meta.path().is_ident("ToSchema") && !is_generic {
                     out.push(DiscoverType::Model(name.to_string()));
                 }
                 if nested_meta.path().is_ident("ToResponse") {
