@@ -1,6 +1,6 @@
 [package]
 name = "utoipauto-macro"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2021"
 authors = ["ProbablyClem", "RxDiscovery"]
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
@@ -22,7 +22,7 @@ proc-macro = true
 generic_full_path = ["utoipauto-core/generic_full_path"]
 
 [dependencies]
-utoipauto-core = { path = "../utoipauto-core", version = "0.1.10" }
+utoipauto-core = { path = "../utoipauto-core", version = "0.1.11" }
 
 quote = "1.0.35"
 syn = { version = "2.0.52", features = ["full"] }
