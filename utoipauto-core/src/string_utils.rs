@@ -31,7 +31,7 @@ pub fn trim_parentheses(str: &str) -> String {
 /// ```
 /// use utoipauto_core::string_utils::extract_paths;
 /// let paths = extract_paths(
-///    "\"(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)\""
+///    "(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)"
 ///       .to_string()
 /// );
 /// assert_eq!(
@@ -43,7 +43,7 @@ pub fn trim_parentheses(str: &str) -> String {
 /// );
 /// ```
 pub fn extract_paths(attributes: String) -> Vec<String> {
-    let attributes = trim_parentheses(rem_first_and_last(&attributes));
+    let attributes = trim_parentheses(&attributes);
 
     if attributes.contains('|') {
         panic!("Please use the new syntax ! paths=\"(MODULE_TREE_PATH => MODULE_SRC_PATH) ;\"")
@@ -160,7 +160,7 @@ mod test {
     fn test_extract_paths_arrow() {
         assert_eq!(
             super::extract_paths(
-                "\"(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)\""
+                "(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)"
                     .to_string()
             ),
             vec![
@@ -174,7 +174,7 @@ mod test {
     fn test_extract_paths_coma() {
         assert_eq!(
             super::extract_paths(
-                "\"./utoipa-auto-macro/tests/controllers/controller1.rs, ./utoipa-auto-macro/tests/controllers/controller2.rs\""
+                "./utoipa-auto-macro/tests/controllers/controller1.rs, ./utoipa-auto-macro/tests/controllers/controller2.rs"
                     .to_string()
             ),
             vec![

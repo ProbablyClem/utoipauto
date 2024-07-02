@@ -16,10 +16,11 @@ pub fn utoipauto(
     attributes: proc_macro::TokenStream, // #[utoipauto(paths = "(MODULE_TREE_PATH => MODULE_SRC_PATH) ;")]
     item: proc_macro::TokenStream,       // #[openapi(paths = "")]
 ) -> proc_macro::TokenStream {
+    println!("{}", attributes);
     // (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ; ...
-    let paths: String = extract_attributes(attributes.into());
+    let params = extract_attributes(attributes.into());
     // [(MODULE_TREE_PATH, MODULE_SRC_PATH)]
-    let paths: Vec<String> = extract_paths(paths);
+    let paths: Vec<String> = extract_paths(params.paths);
 
     // #[openapi(...)]
     let mut openapi_macro = parse_macro_input!(item as syn::ItemStruct);
