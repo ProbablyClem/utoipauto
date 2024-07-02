@@ -293,7 +293,7 @@ pub struct CustomModel {
 
 #[utoipauto(schema_attribute_name = "Schema", response_attribute_name = "Response")] //Custom derive
 #[derive(OpenApi)]
-#[openapi(tags()))]
+#[openapi(tags())]
 pub struct ApiDoc;
 
 ```
