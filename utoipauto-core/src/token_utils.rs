@@ -74,8 +74,6 @@ pub fn output_macro(openapi_macro: syn::ItemStruct) -> proc_macro::TokenStream {
 
 #[cfg(test)]
 mod tests {
-    use syn::ext;
-
     use super::*;
 
     #[test]

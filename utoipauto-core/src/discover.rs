@@ -1,15 +1,17 @@
 use std::vec;
 
 use quote::ToTokens;
-use syn::{Attribute, Item, ItemFn, Meta, punctuated::Punctuated, Token, Type};
 use syn::meta::ParseNestedMeta;
+use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
 
 use crate::file_utils::{extract_module_name_from_path, parse_files};
+use crate::token_utils::Parameters;
 
 /// Discover everything from a file, will explore folder recursively
 pub fn discover_from_file(
     src_path: String,
     crate_name: String,
+    params: &Parameters,
 ) -> (Vec<String>, Vec<String>, Vec<String>) {
     let files =
         parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
@@ -18,13 +20,14 @@ pub fn discover_from_file(
         .into_iter()
         .map(|e| {
             #[cfg(feature = "generic_full_path")]
-                let imports = extract_use_statements(&e.0, &crate_name);
+            let imports = extract_use_statements(&e.0, &crate_name);
             #[cfg(not(feature = "generic_full_path"))]
-                let imports = vec![];
+            let imports = vec![];
             parse_module_items(
                 &extract_module_name_from_path(&e.0, &crate_name),
                 e.1.items,
                 imports,
+                params,
             )
         })
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
@@ -64,6 +67,7 @@ fn parse_module_items(
     module_path: &str,
     items: Vec<Item>,
     imports: Vec<String>,
+    params: &Parameters,
 ) -> Vec<DiscoverType> {
     items
         .into_iter()
@@ -83,9 +87,10 @@ fn parse_module_items(
                     &build_path(module_path, &m.ident.to_string()),
                     cs.1,
                     imports.clone(),
+                    params,
                 )
             }),
-            syn::Item::Fn(f) => parse_function(&f)
+            syn::Item::Fn(f) => parse_function(&f, &params.fn_attribute_name)
                 .into_iter()
                 .map(|item| DiscoverType::Fn(build_path(module_path, &item)))
                 .collect(),
@@ -96,6 +101,7 @@ fn parse_module_items(
                     &build_path(module_path, &s.ident.to_string()),
                     is_generic,
                     imports.clone(),
+                    params,
                 )
             }
             syn::Item::Enum(e) => {
@@ -105,9 +111,10 @@ fn parse_module_items(
                     &build_path(module_path, &e.ident.to_string()),
                     is_generic,
                     imports.clone(),
+                    params,
                 )
             }
-            syn::Item::Impl(im) => parse_from_impl(&im, module_path),
+            syn::Item::Impl(im) => parse_from_impl(&im, module_path, params),
             _ => vec![],
         })
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
@@ -122,6 +129,7 @@ fn parse_from_attr(
     name: &str,
     is_generic: bool,
     imports: Vec<String>,
+    params: &Parameters,
 ) -> Vec<DiscoverType> {
     let mut out: Vec<DiscoverType> = vec![];
 
@@ -137,16 +145,21 @@ fn parse_from_attr(
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
                     if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
-                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema" && !is_generic {
+                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema"
+                            && !is_generic
+                        {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse" && !is_generic {
+                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse"
+                            && !is_generic
+                        {
                             out.push(DiscoverType::Response(name.to_string()));
                         }
                     }
-                } else if nested_meta.path().is_ident("ToSchema") && !is_generic {
+                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && !is_generic
+                {
                     out.push(DiscoverType::Model(name.to_string()));
                 }
-                if nested_meta.path().is_ident("ToResponse") {
+                if nested_meta.path().is_ident(&params.response_attribute_name) {
                     out.push(DiscoverType::Response(name.to_string()));
                 }
             }
@@ -274,17 +287,21 @@ fn merge_nested_generics(nested_generics: Vec<String>) -> String {
     generics
 }
 
-fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverType> {
+fn parse_from_impl(
+    im: &syn::ItemImpl,
+    module_base_path: &str,
+    params: &Parameters,
+) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
         .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
         .and_then(|impl_name| {
-            if impl_name.eq("ToSchema") {
+            if impl_name.eq(params.schema_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(
                     module_base_path,
                     &im.self_ty.to_token_stream().to_string(),
                 ))])
-            } else if impl_name.eq("ToResponse") {
+            } else if impl_name.eq(params.response_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomResponseImpl(build_path(
                     module_base_path,
                     &im.self_ty.to_token_stream().to_string(),
@@ -296,7 +313,7 @@ fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str) -> Vec<DiscoverTy
         .unwrap_or_default()
 }
 
-fn parse_function(f: &ItemFn) -> Vec<String> {
+fn parse_function(f: &ItemFn, fn_attributes_name: &str) -> Vec<String> {
     let mut fns_name: Vec<String> = vec![];
     if should_parse_fn(f) {
         for i in 0..f.attrs.len() {
@@ -305,7 +322,7 @@ fn parse_function(f: &ItemFn) -> Vec<String> {
                 .path()
                 .segments
                 .iter()
-                .any(|item| item.ident.eq("utoipa"))
+                .any(|item| item.ident.eq(fn_attributes_name))
             {
                 fns_name.push(f.sig.ident.to_string());
             }
@@ -424,17 +441,12 @@ fn get_current_module_from_name(name: &str) -> String {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-
     #[test]
     #[cfg(feature = "generic_full_path")]
     fn test_process_one_generic_nested_generics() {
         let part = "Generic<Inner>";
         let name = "module::name";
-        let imports = vec![
-            "module::Generic".to_string(),
-            "module::Inner".to_string(),
-        ];
+        let imports = vec!["module::Generic".to_string(), "module::Inner".to_string()];
         let expected = "module::Generic<module::Inner>";
         let result = process_one_generic(part, name, imports);
         assert_eq!(result, expected);
@@ -445,9 +457,7 @@ mod test {
     fn test_process_one_generic_no_nested_generics() {
         let part = "Generic";
         let name = "module::name";
-        let imports = vec![
-            "module::Generic".to_string(),
-        ];
+        let imports = vec!["module::Generic".to_string()];
         let expected = "module::Generic";
         let result = process_one_generic(part, name, imports);
         assert_eq!(result, expected);
@@ -458,9 +468,7 @@ mod test {
     fn test_process_one_generic_no_generics() {
         let part = "NonGeneric";
         let name = "module::name";
-        let imports = vec![
-            "module::NonGeneric".to_string(),
-        ];
+        let imports = vec!["module::NonGeneric".to_string()];
         let expected = "module::NonGeneric";
         let result = process_one_generic(part, name, imports);
         assert_eq!(result, expected);
@@ -497,10 +505,7 @@ mod test {
     #[test]
     #[cfg(feature = "generic_full_path")]
     fn test_find_import_no_module() {
-        let imports = vec![
-            "name".to_string(),
-            "other_name".to_string(),
-        ];
+        let imports = vec!["name".to_string(), "other_name".to_string()];
         let current_module = "";
         let name = "name";
         let expected = "name";

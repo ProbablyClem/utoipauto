@@ -1,4 +1,4 @@
-use crate::discover::discover_from_file;
+use crate::{discover::discover_from_file, token_utils::Parameters};
 
 pub fn rem_first_and_last(value: &str) -> &str {
     let mut chars = value.chars();
@@ -32,7 +32,6 @@ pub fn trim_parentheses(str: &str) -> String {
 /// use utoipauto_core::string_utils::extract_paths;
 /// let paths = extract_paths(
 ///    "(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)"
-///       .to_string()
 /// );
 /// assert_eq!(
 ///   paths,
@@ -42,7 +41,7 @@ pub fn trim_parentheses(str: &str) -> String {
 /// ]   
 /// );
 /// ```
-pub fn extract_paths(attributes: String) -> Vec<String> {
+pub fn extract_paths(attributes: &str) -> Vec<String> {
     let attributes = trim_parentheses(&attributes);
 
     if attributes.contains('|') {
@@ -90,13 +89,14 @@ fn extract_paths_coma(attributes: String) -> Vec<String> {
 /// Return the list of all the functions with the #[utoipa] attribute
 /// and the list of all the structs with the #[derive(ToSchema)] attribute
 /// and the list of all the structs with the #[derive(ToResponse)] attribute
-pub fn discover(paths: Vec<String>) -> (String, String, String) {
+pub fn discover(paths: Vec<String>, params: &Parameters) -> (String, String, String) {
     let mut uto_paths: String = String::new();
     let mut uto_models: String = String::new();
     let mut uto_responses: String = String::new();
     for p in paths {
         let path = extract_crate_name(p);
-        let (list_fn, list_model, list_reponse) = discover_from_file(path.paths, path.crate_name);
+        let (list_fn, list_model, list_reponse) =
+            discover_from_file(path.paths, path.crate_name, params);
         // We need to add a coma after each path
         for i in list_fn {
             uto_paths.push_str(format!("{},", i).as_str());
@@ -161,7 +161,6 @@ mod test {
         assert_eq!(
             super::extract_paths(
                 "(utoipa_auto_macro::tests::controllers::controller1 => ./utoipa-auto-macro/tests/controllers/controller1.rs) ; (utoipa_auto_macro::tests::controllers::controller2 => ./utoipa-auto-macro/tests/controllers/controller2.rs)"
-                    .to_string()
             ),
             vec![
                 "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
@@ -175,7 +174,6 @@ mod test {
         assert_eq!(
             super::extract_paths(
                 "./utoipa-auto-macro/tests/controllers/controller1.rs, ./utoipa-auto-macro/tests/controllers/controller2.rs"
-                    .to_string()
             ),
             vec![
                 "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),

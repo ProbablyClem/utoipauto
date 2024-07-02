@@ -20,13 +20,13 @@ pub fn utoipauto(
     // (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ; ...
     let params = extract_attributes(attributes.into());
     // [(MODULE_TREE_PATH, MODULE_SRC_PATH)]
-    let paths: Vec<String> = extract_paths(params.paths);
+    let paths: Vec<String> = extract_paths(&params.paths);
 
     // #[openapi(...)]
     let mut openapi_macro = parse_macro_input!(item as syn::ItemStruct);
 
     // Discover all the functions with the #[utoipa] attribute
-    let (uto_paths, uto_models, uto_responses): (String, String, String) = discover(paths);
+    let (uto_paths, uto_models, uto_responses): (String, String, String) = discover(paths, &params);
 
     // extract the openapi macro attributes : #[openapi(openapi_macro_attibutes)]
     let openapi_macro_attibutes = &mut openapi_macro.attrs;
