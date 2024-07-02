@@ -141,7 +141,7 @@ fn parse_from_attr(
         if meta.path().is_ident("derive") {
             let nested = attr
                 .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
-                .unwrap();
+                .expect("Failed to parse derive attribute");
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
                     if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
@@ -441,6 +441,29 @@ fn get_current_module_from_name(name: &str) -> String {
 
 #[cfg(test)]
 mod test {
+    use quote::quote;
+
+    #[test]
+    fn test_parse_function() {
+        let quoted = quote! {
+            #[utoipa]
+            pub fn route_custom() {}
+        };
+
+        let item_fn: syn::ItemFn = syn::parse2(quoted).unwrap();
+        let fn_name = super::parse_function(&item_fn, "utoipa");
+        assert_eq!(fn_name, vec!["route_custom"]);
+
+        let quoted = quote! {
+            #[handler]
+            pub fn route_custom() {}
+        };
+
+        let item_fn: syn::ItemFn = syn::parse2(quoted).unwrap();
+        let fn_name = super::parse_function(&item_fn, "handler");
+        assert_eq!(fn_name, vec!["route_custom"]);
+    }
+
     #[test]
     #[cfg(feature = "generic_full_path")]
     fn test_process_one_generic_nested_generics() {

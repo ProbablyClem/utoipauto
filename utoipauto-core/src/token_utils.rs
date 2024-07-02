@@ -104,11 +104,32 @@ mod tests {
     }
 
     #[test]
+    fn test_extract_attribute_none() {
+        let quote = quote! {
+            paths = "p1", thing = "thing", other = "other"
+        };
+
+        let attributes = extract_attribute("not_found", quote.into());
+        assert_eq!(attributes, None);
+    }
+
+    #[test]
+    fn test_extract_attribute_empty() {
+        let quote = quote! {};
+
+        let attributes = extract_attribute("thing", quote.into());
+        assert_eq!(attributes, None);
+    }
+
+    #[test]
     fn test_extract_attributes_empty() {
         let tokens = quote! {};
 
         let attributes = extract_attributes(tokens);
-        assert_eq!(attributes.paths, "./src")
+        assert_eq!(attributes.paths, "./src");
+        assert_eq!(attributes.fn_attribute_name, "utoipa");
+        assert_eq!(attributes.schema_attribute_name, "ToSchema");
+        assert_eq!(attributes.response_attribute_name, "ToResponse");
     }
 
     #[test]

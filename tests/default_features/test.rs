@@ -126,3 +126,17 @@ fn test_path_import_responses() {
         3, // 1 derive, 1 manual, 1 manual with utoipa::ToResponse
     )
 }
+
+/// Discover custom handler
+#[utoipauto(
+    paths = "./tests/default_features/controllers/controller3.rs",
+    function_attribute_name = "test_handler"
+)]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct CustomHandlerApiDocs {}
+
+#[test]
+fn test_custom_handler() {
+    assert_eq!(CustomHandlerApiDocs::openapi().paths.paths.len(), 1)
+}

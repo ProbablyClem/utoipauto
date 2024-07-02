@@ -60,6 +60,8 @@ It also detects struct that derive or implement `ToSchema` for the `components(s
 - [x] Automatic model detection
 - [x] Automatic response detection
 - [x] Works with workspaces
+- [x] Exclude a method from automatic scanning
+- [x] Custom path detection
 
 # How to use it
 
@@ -116,11 +118,13 @@ Please keep in mind that this is an experimental feature and causes more build-t
 Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
 <br>
 Also we currently do not support "partial" imports. The following is **NOT** supported:
+
 ```rust
 use path::to::generic;
 
 #[aliases(GenericSchema = generic::Schema)]
 ```
+
 Please use the full path instead or the `as` keyword to rename the imported schemas.
 
 ```toml
@@ -262,6 +266,38 @@ ex:
 
 ```
 
+### Custom path detection
+
+By default, this macro will look for function with the `#[utoipa::path(...)]` attribute, but you can also specify a custom attribute to look for.
+
+```rust
+#[handler]
+pub fn custom_router() {
+    // ...
+}
+
+#[utoipauto(function_attribute_name = "handler")] //Custom attribute
+#[derive(OpenApi)]
+#[openapi(tags()))]
+pub struct ApiDoc;
+
+```
+
+You can also specify custom attributes for the model and response detection.
+
+```rust
+#[derive(Schema, Response)]
+pub struct CustomModel {
+    // ...
+}
+
+#[utoipauto(schema_attribute_name = "Schema", response_attribute_name = "Response")] //Custom derive
+#[derive(OpenApi)]
+#[openapi(tags()))]
+pub struct ApiDoc;
+
+```
+
 ## Note
 
 Sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
@@ -273,3 +309,11 @@ Contributions are welcomed, feel free to submit a PR or an issue.
 ## Inspiration
 
 Inspired by [utoipa_auto_discovery](https://github.com/rxdiscovery/utoipa_auto_discovery)
+
+```
+
+```
+
+```
+
+```

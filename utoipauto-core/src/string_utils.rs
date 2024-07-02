@@ -129,6 +129,15 @@ fn extract_crate_name(path: String) -> Path {
 
 #[cfg(test)]
 mod test {
+    use crate::string_utils::extract_paths;
+
+    #[test]
+    fn test_extract_path() {
+        let paths = "./src";
+        let extracted = extract_paths(paths);
+        assert_eq!(extracted, vec!["./src".to_string()]);
+    }
+
     #[test]
     fn test_extract_crate_name() {
         assert_eq!(

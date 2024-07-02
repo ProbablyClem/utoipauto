@@ -1,5 +1,3 @@
-extern crate proc_macro;
-
 use attribute_utils::update_openapi_macro_attributes;
 use proc_macro::TokenStream;
 
@@ -16,7 +14,6 @@ pub fn utoipauto(
     attributes: proc_macro::TokenStream, // #[utoipauto(paths = "(MODULE_TREE_PATH => MODULE_SRC_PATH) ;")]
     item: proc_macro::TokenStream,       // #[openapi(paths = "")]
 ) -> proc_macro::TokenStream {
-    println!("{}", attributes);
     // (MODULE_TREE_PATH => MODULE_SRC_PATH) ; (MODULE_TREE_PATH => MODULE_SRC_PATH) ; ...
     let params = extract_attributes(attributes.into());
     // [(MODULE_TREE_PATH, MODULE_SRC_PATH)]
@@ -55,6 +52,22 @@ pub fn utoipa_ignore(
     let input = parse_macro_input!(item as syn::Item);
     let code = quote!(
           #input
+    );
+
+    TokenStream::from(code)
+}
+
+/// Useless macro to test custom function attributes
+#[proc_macro_attribute]
+pub fn test_handler(
+    _attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let input = parse_macro_input!(item as syn::ItemFn);
+
+    let code = quote!(
+        #[utoipa::path(get, path = "/")]
+        #input
     );
 
     TokenStream::from(code)
