@@ -87,7 +87,7 @@ pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     // `./src/lib/my/module/name from crate::my::module` should turn into `crate::my::module:name`,
     // and not into `crate::lib::my::module::name`.
     let mut crate_segments = crate_name.split("::");
-    let first_crate_fragment = crate_segments.next().unwrap();
+    let first_crate_fragment = crate_segments.next().expect("Crate should not be empty");
     let segments_inside_crate = match crate_segments.next() {
         Some(crate_fragment) => find_segment_and_skip(segments_inside_crate, &[crate_fragment], 0),
         None => segments_inside_crate,

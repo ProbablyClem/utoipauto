@@ -196,6 +196,27 @@ pub struct ApiDoc;
 
 ```
 
+Here's an example of how to add all methods and structs contained in the rest module if it is in a sub-folder:
+
+```rust
+
+use utoipauto::utoipauto;
+
+#[utoipauto(
+  paths = "(./src/lib/rest from crate::rest)"
+  )]
+#[derive(OpenApi)]
+#[openapi(
+    tags(
+        (name = "todo", description = "Todo management endpoints.")
+    ),
+    modifiers(&SecurityAddon)
+)]
+
+pub struct ApiDoc;
+
+```
+
 ### Import from filename
 
 Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
