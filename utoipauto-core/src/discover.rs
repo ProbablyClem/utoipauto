@@ -144,12 +144,10 @@ fn parse_from_attr(
                 .expect("Failed to parse derive attribute");
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
-                    if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
-                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema"
-                            && !is_generic
-                        {
+                    if nested_meta.path().segments[0].ident == "utoipa" {
+                        if nested_meta.path().segments[1].ident == "ToSchema" && !is_generic {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse"
+                        } else if nested_meta.path().segments[1].ident == "ToResponse"
                             && !is_generic
                         {
                             out.push(DiscoverType::Response(name.to_string()));
@@ -197,9 +195,8 @@ fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>
     }
 
     let generics = merge_nested_generics(nested_generics);
-    let generic_type = name.to_string() + &generics;
 
-    generic_type
+    name.to_string() + &generics
 }
 
 #[cfg(feature = "generic_full_path")]
@@ -408,21 +405,17 @@ fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
 #[cfg(feature = "generic_full_path")]
 fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String {
     let name = name.trim();
-    for import in imports {
+    let current_module = current_module.trim();
+    for import in imports.iter() {
         if import.contains(name) {
-            let import = import
-                .split(" as ")
-                .next()
-                .unwrap_or(&import)
-                .trim()
-                .to_string();
-            return import;
+            let full_path = import_to_full_path(import);
+            return full_path;
         }
     }
 
-    // If the name contains `::` it means it's already a full path
+    // If the name contains `::` it means that it's a partial import or a full path
     if name.contains("::") {
-        return name.to_string();
+        return handle_partial_import(imports, name).unwrap_or_else(|| name.to_string());
     }
 
     // Only append the module path if the name does not already contain it
@@ -434,6 +427,35 @@ fn find_import(imports: Vec<String>, current_module: &str, name: &str) -> String
 }
 
 #[cfg(feature = "generic_full_path")]
+fn handle_partial_import(imports: Vec<String>, name: &str) -> Option<String> {
+    name.split("::").next().and_then(|first| {
+        let first = first.trim();
+
+        for import in imports {
+            let import = import.trim();
+
+            if import.ends_with(first) {
+                let full_path = import_to_full_path(&import);
+
+                let usable_import = format!("{}{}", full_path.trim(), name[first.len()..].trim());
+                return Some(usable_import);
+            }
+        }
+        None
+    })
+}
+
+#[cfg(feature = "generic_full_path")]
+fn import_to_full_path(import: &str) -> String {
+    import
+        .split(" as ")
+        .next()
+        .unwrap_or(&import)
+        .trim()
+        .to_string()
+}
+
+#[cfg(feature = "generic_full_path")]
 fn get_current_module_from_name(name: &str) -> String {
     let parts: Vec<&str> = name.split("::").collect();
     parts[..parts.len() - 1].join("::")
@@ -442,6 +464,9 @@ fn get_current_module_from_name(name: &str) -> String {
 #[cfg(test)]
 mod test {
     use quote::quote;
+
+    #[cfg(feature = "generic_full_path")]
+    use crate::discover::{find_import, get_current_module_from_name, process_one_generic};
 
     #[test]
     fn test_parse_function() {
@@ -471,6 +496,18 @@ mod test {
         let name = "module::name";
         let imports = vec!["module::Generic".to_string(), "module::Inner".to_string()];
         let expected = "module::Generic<module::Inner>";
+        let result = process_one_generic(part, name, imports);
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    #[cfg(feature = "generic_full_path")]
+    fn test_process_one_generic_partial_import() {
+        let part = "PartialImportGenericSchema<more_schemas::MoreSchema>";
+        let name = "crate";
+        let imports = vec!["crate::generic_full_path::more_schemas".to_string()];
+        let expected =
+            "PartialImportGenericSchema<crate::generic_full_path::more_schemas::MoreSchema>";
         let result = process_one_generic(part, name, imports);
         assert_eq!(result, expected);
     }

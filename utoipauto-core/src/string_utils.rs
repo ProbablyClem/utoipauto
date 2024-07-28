@@ -37,12 +37,12 @@ pub fn trim_parentheses(str: &str) -> String {
 ///   paths,
 ///  vec![
 ///    "./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
-///   "./utoipa-auto-macro/tests/controllers/controller2.rs".to_string()
+///   "./utoipa-auto-macro/tests/controllers/controller2.rs".to_string(),
 /// ]   
 /// );
 /// ```
 pub fn extract_paths(attributes: &str) -> Vec<String> {
-    let attributes = trim_parentheses(&attributes);
+    let attributes = trim_parentheses(attributes);
 
     if attributes.contains('|') {
         panic!("Please use the new syntax ! paths=\"(MODULE_TREE_PATH => MODULE_SRC_PATH) ;\"")

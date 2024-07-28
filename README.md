@@ -1,9 +1,7 @@
-<div align="center">
+<div style="text-align: center">
 <h1>Utoipauto</h1>
   <p>
     <strong>Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase</strong>
-  </p>
-  <p>
   </p>
 </div>
 
@@ -111,24 +109,13 @@ If you want to use generics, you have three ways to do it.
 use path::to::schema;
 ```
 
-3. use experimental `generic_full_path` feature
+3. use `generic_full_path` feature
 
-Please keep in mind that this is an experimental feature and causes more build-time overhead.
-<br>
+Please keep in mind that this is an experimental feature and causes more build-time overhead.  
 Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
-<br>
-Also we currently do not support "partial" imports. The following is **NOT** supported:
-
-```rust
-use path::to::generic;
-
-#[aliases(GenericSchema = generic::Schema)]
-```
-
-Please use the full path instead or the `as` keyword to rename the imported schemas.
 
 ```toml
-utoipauto = { version = "0.2.0", feature = ["generic_full_path"] }
+utoipauto = { version = "*", feature = ["generic_full_path"] }
 ```
 
 ## Usage with workspaces
