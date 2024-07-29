@@ -2,6 +2,6 @@
 /.idea
 
 *target
-*Cargo.lock
+/Cargo.lock
 git_cmd.md
 .vscode/settings.json

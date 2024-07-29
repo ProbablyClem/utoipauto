@@ -3,6 +3,7 @@ name = "utoipauto-lib-test"
 authors = ["joaquin041"]
 version = "0.0.1"
 edition = "2021"
+publish = false
 description = "Test library in utoipauto project"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ProbablyClem/utoipauto"
