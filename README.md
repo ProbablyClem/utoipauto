@@ -111,7 +111,7 @@ use path::to::schema;
 
 3. use `generic_full_path` feature
 
-Please keep in mind that this is an experimental feature and causes more build-time overhead.  
+Please keep in mind that this feature causes more build-time overhead.  
 Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
 
 ```toml
