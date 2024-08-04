@@ -144,12 +144,10 @@ fn parse_from_attr(
                 .expect("Failed to parse derive attribute");
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
-                    if nested_meta.path().segments[0].ident.to_string() == "utoipa" {
-                        if nested_meta.path().segments[1].ident.to_string() == "ToSchema"
-                            && !is_generic
-                        {
+                    if nested_meta.path().segments[0].ident == "utoipa" {
+                        if nested_meta.path().segments[1].ident == "ToSchema" && !is_generic {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident.to_string() == "ToResponse"
+                        } else if nested_meta.path().segments[1].ident == "ToResponse"
                             && !is_generic
                         {
                             out.push(DiscoverType::Response(name.to_string()));
@@ -197,9 +195,8 @@ fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>
     }
 
     let generics = merge_nested_generics(nested_generics);
-    let generic_type = name.to_string() + &generics;
 
-    generic_type
+    name.to_string() + &generics
 }
 
 #[cfg(feature = "generic_full_path")]
@@ -441,6 +438,8 @@ fn get_current_module_from_name(name: &str) -> String {
 
 #[cfg(test)]
 mod test {
+    #[cfg(feature = "generic_full_path")]
+    use crate::discover::{find_import, get_current_module_from_name, process_one_generic};
     use quote::quote;
 
     #[test]
