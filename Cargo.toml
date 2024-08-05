@@ -1,14 +1,10 @@
 [workspace]
-members = [
-    "utoipauto",
-    "utoipauto-core",
-    "utoipauto-macro",
-]
+members = ["utoipauto", "utoipauto-core", "utoipauto-macro"]
 resolver = "2"
 
 [workspace.package]
 authors = ["ProbablyClem", "RxDiscovery", "DenuxPlays"]
-version = "0.1.12"
+version = "0.1.13"
 edition = "2021"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
@@ -24,8 +20,8 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
 # Core dependencies
-utoipauto-core = { path = "utoipauto-core", version = "0.1.12" }
-utoipauto-macro = { path = "utoipauto-macro", version = "0.1.12" }
+utoipauto-core = { path = "utoipauto-core", version = "*" }
+utoipauto-macro = { path = "utoipauto-macro", version = "*" }
 
 # Macro dependencies
 quote = "1.0.36"
