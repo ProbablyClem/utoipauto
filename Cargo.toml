@@ -4,7 +4,7 @@ resolver = "2"
 
 [workspace.package]
 authors = ["ProbablyClem", "RxDiscovery", "DenuxPlays"]
-version = "0.1.13"
+version = "0.1.14"
 edition = "2021"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
