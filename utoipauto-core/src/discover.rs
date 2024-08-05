@@ -467,9 +467,6 @@ mod test {
     use crate::discover::{find_import, get_current_module_from_name, process_one_generic};
     use quote::quote;
 
-    #[cfg(feature = "generic_full_path")]
-    use crate::discover::{find_import, get_current_module_from_name, process_one_generic};
-
     #[test]
     fn test_parse_function() {
         let quoted = quote! {

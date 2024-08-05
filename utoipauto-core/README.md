@@ -1,7 +1,13 @@
-<div style="text-align: center">
+# Logic for the utoipauto crate
+
+# This file is part of the `utoipauto` crate documentation
+
+<div align="center">
 <h1>Utoipauto</h1>
   <p>
     <strong>Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase</strong>
+  </p>
+  <p>
   </p>
 </div>
 
@@ -48,7 +54,7 @@ pub struct ApiDoc;
 
 The goal of this crate is to propose a macro that automates the detection of methods carrying Utoipa macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
 
-It also detects struct that derive or implement `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
+It also detects struct that derive `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
 
 # Features
 
@@ -57,9 +63,6 @@ It also detects struct that derive or implement `ToSchema` for the `components(s
 - [x] Automatic import from src folder
 - [x] Automatic model detection
 - [x] Automatic response detection
-- [x] Works with workspaces
-- [x] Exclude a method from automatic scanning
-- [x] Custom path detection
 
 # How to use it
 
@@ -90,49 +93,6 @@ The paths receives a String which must respect this structure :
 `"MODULE_SRC_FILE_PATH, MODULE_SRC_FILE_PATH, ..."`
 
 You can add several paths by separating them with a coma `","`.
-
-## Support for generic schemas
-
-We support generic schemas, but with a few drawbacks.
-<br>
-If you want to use generics, you have three ways to do it.
-
-1. use the full path
-
-```rust
-#[aliases(GenericSchema = path::to::Generic<path::to::Schema>)]
-```
-
-2. Import where utoipauto lives
-
-```rust
-use path::to::schema;
-```
-
-3. use `generic_full_path` feature
-
-Please keep in mind that this feature causes more build-time overhead.  
-Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
-
-```toml
-utoipauto = { version = "*", feature = ["generic_full_path"] }
-```
-
-## Usage with workspaces
-
-If you are using a workspace, you must specify the name of the crate in the path.
-<br>
-This applies even if you are using `#[utoipauto]` in the same crate.
-
-```rust
-#[utoipauto(paths = "./utoipauto/src")]
-```
-
-You can specify that the specified paths are from another crate by using the from key work.
-
-```rust
-#[utoipauto(paths = "./utoipauto/src from utoipauto")]
-```
 
 ### Import from src folder
 
@@ -274,38 +234,6 @@ ex:
 
 ```
 
-### Custom path detection
-
-By default, this macro will look for function with the `#[utoipa::path(...)]` attribute, but you can also specify a custom attribute to look for.
-
-```rust
-#[handler]
-pub fn custom_router() {
-    // ...
-}
-
-#[utoipauto(function_attribute_name = "handler")] //Custom attribute
-#[derive(OpenApi)]
-#[openapi(tags()))]
-pub struct ApiDoc;
-
-```
-
-You can also specify custom attributes for the model and response detection.
-
-```rust
-#[derive(Schema, Response)]
-pub struct CustomModel {
-    // ...
-}
-
-#[utoipauto(schema_attribute_name = "Schema", response_attribute_name = "Response")] //Custom derive
-#[derive(OpenApi)]
-#[openapi(tags())]
-pub struct ApiDoc;
-
-```
-
 ## Note
 
 Sub-modules within a module containing methods tagged with utoipa::path are also automatically detected.
@@ -313,15 +241,3 @@ Sub-modules within a module containing methods tagged with utoipa::path are also
 ## Contributing
 
 Contributions are welcomed, feel free to submit a PR or an issue.
-
-## Inspiration
-
-Inspired by [utoipa_auto_discovery](https://github.com/rxdiscovery/utoipa_auto_discovery)
-
-```
-
-```
-
-```
-
-```
