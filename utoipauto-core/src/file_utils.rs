@@ -44,13 +44,14 @@ pub fn parse_files<T: Into<PathBuf>>(path: T) -> Result<Vec<(String, syn::File)>
 }
 
 fn is_rust_file(path: &Path) -> bool {
-    path.is_file() && match path.extension() {
-        Some(ext) => match ext.to_str() {
-            Some(ext) => ext.eq("rs"),
+    path.is_file()
+        && match path.extension() {
+            Some(ext) => match ext.to_str() {
+                Some(ext) => ext.eq("rs"),
+                None => false,
+            },
             None => false,
-        },
-        None => false,
-    }
+        }
 }
 
 /// Extract the module name from the file path
