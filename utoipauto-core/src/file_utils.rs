@@ -82,17 +82,36 @@ pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     // `./crates/subcrate/src/my/module`, etc., so we need to remove anything up to `src`
     // (or `tests`) to still produce `crate::my::module`.
     // So we split the segments by the last occurrence of `src` or `tests` and take the last part.
-    let segments_inside_crate = match segments
-        .iter()
-        .rposition(|&segment| segment == "src" || segment == "tests")
-    {
-        Some(idx) => &segments[(idx + 1)..],
-        None => &segments,
+    let segments_inside_crate = find_segment_and_skip(&segments, &["src", "tests"], 1);
+
+    // Also skip fragments that are already out of the crate name. For example,
+    // `./src/lib/my/module/name from crate::my::module` should turn into `crate::my::module:name`,
+    // and not into `crate::lib::my::module::name`.
+    let mut crate_segments = crate_name.split("::");
+    let first_crate_fragment = crate_segments.next().expect("Crate should not be empty");
+    let segments_inside_crate = match crate_segments.next() {
+        Some(crate_fragment) => find_segment_and_skip(segments_inside_crate, &[crate_fragment], 0),
+        None => segments_inside_crate,
     };
-    let full_crate_path: Vec<_> = iter::once(crate_name)
+
+    let full_crate_path: Vec<_> = iter::once(first_crate_fragment)
         .chain(segments_inside_crate.iter().copied())
         .collect();
     full_crate_path.join("::")
+}
+
+fn find_segment_and_skip<'a>(
+    segments: &'a [&str],
+    to_find: &[&str],
+    to_skip: usize,
+) -> &'a [&'a str] {
+    match segments
+        .iter()
+        .rposition(|segment| to_find.contains(segment))
+    {
+        Some(idx) => &segments[(idx + to_skip)..],
+        None => segments,
+    }
 }
 
 #[cfg(test)]
@@ -188,6 +207,17 @@ mod tests {
                 "other_crate"
             ),
             "other_crate::retail_api::controllers"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_workspace_with_prefix_path() {
+        assert_eq!(
+            extract_module_name_from_path(
+                "./crates/server/src/routes_lib/routes/asset.rs",
+                "crate::routes"
+            ),
+            "crate::routes::asset"
         );
     }
 }
