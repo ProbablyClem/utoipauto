@@ -100,14 +100,18 @@ pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     full_crate_path.join("::")
 }
 
-fn find_segment_and_skip<'a>(segments: &'a [&str], to_find: &[&str], to_skip: usize) -> &'a [&'a str] {
+fn find_segment_and_skip<'a>(
+    segments: &'a [&str],
+    to_find: &[&str],
+    to_skip: usize,
+) -> &'a [&'a str] {
     match segments
         .iter()
-        .rposition(|segment| to_find.contains(&segment))
+        .rposition(|segment| to_find.contains(segment))
     {
         Some(idx) => &segments[(idx + to_skip)..],
-        None => &segments,
-    }.into()
+        None => segments,
+    }
 }
 
 #[cfg(test)]
