@@ -41,7 +41,7 @@ jobs:
         working-directory: utoipauto-core
         run: |
           echo "Cargo Publishing..."
-          cargo publish --no-verify
+          cargo publish --no-verify -p utoipauto-core
           echo "New version $NEXT_VERSION has been published"
 
   utoipauto-macro:
@@ -80,7 +80,7 @@ jobs:
         working-directory: utoipauto-macro
         run: |
           echo "Cargo Publishing..."
-          cargo publish --no-verify
+          cargo publish --no-verify -p utoipauto-macro
           echo "New version $NEXT_VERSION has been published"
 
   utoipauto:
@@ -116,5 +116,5 @@ jobs:
         if: env.NEXT_VERSION != env.PREV_VERSION
         run: |
           echo "Cargo Publishing..."
-          cargo publish --no-verify
+          cargo publish --no-verify -p utoipauto
           echo "New version $NEXT_VERSION has been published"

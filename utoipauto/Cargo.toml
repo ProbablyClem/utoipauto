@@ -1,5 +1,5 @@
 [package]
-name = "utoipauto-macro"
+name = "utoipauto"
 authors.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -11,15 +11,12 @@ readme.workspace = true
 repository.workspace = true
 homepage.workspace = true
 
-[lib]
-proc-macro = true
-
 [features]
-generic_full_path = ["utoipauto-core/generic_full_path"]
+generic_full_path = ["utoipauto-macro/generic_full_path"]
 
 [dependencies]
-utoipauto-core.workspace = true
+utoipauto-macro.workspace = true
 
-quote.workspace = true
-syn.workspace = true
-proc-macro2.workspace = true
+[dev-dependencies]
+utoipa = { version = "4.2.3", features = ["preserve_path_order"] }
+syn = { version = "2.0.72", features = ["extra-traits", "full"] }

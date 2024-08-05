@@ -89,7 +89,7 @@ mod tests {
             paths = "p1"
         };
 
-        let attributes = extract_attributes(tokens.into());
+        let attributes = extract_attributes(tokens);
         assert_eq!(attributes.paths, "p1")
     }
 
@@ -99,7 +99,7 @@ mod tests {
             paths = "p1", thing = "thing", other = "other"
         };
 
-        let attributes = extract_attribute("thing", quote.into()).unwrap();
+        let attributes = extract_attribute("thing", quote).unwrap();
         assert_eq!(attributes, "thing");
     }
 
@@ -109,7 +109,7 @@ mod tests {
             paths = "p1", thing = "thing", other = "other"
         };
 
-        let attributes = extract_attribute("not_found", quote.into());
+        let attributes = extract_attribute("not_found", quote);
         assert_eq!(attributes, None);
     }
 
@@ -117,7 +117,7 @@ mod tests {
     fn test_extract_attribute_empty() {
         let quote = quote! {};
 
-        let attributes = extract_attribute("thing", quote.into());
+        let attributes = extract_attribute("thing", quote);
         assert_eq!(attributes, None);
     }
 
@@ -138,7 +138,7 @@ mod tests {
             paths = "p1", function_attribute_name = "handler", schema_attribute_name = "Schema", response_attribute_name = "Response"
         };
 
-        let attributes = extract_attributes(tokens.into());
+        let attributes = extract_attributes(tokens);
         assert_eq!(attributes.paths, "p1");
         assert_eq!(attributes.fn_attribute_name, "handler");
         assert_eq!(attributes.schema_attribute_name, "Schema");
