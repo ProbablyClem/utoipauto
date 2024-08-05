@@ -20,8 +20,8 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
 # Core dependencies
-utoipauto-core = { path = "utoipauto-core", version = "*" }
-utoipauto-macro = { path = "utoipauto-macro", version = "*" }
+utoipauto-core = { path = "utoipauto-core", version = "0.1" }
+utoipauto-macro = { path = "utoipauto-macro", version = "0.1" }
 
 # Macro dependencies
 quote = "1.0.36"
