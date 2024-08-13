@@ -8,7 +8,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTUP_TOOLCHAIN: none
 
 jobs:
   test:
@@ -23,8 +22,6 @@ jobs:
         uses: dtolnay/rust-toolchain@master # Needed to always have access to the latest releases. DO NOT REPLACE WITH STABLE!
         with:
           toolchain: ${{ matrix.rust }}
-        env:
-          RUSTUP_TOOLCHAIN: ${{ matrix.rust }}
       - name: add cargo caching
         uses: Swatinem/rust-cache@v2
       - name: Build
