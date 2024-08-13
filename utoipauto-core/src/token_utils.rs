@@ -17,7 +17,7 @@ pub fn extract_attributes(stream: proc_macro2::TokenStream) -> Parameters {
     let paths = extract_attribute("paths", stream.clone());
     let fn_attribute_name = extract_attribute("function_attribute_name", stream.clone());
     let schema_attribute_name = extract_attribute("schema_attribute_name", stream.clone());
-    let response_attribute_name = extract_attribute("response_attribute_name", stream.clone());
+    let response_attribute_name = extract_attribute("response_attribute_name", stream);
     // if no paths specified, we use the default path "./src"
     Parameters {
         paths: paths.unwrap_or("./src".to_string()),

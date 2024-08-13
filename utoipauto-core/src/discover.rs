@@ -13,8 +13,7 @@ pub fn discover_from_file(
     crate_name: String,
     params: &Parameters,
 ) -> (Vec<String>, Vec<String>, Vec<String>) {
-    let files =
-        parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
+    let files = parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
     files
         .into_iter()
@@ -36,11 +35,7 @@ pub fn discover_from_file(
         })
         .into_iter()
         .fold(
-            (
-                Vec::<String>::new(),
-                Vec::<String>::new(),
-                Vec::<String>::new(),
-            ),
+            (Vec::<String>::new(), Vec::<String>::new(), Vec::<String>::new()),
             |mut acc, v| {
                 match v {
                     DiscoverType::Fn(n) => acc.0.push(n),
@@ -74,11 +69,7 @@ fn parse_module_items(
         .filter(|e| {
             matches!(
                 e,
-                syn::Item::Mod(_)
-                    | syn::Item::Fn(_)
-                    | syn::Item::Struct(_)
-                    | syn::Item::Enum(_)
-                    | syn::Item::Impl(_)
+                syn::Item::Mod(_) | syn::Item::Fn(_) | syn::Item::Struct(_) | syn::Item::Enum(_) | syn::Item::Impl(_)
             )
         })
         .map(|v| match v {
@@ -147,14 +138,11 @@ fn parse_from_attr(
                     if nested_meta.path().segments[0].ident == "utoipa" {
                         if nested_meta.path().segments[1].ident == "ToSchema" && !is_generic {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident == "ToResponse"
-                            && !is_generic
-                        {
+                        } else if nested_meta.path().segments[1].ident == "ToResponse" && !is_generic {
                             out.push(DiscoverType::Response(name.to_string()));
                         }
                     }
-                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && !is_generic
-                {
+                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && !is_generic {
                     out.push(DiscoverType::Model(name.to_string()));
                 }
                 if nested_meta.path().is_ident(&params.response_attribute_name) {
@@ -164,11 +152,7 @@ fn parse_from_attr(
         }
         if is_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
-                out.push(DiscoverType::Model(parse_generic_schema(
-                    meta,
-                    name,
-                    imports.clone(),
-                )));
+                out.push(DiscoverType::Model(parse_generic_schema(meta, name, imports.clone())));
 
                 Ok(())
             });
@@ -284,11 +268,7 @@ fn merge_nested_generics(nested_generics: Vec<String>) -> String {
     generics
 }
 
-fn parse_from_impl(
-    im: &syn::ItemImpl,
-    module_base_path: &str,
-    params: &Parameters,
-) -> Vec<DiscoverType> {
+fn parse_from_impl(im: &syn::ItemImpl, module_base_path: &str, params: &Parameters) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
         .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
@@ -368,10 +348,7 @@ fn extract_use_statements(file_path: &str, crate_name: &str) -> Vec<String> {
         }
 
         if line.starts_with("use") {
-            line = line
-                .replace("use ", "")
-                .replace(";", "")
-                .replace(crate_name, "");
+            line = line.replace("use ", "").replace(";", "").replace(crate_name, "");
 
             if line.ends_with("{") {
                 is_multiline = true;
@@ -447,12 +424,7 @@ fn handle_partial_import(imports: Vec<String>, name: &str) -> Option<String> {
 
 #[cfg(feature = "generic_full_path")]
 fn import_to_full_path(import: &str) -> String {
-    import
-        .split(" as ")
-        .next()
-        .unwrap_or(&import)
-        .trim()
-        .to_string()
+    import.split(" as ").next().unwrap_or(&import).trim().to_string()
 }
 
 #[cfg(feature = "generic_full_path")]
@@ -505,8 +477,7 @@ mod test {
         let part = "PartialImportGenericSchema<more_schemas::MoreSchema>";
         let name = "crate";
         let imports = vec!["crate::generic_full_path::more_schemas".to_string()];
-        let expected =
-            "PartialImportGenericSchema<crate::generic_full_path::more_schemas::MoreSchema>";
+        let expected = "PartialImportGenericSchema<crate::generic_full_path::more_schemas::MoreSchema>";
         let result = process_one_generic(part, name, imports);
         assert_eq!(result, expected);
     }
@@ -550,10 +521,7 @@ mod test {
     #[test]
     #[cfg(feature = "generic_full_path")]
     fn test_find_import_single_module() {
-        let imports = vec![
-            "module1::name".to_string(),
-            "module1::other_name".to_string(),
-        ];
+        let imports = vec!["module1::name".to_string(), "module1::other_name".to_string()];
         let current_module = "module1";
         let name = "name";
         let expected = "module1::name";

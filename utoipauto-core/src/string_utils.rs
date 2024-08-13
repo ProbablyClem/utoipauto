@@ -95,8 +95,7 @@ pub fn discover(paths: Vec<String>, params: &Parameters) -> (String, String, Str
     let mut uto_responses: String = String::new();
     for p in paths {
         let path = extract_crate_name(p);
-        let (list_fn, list_model, list_reponse) =
-            discover_from_file(path.paths, path.crate_name, params);
+        let (list_fn, list_model, list_reponse) = discover_from_file(path.paths, path.crate_name, params);
         // We need to add a coma after each path
         for i in list_fn {
             uto_paths.push_str(format!("{},", i).as_str());
@@ -142,8 +141,7 @@ mod test {
     fn test_extract_crate_name() {
         assert_eq!(
             super::extract_crate_name(
-                "utoipa_auto_macro::from::controllers::controller1 from utoipa_auto_macro"
-                    .to_string(),
+                "utoipa_auto_macro::from::controllers::controller1 from utoipa_auto_macro".to_string(),
             ),
             super::Path {
                 paths: "utoipa_auto_macro::from::controllers::controller1".to_string(),
@@ -155,9 +153,7 @@ mod test {
     #[test]
     fn test_extract_crate_name_default() {
         assert_eq!(
-            super::extract_crate_name(
-                "utoipa_auto_macro::from::controllers::controller1".to_string()
-            ),
+            super::extract_crate_name("utoipa_auto_macro::from::controllers::controller1".to_string()),
             super::Path {
                 paths: "utoipa_auto_macro::from::controllers::controller1".to_string(),
                 crate_name: "crate".to_string()

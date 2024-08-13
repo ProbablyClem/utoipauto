@@ -44,13 +44,7 @@ pub struct SingleControllerManualPathApiDocs {}
 
 #[test]
 fn test_manual_path() {
-    assert_eq!(
-        SingleControllerManualPathApiDocs::openapi()
-            .paths
-            .paths
-            .len(),
-        2
-    )
+    assert_eq!(SingleControllerManualPathApiDocs::openapi().paths.paths.len(), 2)
 }
 
 /// Discover from a module root
@@ -85,10 +79,7 @@ pub struct MultiControllerNoModuleApiDocs {}
 
 #[test]
 fn test_path_import_no_module() {
-    assert_eq!(
-        MultiControllerNoModuleApiDocs::openapi().paths.paths.len(),
-        2
-    )
+    assert_eq!(MultiControllerNoModuleApiDocs::openapi().paths.paths.len(), 2)
 }
 
 // Discover from multiple controllers new syntax
