@@ -25,6 +25,8 @@ jobs:
         run: cargo test --verbose
       - name: Run tests with all features
         run: cargo test --all-features --verbose
+      - name: Run acceptance tests
+        run: cd crate_tests && cargo build --verbose
 
   format:
     name: Format

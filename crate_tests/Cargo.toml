@@ -1,0 +1,18 @@
+[workspace]
+members = ["crate_segment_path"]
+resolver = "2"
+
+[workspace.package]
+authors = ["ProbablyClem", "DenuxPlays", "joaquin041"]
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "A collection of crates to test utoipauto."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ProbablyClem/utoipauto"
+homepage = "https://github.com/ProbablyClem/utoipauto"
+
+[workspace.dependencies]
+utoipauto = { path = "../utoipauto", version = "0.1"}
+utoipa = "4.2.3"
