@@ -31,6 +31,23 @@ jobs:
       - name: Run tests with all features
         run: cargo test --all-features --verbose
 
+  acceptance-tests:
+    name: Acceptance Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: [ "stable", "nightly" ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: install toolchain
+        uses: dtolnay/rust-toolchain@master # Needed to always have access to the latest releases. DO NOT REPLACE WITH STABLE!
+        with:
+          toolchain: ${{ matrix.rust }}
+      - name: add cargo caching
+        uses: Swatinem/rust-cache@v2
+      - name: Run acceptance tests
+        run: cd acceptance && cargo test --verbose
+
   format:
     name: Format
     runs-on: ubuntu-latest
