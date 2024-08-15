@@ -9,9 +9,11 @@
 
 Utoipa is a great crate for generating documentation (openapi/swagger) via source code.
 
-But since Rust is a static programming language, we don't have the possibility of automatically discovering paths and dto in runtime and adding them to the documentation,
+But since Rust is a static programming language, we don't have the possibility of automatically discovering paths and
+dto in runtime and adding them to the documentation,
 
-For APIs with just a few endpoints, it's not that much trouble to add controller functions one by one, and DTOs one by one.
+For APIs with just a few endpoints, it's not that much trouble to add controller functions one by one, and DTOs one by
+one.
 
 But, if you have hundreds or even thousands of endpoints, the code becomes very verbose and difficult to maintain.
 
@@ -46,9 +48,11 @@ pub struct ApiDoc;
 
 ```
 
-The goal of this crate is to propose a macro that automates the detection of methods carrying Utoipa macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
+The goal of this crate is to propose a macro that automates the detection of methods carrying Utoipa
+macros (`#[utoipa::path(...]`), and adds them automatically. (it also detects sub-modules.)
 
-It also detects struct that derive or implement `ToSchema` for the `components(schemas)` section, and the `ToResponse` for the `components(responses)` section.
+It also detects struct that derive or implement `ToSchema` for the `components(schemas)` section, and the `ToResponse`
+for the `components(responses)` section.
 
 # Features
 
@@ -136,7 +140,8 @@ You can specify that the specified paths are from another crate by using the fro
 
 ### Import from src folder
 
-If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
+If no path is specified, the macro will automatically scan the `src` folder and add all the methods carrying
+the `#[utoipa::path(...)]` macro, and all structs deriving `ToSchema` and `ToResponse`.
 Here's an example of how to add all the methods contained in the src code.
 
 ```rust
@@ -207,7 +212,8 @@ pub struct ApiDoc;
 ### Import from filename
 
 Here's an example of how to add all the methods contained in the test_controller and test2_controller modules.
-you can also combine automatic and manual addition, as here we've added a method manually to the documentation "other_controller::get_users", and a schema "TestDTO".
+you can also combine automatic and manual addition, as here we've added a method manually to the documentation "
+other_controller::get_users", and a schema "TestDTO".
 
 ```rust
 
@@ -276,7 +282,8 @@ ex:
 
 ### Custom path detection
 
-By default, this macro will look for function with the `#[utoipa::path(...)]` attribute, but you can also specify a custom attribute to look for.
+By default, this macro will look for function with the `#[utoipa::path(...)]` attribute, but you can also specify a
+custom attribute to look for.
 
 ```rust
 #[handler]

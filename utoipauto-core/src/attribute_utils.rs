@@ -145,10 +145,7 @@ mod test {
 
     #[test]
     fn test_extract_paths() {
-        assert_eq!(
-            super::extract_paths("paths(p1)".to_string()),
-            "p1".to_string()
-        );
+        assert_eq!(super::extract_paths("paths(p1)".to_string()), "p1".to_string());
     }
 
     #[test]
@@ -165,9 +162,9 @@ mod test {
                 &"".to_string(),
                 &"".to_string(),
             )
-            .to_token_stream()
-            .to_string()
-            .replace(' ', ""),
+                .to_token_stream()
+                .to_string()
+                .replace(' ', ""),
             "#[openapi(paths(./src),components(schemas(),responses()),)]".to_string()
         );
     }
@@ -248,8 +245,7 @@ mod test {
             .to_token_stream()
             .to_string()
             .replace(' ', ""),
-            "#[openapi(paths(./src,p1),components(schemas(model,m1),responses(response,r1)),)]"
-                .to_string()
+            "#[openapi(paths(./src,p1),components(schemas(model,m1),responses(response,r1)),)]".to_string()
         );
     }
 
@@ -265,8 +261,7 @@ mod test {
             .to_token_stream()
             .to_string()
             .replace(' ', ""),
-            "#[openapi(paths(./src,p1),components(schemas(m1),responses(response,r1)),)]"
-                .to_string()
+            "#[openapi(paths(./src,p1),components(schemas(m1),responses(response,r1)),)]".to_string()
         );
     }
 
