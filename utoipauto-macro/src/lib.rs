@@ -32,12 +32,7 @@ pub fn utoipauto(
     check_macro_placement(openapi_macro_attibutes.clone());
 
     // Update the openapi macro attributes with the newly discovered paths
-    update_openapi_macro_attributes(
-        openapi_macro_attibutes,
-        &uto_paths,
-        &uto_models,
-        &uto_responses,
-    );
+    update_openapi_macro_attributes(openapi_macro_attibutes, &uto_paths, &uto_models, &uto_responses);
 
     // Output the macro back to the compiler
     output_macro(openapi_macro)
@@ -45,10 +40,7 @@ pub fn utoipauto(
 
 /// Ignore the function from the auto discovery
 #[proc_macro_attribute]
-pub fn utoipa_ignore(
-    _attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn utoipa_ignore(_attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(item as syn::Item);
     let code = quote!(
           #input
@@ -59,10 +51,7 @@ pub fn utoipa_ignore(
 
 /// Useless macro to test custom function attributes
 #[proc_macro_attribute]
-pub fn test_handler(
-    _attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn test_handler(_attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(item as syn::ItemFn);
 
     let code = quote!(

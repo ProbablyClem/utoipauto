@@ -10,6 +10,7 @@ license.workspace = true
 readme.workspace = true
 repository.workspace = true
 homepage.workspace = true
+rust-version.workspace = true
 
 [features]
 generic_full_path = ["utoipauto-macro/generic_full_path"]
@@ -18,5 +19,5 @@ generic_full_path = ["utoipauto-macro/generic_full_path"]
 utoipauto-macro.workspace = true
 
 [dev-dependencies]
-utoipa = { version = "4.2.3", features = ["preserve_path_order"] }
-syn = { version = "2.0.72", features = ["extra-traits", "full"] }
+utoipa.workspace = true
+syn = { version = "2.0.74", features = ["extra-traits", "full"] }
