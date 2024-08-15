@@ -101,15 +101,8 @@ pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     full_crate_path.join("::")
 }
 
-fn find_segment_and_skip<'a>(
-    segments: &'a [&str],
-    to_find: &[&str],
-    to_skip: usize,
-) -> &'a [&'a str] {
-    match segments
-        .iter()
-        .rposition(|segment| to_find.contains(segment))
-    {
+fn find_segment_and_skip<'a>(segments: &'a [&str], to_find: &[&str], to_skip: usize) -> &'a [&'a str] {
+    match segments.iter().rposition(|segment| to_find.contains(segment)) {
         Some(idx) => &segments[(idx + to_skip)..],
         None => segments,
     }
@@ -122,10 +115,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_path() {
         assert_eq!(
-            extract_module_name_from_path(
-                "./utoipa-auto-macro/tests/controllers/controller1.rs",
-                "crate"
-            ),
+            extract_module_name_from_path("./utoipa-auto-macro/tests/controllers/controller1.rs", "crate"),
             "crate::controllers::controller1"
         );
     }
@@ -133,10 +123,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_path_windows() {
         assert_eq!(
-            extract_module_name_from_path(
-                ".\\utoipa-auto-macro\\tests\\controllers\\controller1.rs",
-                "crate"
-            ),
+            extract_module_name_from_path(".\\utoipa-auto-macro\\tests\\controllers\\controller1.rs", "crate"),
             "crate::controllers::controller1"
         );
     }
@@ -151,18 +138,12 @@ mod tests {
 
     #[test]
     fn test_extract_module_name_from_lib() {
-        assert_eq!(
-            extract_module_name_from_path("./src/lib.rs", "crate"),
-            "crate"
-        );
+        assert_eq!(extract_module_name_from_path("./src/lib.rs", "crate"), "crate");
     }
 
     #[test]
     fn test_extract_module_name_from_main() {
-        assert_eq!(
-            extract_module_name_from_path("./src/main.rs", "crate"),
-            "crate"
-        );
+        assert_eq!(extract_module_name_from_path("./src/main.rs", "crate"), "crate");
     }
 
     #[test]
@@ -192,10 +173,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_folders_nested() {
         assert_eq!(
-            extract_module_name_from_path(
-                "./src/applications/src/retail_api/controllers/mod.rs",
-                "crate"
-            ),
+            extract_module_name_from_path("./src/applications/src/retail_api/controllers/mod.rs", "crate"),
             "crate::retail_api::controllers"
         );
     }
@@ -203,10 +181,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_folders_nested_external_crate() {
         assert_eq!(
-            extract_module_name_from_path(
-                "./src/applications/src/retail_api/controllers/mod.rs",
-                "other_crate"
-            ),
+            extract_module_name_from_path("./src/applications/src/retail_api/controllers/mod.rs", "other_crate"),
             "other_crate::retail_api::controllers"
         );
     }
@@ -214,10 +189,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_workspace_with_prefix_path() {
         assert_eq!(
-            extract_module_name_from_path(
-                "./crates/server/src/routes_lib/routes/asset.rs",
-                "crate::routes"
-            ),
+            extract_module_name_from_path("./crates/server/src/routes_lib/routes/asset.rs", "crate::routes"),
             "crate::routes::asset"
         );
     }

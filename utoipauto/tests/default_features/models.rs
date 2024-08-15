@@ -45,9 +45,7 @@ impl<'s> ToResponse<'s> for ModelResponseImpl {
     fn response() -> (&'s str, RefOr<Response>) {
         (
             "ModelResponseImpl",
-            ResponseBuilder::new()
-                .description("A manual response")
-                .into(),
+            ResponseBuilder::new().description("A manual response").into(),
         )
     }
 }
@@ -59,9 +57,7 @@ impl<'s> utoipa::ToResponse<'s> for ModelResponseImplFullName {
     fn response() -> (&'s str, RefOr<Response>) {
         (
             "ModelResponseImplFullName",
-            ResponseBuilder::new()
-                .description("A manual response")
-                .into(),
+            ResponseBuilder::new().description("A manual response").into(),
         )
     }
 }

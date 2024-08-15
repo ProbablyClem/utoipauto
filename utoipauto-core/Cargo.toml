@@ -10,6 +10,7 @@ license.workspace = true
 readme.workspace = true
 repository.workspace = true
 homepage.workspace = true
+rust-version.workspace = true
 
 [features]
 generic_full_path = []
@@ -20,4 +21,4 @@ syn.workspace = true
 proc-macro2.workspace = true
 
 [dev-dependencies]
-utoipa = { version = "4.2.0", features = ["preserve_path_order"] }
+utoipa.workspace = true
