@@ -14,5 +14,5 @@ repository = "https://github.com/ProbablyClem/utoipauto"
 homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
-utoipauto = { path = "../utoipauto", version = "0.1"}
+utoipauto = { path = "../utoipauto", version = "0.1" }
 utoipa = "4.2.3"
