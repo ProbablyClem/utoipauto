@@ -1,5 +1,5 @@
 [package]
-name = "utoipauto-lib-test"
+name = "utoipauto-lib-test-new"
 description = "Test library that tests folders in the src directory."
 authors.workspace = true
 version.workspace = true
@@ -16,4 +16,3 @@ path = "crate_folder/lib.rs"
 [dependencies]
 utoipa.workspace = true
 utoipauto.workspace = true
-utoipauto-lib-test-new = { path = "../new_crate_segment_path" }

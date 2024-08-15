@@ -190,6 +190,15 @@ version = "0.1.0"
 dependencies = [
  "utoipa",
  "utoipauto",
+ "utoipauto-lib-test-new",
+]
+
+[[package]]
+name = "utoipauto-lib-test-new"
+version = "0.1.0"
+dependencies = [
+ "utoipa",
+ "utoipauto",
 ]
 
 [[package]]

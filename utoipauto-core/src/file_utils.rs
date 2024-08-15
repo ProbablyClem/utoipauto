@@ -197,10 +197,7 @@ mod tests {
     #[test]
     fn test_extract_module_name_from_workspace_with_external_crate_and_underscore() {
         assert_eq!(
-            extract_module_name_from_path(
-                "./src/applications/src/retail-api/controllers/mod.rs",
-                "other-crate"
-            ),
+            extract_module_name_from_path("./src/applications/src/retail-api/controllers/mod.rs", "other-crate"),
             "other_crate::retail-api::controllers"
         );
     }
