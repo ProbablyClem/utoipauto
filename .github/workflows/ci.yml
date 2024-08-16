@@ -22,8 +22,6 @@ jobs:
         uses: dtolnay/rust-toolchain@master # Needed to always have access to the latest releases. DO NOT REPLACE WITH STABLE!
         with:
           toolchain: ${{ matrix.rust }}
-      - name: add cargo caching
-        uses: Swatinem/rust-cache@v2
       - name: Build
         run: cargo build --all-features --verbose
       - name: Run tests
@@ -47,8 +45,6 @@ jobs:
         uses: dtolnay/rust-toolchain@master # Needed to always have access to the latest releases. DO NOT REPLACE WITH STABLE!
         with:
           toolchain: ${{ matrix.rust }}
-      - name: add cargo caching
-        uses: Swatinem/rust-cache@v2
       - name: Run acceptance tests (build)
         run: cargo build
       - name: Run acceptance tests (tests)
@@ -63,8 +59,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
-      - name: add cargo caching
-        uses: Swatinem/rust-cache@v2
       - name: run formater
         run: cargo fmt --check
 
@@ -77,7 +71,5 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - name: add cargo caching
-        uses: Swatinem/rust-cache@v2
       - name: run formater
         run: cargo clippy -- -D warnings
