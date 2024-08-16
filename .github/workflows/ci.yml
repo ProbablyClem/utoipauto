@@ -34,6 +34,10 @@ jobs:
   acceptance-tests:
     name: Acceptance Tests
     runs-on: ubuntu-latest
+    # Set default working directory
+    defaults:
+      run:
+        working-directory: ./acceptance
     strategy:
       matrix:
         rust: [ "stable", "nightly" ]
@@ -45,8 +49,10 @@ jobs:
           toolchain: ${{ matrix.rust }}
       - name: add cargo caching
         uses: Swatinem/rust-cache@v2
-      - name: Run acceptance tests
-        run: cd acceptance && cargo test --verbose
+      - name: Run acceptance tests (build)
+        run: cargo build
+      - name: Run acceptance tests (tests)
+        run: cargo test --verbose
 
   format:
     name: Format
