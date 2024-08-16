@@ -16,4 +16,4 @@ path = "crate_folder/lib.rs"
 [dependencies]
 utoipa.workspace = true
 utoipauto.workspace = true
-utoipauto-lib-test-new = { path = "../new_crate_segment_path" }
+folder-in-src = { path = "../folder_in_src" }

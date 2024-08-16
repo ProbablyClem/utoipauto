@@ -1,5 +1,5 @@
 [workspace]
-members = ["crate_segment_path", "new_crate_segment_path"]
+members = ["crate_segment_path", "folder_in_src"]
 resolver = "2"
 
 [workspace.package]

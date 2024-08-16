@@ -8,7 +8,7 @@ use utoipauto::utoipauto;
 pub struct CrateInAnotherPath {}
 
 #[utoipauto(
-    paths = "( ./new_crate_segment_path/crate_folder/new_sub_folder/paths.rs from utoipauto-lib-test-new::new_sub_folder )"
+    paths = "( ./folder_in_src/crate_folder/new_sub_folder/paths.rs from folder-in-src::new_sub_folder )"
 )]
 #[derive(OpenApi)]
 #[openapi(info(title = "Percentage API", version = "1.0.0"))]

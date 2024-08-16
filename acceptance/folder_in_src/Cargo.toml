@@ -1,5 +1,5 @@
 [package]
-name = "utoipauto-lib-test-new"
+name = "folder-in-src"
 description = "Test library that tests folders in the src directory."
 authors.workspace = true
 version.workspace = true
