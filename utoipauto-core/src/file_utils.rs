@@ -87,6 +87,7 @@ pub fn extract_module_name_from_path(path: &str, crate_name: &str) -> String {
     // Also skip fragments that are already out of the crate name. For example,
     // `./src/lib/my/module/name from crate::my::module` should turn into `crate::my::module:name`,
     // and not into `crate::lib::my::module::name`.
+    let crate_name = crate_name.replace("-", "_");
     let mut crate_segments = crate_name.split("::");
     let first_crate_fragment = crate_segments.next().expect("Crate should not be empty");
     let segments_inside_crate = match crate_segments.next() {
@@ -190,6 +191,14 @@ mod tests {
         assert_eq!(
             extract_module_name_from_path("./crates/server/src/routes_lib/routes/asset.rs", "crate::routes"),
             "crate::routes::asset"
+        );
+    }
+
+    #[test]
+    fn test_extract_module_name_from_workspace_with_external_crate_and_underscore() {
+        assert_eq!(
+            extract_module_name_from_path("./src/applications/src/retail-api/controllers/mod.rs", "other-crate"),
+            "other_crate::retail-api::controllers"
         );
     }
 }
