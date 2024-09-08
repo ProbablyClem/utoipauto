@@ -1,11 +1,11 @@
 use std::vec;
 
-use quote::ToTokens;
-use syn::meta::ParseNestedMeta;
-use syn::{punctuated::Punctuated, Attribute, Item, ItemFn, Meta, Token, Type};
-
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 use crate::token_utils::Parameters;
+use quote::ToTokens;
+use syn::meta::ParseNestedMeta;
+use syn::token::Comma;
+use syn::{punctuated::Punctuated, Attribute, GenericParam, Item, ItemFn, Meta, Token, Type};
 
 /// Discover everything from a file, will explore folder recursively
 pub fn discover_from_file(
@@ -85,26 +85,20 @@ fn parse_module_items(
                 .into_iter()
                 .map(|item| DiscoverType::Fn(build_path(module_path, &item)))
                 .collect(),
-            syn::Item::Struct(s) => {
-                let is_generic = !s.generics.params.is_empty();
-                parse_from_attr(
-                    &s.attrs,
-                    &build_path(module_path, &s.ident.to_string()),
-                    is_generic,
-                    imports.clone(),
-                    params,
-                )
-            }
-            syn::Item::Enum(e) => {
-                let is_generic = !e.generics.params.is_empty();
-                parse_from_attr(
-                    &e.attrs,
-                    &build_path(module_path, &e.ident.to_string()),
-                    is_generic,
-                    imports.clone(),
-                    params,
-                )
-            }
+            syn::Item::Struct(s) => parse_from_attr(
+                &s.attrs,
+                &build_path(module_path, &s.ident.to_string()),
+                s.generics.params,
+                imports.clone(),
+                params,
+            ),
+            syn::Item::Enum(e) => parse_from_attr(
+                &e.attrs,
+                &build_path(module_path, &e.ident.to_string()),
+                e.generics.params,
+                imports.clone(),
+                params,
+            ),
             syn::Item::Impl(im) => parse_from_impl(&im, module_path, params),
             _ => vec![],
         })
@@ -118,11 +112,12 @@ fn parse_module_items(
 fn parse_from_attr(
     a: &Vec<Attribute>,
     name: &str,
-    is_generic: bool,
+    generic_params: Punctuated<GenericParam, Comma>,
     imports: Vec<String>,
     params: &Parameters,
 ) -> Vec<DiscoverType> {
     let mut out: Vec<DiscoverType> = vec![];
+    let is_non_lifetime_generic = !generic_params.iter().all(|p| matches!(p, GenericParam::Lifetime(_)));
 
     for attr in a {
         let meta = &attr.meta;
@@ -136,13 +131,13 @@ fn parse_from_attr(
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 {
                     if nested_meta.path().segments[0].ident == "utoipa" {
-                        if nested_meta.path().segments[1].ident == "ToSchema" && !is_generic {
+                        if nested_meta.path().segments[1].ident == "ToSchema" && !is_non_lifetime_generic {
                             out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident == "ToResponse" && !is_generic {
+                        } else if nested_meta.path().segments[1].ident == "ToResponse" && !is_non_lifetime_generic {
                             out.push(DiscoverType::Response(name.to_string()));
                         }
                     }
-                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && !is_generic {
+                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && !is_non_lifetime_generic {
                     out.push(DiscoverType::Model(name.to_string()));
                 }
                 if nested_meta.path().is_ident(&params.response_attribute_name) {
@@ -150,9 +145,14 @@ fn parse_from_attr(
                 }
             }
         }
-        if is_generic && attr.path().is_ident("aliases") {
+        if is_non_lifetime_generic && attr.path().is_ident("aliases") {
             let _ = attr.parse_nested_meta(|meta| {
-                out.push(DiscoverType::Model(parse_generic_schema(meta, name, imports.clone())));
+                out.push(DiscoverType::Model(parse_generic_schema(
+                    meta,
+                    name,
+                    imports.clone(),
+                    &generic_params,
+                )));
 
                 Ok(())
             });
@@ -163,7 +163,12 @@ fn parse_from_attr(
 }
 
 #[cfg(not(feature = "generic_full_path"))]
-fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>) -> String {
+fn parse_generic_schema(
+    meta: ParseNestedMeta,
+    name: &str,
+    _imports: Vec<String>,
+    non_lifetime_generic_params: &Punctuated<GenericParam, Comma>,
+) -> String {
     let splited_types = split_type(meta);
     let mut nested_generics = Vec::new();
 
@@ -171,8 +176,14 @@ fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>
         let parts: Vec<&str> = spl_type.split(',').collect();
         let mut generics = Vec::new();
 
-        for part in parts {
-            generics.push(part);
+        for (index, part) in parts.iter().enumerate() {
+            match non_lifetime_generic_params
+                .get(index)
+                .expect("Too few parameters provided to generic")
+            {
+                GenericParam::Lifetime(_) => (),
+                _ => generics.push(part.to_string()),
+            };
         }
 
         nested_generics.push(generics.join(", "));
@@ -184,7 +195,12 @@ fn parse_generic_schema(meta: ParseNestedMeta, name: &str, _imports: Vec<String>
 }
 
 #[cfg(feature = "generic_full_path")]
-fn parse_generic_schema(meta: ParseNestedMeta, name: &str, imports: Vec<String>) -> String {
+fn parse_generic_schema(
+    meta: ParseNestedMeta,
+    name: &str,
+    imports: Vec<String>,
+    non_lifetime_generic_params: &Punctuated<GenericParam, Comma>,
+) -> String {
     let splitted_types = split_type(meta);
     let mut nested_generics = Vec::new();
 
@@ -192,8 +208,15 @@ fn parse_generic_schema(meta: ParseNestedMeta, name: &str, imports: Vec<String>)
         let parts: Vec<&str> = spl_type.split(",").collect();
         let mut generics = Vec::new();
 
-        for part in parts {
-            generics.push(process_one_generic(part, name, imports.clone()));
+        for (index, part) in parts.iter().enumerate() {
+            match non_lifetime_generic_params
+                .get(index)
+                .expect("Too few parameters provided to generic")
+            {
+                GenericParam::Lifetime(_) => (),
+                GenericParam::Type(_) => generics.push(process_one_generic(part, name, imports.clone())),
+                GenericParam::Const(_) => generics.push(part.to_string()),
+            };
         }
 
         nested_generics.push(generics.join(", "));
