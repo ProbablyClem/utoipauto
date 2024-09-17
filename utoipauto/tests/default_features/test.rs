@@ -3,9 +3,9 @@ use utoipa::OpenApi;
 use utoipauto::utoipauto;
 
 use crate::default_features::controllers;
-use crate::default_features::generics::GenericSchema;
-use crate::default_features::generics::NonGenericSchema;
-use crate::default_features::generics::NonGenericSchema2;
+use crate::default_features::type_generics::GenericSchema;
+use crate::default_features::type_generics::NonGenericSchema;
+use crate::default_features::type_generics::NonGenericSchema2;
 
 // Discover from multiple controllers
 #[utoipauto(
