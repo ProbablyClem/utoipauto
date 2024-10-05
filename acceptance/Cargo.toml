@@ -15,4 +15,4 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
 utoipauto = { path = "../utoipauto", version = "0.2" }
-utoipa = { git = "https://github.com/juhaku/utoipa", rev = "ceb543e4d8ceeea47416989647b4c8dfc46cac6d", features = ["preserve_path_order"] }
+utoipa = { git = "https://github.com/juhaku/utoipa", rev = "22ea68da5134f478283feb212cbb584ed8bac612", features = ["preserve_path_order"] }
