@@ -9,15 +9,14 @@ use utoipauto::utoipauto;
 
 #[utoipauto(paths = "./generics/src")]
 #[derive(Debug, OpenApi)]
-#[openapi(
-    info(
-        title = "Generic Test Api"
-    )
-)]
+#[openapi(info(title = "Generic Test Api"))]
 pub(crate) struct ApiDoc;
 
 fn main() {
-    println!("Our OpenApi documentation {}", ApiDoc::openapi().to_pretty_json().unwrap());
+    println!(
+        "Our OpenApi documentation {}",
+        ApiDoc::openapi().to_pretty_json().unwrap()
+    );
 }
 
 #[cfg(test)]

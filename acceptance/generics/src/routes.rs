@@ -44,9 +44,18 @@ pub fn get_array_persons() -> ArrayResponse<Person, 3> {
     ArrayResponse {
         status: 200,
         data: [
-            Person { name: "John Doe".to_string(), age: 30 },
-            Person { name: "Jane Doe".to_string(), age: 25 },
-            Person { name: "Jim Doe".to_string(), age: 20 },
+            Person {
+                name: "John Doe".to_string(),
+                age: 30,
+            },
+            Person {
+                name: "Jane Doe".to_string(),
+                age: 25,
+            },
+            Person {
+                name: "Jim Doe".to_string(),
+                age: 20,
+            },
         ],
     }
 }
@@ -91,8 +100,14 @@ pub fn get_combined_persons() -> CombinedResponse<'static, Person, 3> {
             status: 200,
             data: [
                 person_ref.clone(),
-                Person { name: "Jane Doe".to_string(), age: 25 },
-                Person { name: "Jim Doe".to_string(), age: 20 },
+                Person {
+                    name: "Jane Doe".to_string(),
+                    age: 25,
+                },
+                Person {
+                    name: "Jim Doe".to_string(),
+                    age: 20,
+                },
             ],
         },
         borrowed_response: BorrowedResponse {

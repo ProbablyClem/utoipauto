@@ -17,8 +17,11 @@ pub enum Person {
     Admin(#[content("application/vnd-custom-v1+json")] Admin),
 
     #[response(example = json!({"name": "name3", "id": 1}))]
-    Admin2(#[content("application/vnd-custom-v2+json")]
-           #[to_schema] Admin2),
+    Admin2(
+        #[content("application/vnd-custom-v2+json")]
+        #[to_schema]
+        Admin2,
+    ),
 }
 
 #[derive(utoipa::ToSchema)]

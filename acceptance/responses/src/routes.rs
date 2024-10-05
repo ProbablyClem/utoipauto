@@ -1,12 +1,6 @@
 use crate::response::{Admin, Person, UserResponses};
 
-#[utoipa::path(
-    get,
-    path = "/api/user",
-    responses(
-        UserResponses
-    )
-)]
+#[utoipa::path(get, path = "/api/user", responses(UserResponses))]
 fn get_user() -> UserResponses {
     UserResponses::NotFound
 }
