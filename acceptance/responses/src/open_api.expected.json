@@ -1,0 +1,159 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Responses Test Api",
+        "description": "A collection of crates to test utoipauto.",
+        "contact": {
+            "name": "ProbablyClem"
+        },
+        "license": {
+            "name": "MIT OR Apache-2.0"
+        },
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_user",
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Success response",
+                                    "required": [
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequest"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/person": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_person",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Person"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Admin": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Admin2": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "BadRequest": {
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "Person": {
+                "description": "",
+                "content": {
+                    "application/vnd-custom-v1+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Admin"
+                        },
+                        "examples": {
+                            "Person1": {
+                                "value": {
+                                    "name": "name1"
+                                }
+                            },
+                            "Person2": {
+                                "value": {
+                                    "name": "name2"
+                                }
+                            }
+                        }
+                    },
+                    "application/vnd-custom-v2+json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "example": {
+                            "id": 1,
+                            "name": "name3"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

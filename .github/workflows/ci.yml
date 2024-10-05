@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rust: [ "1.74.0", "stable", "nightly" ]
+        rust: [ "1.75.0", "stable", "nightly" ]
     steps:
       - uses: actions/checkout@v4
       - name: install toolchain
