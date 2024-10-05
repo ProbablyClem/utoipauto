@@ -1,5 +1,5 @@
 [workspace]
-members = ["crate_segment_path", "folder_in_src", "generics"]
+members = ["crate_segment_path", "folder_in_src", "generics", "responses"]
 resolver = "2"
 
 [workspace.package]
@@ -15,4 +15,4 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
 utoipauto = { path = "../utoipauto", version = "0.2" }
-utoipa = { git = "https://github.com/juhaku/utoipa", rev = "abd3572b3544f870a46e4ee749a6d480509a7c63", features = ["preserve_path_order"] }
+utoipa = { git = "https://github.com/juhaku/utoipa", rev = "ceb543e4d8ceeea47416989647b4c8dfc46cac6d", features = ["preserve_path_order"] }

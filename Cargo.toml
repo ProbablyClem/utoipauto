@@ -17,7 +17,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/ProbablyClem/utoipauto"
 homepage = "https://github.com/ProbablyClem/utoipauto"
-rust-version = "1.74.0"
+rust-version = "1.75.0"
 
 [workspace.dependencies]
 # Core dependencies
@@ -25,7 +25,7 @@ utoipauto-core = { path = "utoipauto-core", version = "0.2" }
 utoipauto-macro = { path = "utoipauto-macro", version = "0.2" }
 
 # Utoipa
-utoipa = { git = "https://github.com/juhaku/utoipa", rev = "abd3572b3544f870a46e4ee749a6d480509a7c63", features = ["preserve_path_order"] }
+utoipa = { git = "https://github.com/juhaku/utoipa", rev = "ceb543e4d8ceeea47416989647b4c8dfc46cac6d", features = ["preserve_path_order"] }
 
 # Macro dependencies
 quote = "1.0.36"
