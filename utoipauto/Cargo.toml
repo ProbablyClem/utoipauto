@@ -13,7 +13,7 @@ homepage.workspace = true
 rust-version.workspace = true
 
 [features]
-generic_full_path = ["utoipauto-macro/generic_full_path"]
+schema_discovery = ["utoipauto-macro/schema_discovery"]
 
 [dependencies]
 utoipauto-macro.workspace = true

@@ -25,7 +25,7 @@ utoipauto-core = { path = "utoipauto-core", version = "0.2" }
 utoipauto-macro = { path = "utoipauto-macro", version = "0.2" }
 
 # Utoipa
-utoipa = { git = "https://github.com/juhaku/utoipa", rev = "22ea68da5134f478283feb212cbb584ed8bac612", features = ["preserve_path_order"] }
+utoipa = { git = "https://github.com/juhaku/utoipa", rev = "d2f076aafbe2569101fc279e9caa359a7ad72fdb", features = ["preserve_path_order"] }
 
 # Macro dependencies
 quote = "1.0.36"
