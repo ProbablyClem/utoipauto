@@ -139,7 +139,7 @@ checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
 [[package]]
 name = "utoipa"
 version = "5.0.0-rc.0"
-source = "git+https://github.com/juhaku/utoipa?rev=d2f076aafbe2569101fc279e9caa359a7ad72fdb#d2f076aafbe2569101fc279e9caa359a7ad72fdb"
+source = "git+https://github.com/juhaku/utoipa?rev=7d105161d3f25d3634f1ba0445a98a016a782cc7#7d105161d3f25d3634f1ba0445a98a016a782cc7"
 dependencies = [
  "indexmap",
  "serde",
@@ -150,7 +150,7 @@ dependencies = [
 [[package]]
 name = "utoipa-gen"
 version = "5.0.0-rc.0"
-source = "git+https://github.com/juhaku/utoipa?rev=d2f076aafbe2569101fc279e9caa359a7ad72fdb#d2f076aafbe2569101fc279e9caa359a7ad72fdb"
+source = "git+https://github.com/juhaku/utoipa?rev=7d105161d3f25d3634f1ba0445a98a016a782cc7#7d105161d3f25d3634f1ba0445a98a016a782cc7"
 dependencies = [
  "proc-macro2",
  "quote",
