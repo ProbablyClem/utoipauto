@@ -1,4 +1,4 @@
-use crate::schemas::{ArrayResponse, BorrowedResponse, CombinedResponse, NestedResponse, Person, Response};
+use crate::schemas::{BorrowedResponse, CombinedResponse, NestedResponse, Person, Response};
 
 #[utoipa::path(get,
     path = "/persons",
@@ -35,32 +35,6 @@ pub fn get_nested_persons() -> NestedResponse<Person> {
 }
 
 #[utoipa::path(get,
-    path = "/array_persons",
-    responses(
-(status = 200, description = "An ArrayResponse<Person, 3>", content_type = "application/json", body = ArrayResponse<Person, 3>),
-    )
-)]
-pub fn get_array_persons() -> ArrayResponse<Person, 3> {
-    ArrayResponse {
-        status: 200,
-        data: [
-            Person {
-                name: "John Doe".to_string(),
-                age: 30,
-            },
-            Person {
-                name: "Jane Doe".to_string(),
-                age: 25,
-            },
-            Person {
-                name: "Jim Doe".to_string(),
-                age: 20,
-            },
-        ],
-    }
-}
-
-#[utoipa::path(get,
     path = "/borrowed_persons",
     responses(
 (status = 200, description = "A BorrowedResponse<'static, Person>", content_type = "application/json", body = BorrowedResponse<'static, Person>),
@@ -80,10 +54,10 @@ pub fn get_borrowed_persons() -> BorrowedResponse<'static, Person> {
 #[utoipa::path(get,
     path = "/combined_persons",
     responses(
-(status = 200, description = "A CombinedResponse<'static, Person, 3>", content_type = "application/json", body = CombinedResponse<'static, Person, 3>),
+(status = 200, description = "A CombinedResponse<'static, Person>", content_type = "application/json", body = CombinedResponse<'static, Person>),
     )
 )]
-pub fn get_combined_persons() -> CombinedResponse<'static, Person, 3> {
+pub fn get_combined_persons() -> CombinedResponse<'static, Person> {
     let person = Box::new(Person {
         name: "John Doe".to_string(),
         age: 30,
@@ -95,20 +69,6 @@ pub fn get_combined_persons() -> CombinedResponse<'static, Person, 3> {
                 status: 200,
                 data: person_ref.clone(),
             },
-        },
-        array_response: ArrayResponse {
-            status: 200,
-            data: [
-                person_ref.clone(),
-                Person {
-                    name: "Jane Doe".to_string(),
-                    age: 25,
-                },
-                Person {
-                    name: "Jim Doe".to_string(),
-                    age: 20,
-                },
-            ],
         },
         borrowed_response: BorrowedResponse {
             status: 200,
