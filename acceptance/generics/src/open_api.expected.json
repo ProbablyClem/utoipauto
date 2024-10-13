@@ -1,328 +1,205 @@
 {
-    "components": {
-        "schemas": {
-            "ArrayResponse_Person": {
-                "properties": {
-                    "data": {
-                        "items": {
-                            "properties": {
-                                "age": {
-                                    "format": "int32",
-                                    "minimum": 0,
-                                    "type": "integer"
-                                },
-                                "name": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "name",
-                                "age"
-                            ],
-                            "type": "object"
-                        },
-                        "type": "array"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
+  "components": {
+    "schemas": {
+      "BorrowedResponse_Person": {
+        "properties": {
+          "data": {
+            "properties": {
+              "age": {
+                "format": "int32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
             },
-            "ArrayResponse_T_N": {
-                "properties": {
-                    "data": {
-                        "items": {
-                            "$ref": "#/components/schemas/Person"
-                        },
-                        "type": "array"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
-            },
-            "BorrowedResponse_Person": {
-                "properties": {
-                    "data": {
-                        "properties": {
-                            "age": {
-                                "format": "int32",
-                                "minimum": 0,
-                                "type": "integer"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "name",
-                            "age"
-                        ],
-                        "type": "object"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
-            },
-            "BorrowedResponse_T": {
-                "properties": {
-                    "data": {
-                        "$ref": "#/components/schemas/Person"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
-            },
-            "CombinedResponse_Person": {
-                "properties": {
-                    "array_response": {
-                        "$ref": "#/components/schemas/ArrayResponse_T_N"
-                    },
-                    "borrowed_response": {
-                        "$ref": "#/components/schemas/BorrowedResponse_T"
-                    },
-                    "nested_response": {
-                        "$ref": "#/components/schemas/NestedResponse_T"
-                    }
-                },
-                "required": [
-                    "nested_response",
-                    "array_response",
-                    "borrowed_response"
-                ],
-                "type": "object"
-            },
-            "NestedResponse_Person": {
-                "properties": {
-                    "response": {
-                        "$ref": "#/components/schemas/Response_T"
-                    }
-                },
-                "required": [
-                    "response"
-                ],
-                "type": "object"
-            },
-            "NestedResponse_T": {
-                "properties": {
-                    "response": {
-                        "$ref": "#/components/schemas/Response_T"
-                    }
-                },
-                "required": [
-                    "response"
-                ],
-                "type": "object"
-            },
-            "Person": {
-                "properties": {
-                    "age": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    },
-                    "name": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "name",
-                    "age"
-                ],
-                "type": "object"
-            },
-            "Response_Person": {
-                "properties": {
-                    "data": {
-                        "properties": {
-                            "age": {
-                                "format": "int32",
-                                "minimum": 0,
-                                "type": "integer"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "name",
-                            "age"
-                        ],
-                        "type": "object"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
-            },
-            "Response_T": {
-                "properties": {
-                    "data": {
-                        "$ref": "#/components/schemas/Person"
-                    },
-                    "status": {
-                        "format": "int32",
-                        "minimum": 0,
-                        "type": "integer"
-                    }
-                },
-                "required": [
-                    "status",
-                    "data"
-                ],
-                "type": "object"
-            }
-        }
-    },
-    "info": {
-        "contact": {
-            "name": "ProbablyClem"
+            "required": [
+              "name",
+              "age"
+            ],
+            "type": "object"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
         },
-        "description": "A collection of crates to test utoipauto.",
-        "license": {
-            "name": "MIT OR Apache-2.0"
+        "required": [
+          "status",
+          "data"
+        ],
+        "type": "object"
+      },
+      "CombinedResponse_Person": {
+        "properties": {
+          "borrowed_response": {
+            "$ref": "#/components/schemas/BorrowedResponse_Person"
+          },
+          "nested_response": {
+            "$ref": "#/components/schemas/NestedResponse_Person"
+          }
         },
-        "title": "Generic Test Api",
-        "version": "0.1.0"
-    },
-    "openapi": "3.1.0",
-    "paths": {
-        "/array_persons": {
-            "get": {
-                "operationId": "get_array_persons",
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ArrayResponse_Person"
-                                }
-                            }
-                        },
-                        "description": "An ArrayResponse<Person, 3>"
-                    }
-                },
-                "tags": [
-                    "crate::routes"
-                ]
-            }
+        "required": [
+          "nested_response",
+          "borrowed_response"
+        ],
+        "type": "object"
+      },
+      "NestedResponse_Person": {
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/Response_Person"
+          }
         },
-        "/borrowed_persons": {
-            "get": {
-                "operationId": "get_borrowed_persons",
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BorrowedResponse_Person"
-                                }
-                            }
-                        },
-                        "description": "A BorrowedResponse<'static, Person>"
-                    }
-                },
-                "tags": [
-                    "crate::routes"
-                ]
-            }
+        "required": [
+          "response"
+        ],
+        "type": "object"
+      },
+      "Person": {
+        "properties": {
+          "age": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
         },
-        "/combined_persons": {
-            "get": {
-                "operationId": "get_combined_persons",
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CombinedResponse_Person"
-                                }
-                            }
-                        },
-                        "description": "A CombinedResponse<'static, Person, 3>"
-                    }
-                },
-                "tags": [
-                    "crate::routes"
-                ]
-            }
+        "required": [
+          "name",
+          "age"
+        ],
+        "type": "object"
+      },
+      "Response_Person": {
+        "properties": {
+          "data": {
+            "properties": {
+              "age": {
+                "format": "int32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "age"
+            ],
+            "type": "object"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
         },
-        "/nested_persons": {
-            "get": {
-                "operationId": "get_nested_persons",
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/NestedResponse_Person"
-                                }
-                            }
-                        },
-                        "description": "A NestedResponse<Person>"
-                    }
-                },
-                "tags": [
-                    "crate::routes"
-                ]
-            }
-        },
-        "/persons": {
-            "get": {
-                "operationId": "get_persons",
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Response_Person"
-                                }
-                            }
-                        },
-                        "description": "A Response<Person>"
-                    }
-                },
-                "tags": [
-                    "crate::routes"
-                ]
-            }
-        }
+        "required": [
+          "status",
+          "data"
+        ],
+        "type": "object"
+      }
     }
+  },
+  "info": {
+    "contact": {
+      "name": "ProbablyClem"
+    },
+    "description": "A collection of crates to test utoipauto.",
+    "license": {
+      "name": "MIT OR Apache-2.0"
+    },
+    "title": "Generic Test Api",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/borrowed_persons": {
+      "get": {
+        "operationId": "get_borrowed_persons",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BorrowedResponse_Person"
+                }
+              }
+            },
+            "description": "A BorrowedResponse<'static, Person>"
+          }
+        },
+        "tags": [
+          "crate::routes"
+        ]
+      }
+    },
+    "/combined_persons": {
+      "get": {
+        "operationId": "get_combined_persons",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CombinedResponse_Person"
+                }
+              }
+            },
+            "description": "A CombinedResponse<'static, Person>"
+          }
+        },
+        "tags": [
+          "crate::routes"
+        ]
+      }
+    },
+    "/nested_persons": {
+      "get": {
+        "operationId": "get_nested_persons",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestedResponse_Person"
+                }
+              }
+            },
+            "description": "A NestedResponse<Person>"
+          }
+        },
+        "tags": [
+          "crate::routes"
+        ]
+      }
+    },
+    "/persons": {
+      "get": {
+        "operationId": "get_persons",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_Person"
+                }
+              }
+            },
+            "description": "A Response<Person>"
+          }
+        },
+        "tags": [
+          "crate::routes"
+        ]
+      }
+    }
+  }
 }
