@@ -2,7 +2,6 @@ pub mod routes;
 pub mod schemas;
 
 use routes::*;
-use schemas::*;
 
 use utoipa::OpenApi;
 use utoipauto::utoipauto;
@@ -36,8 +35,7 @@ mod tests {
     #[test]
     fn test_openapi() {
         let open_api = ApiDoc::openapi().to_json().unwrap();
-        let expected_value = EXPECTED_OPEN_API;
 
-        assert_json_eq(&open_api, expected_value);
+        assert_json_eq(&open_api, EXPECTED_OPEN_API);
     }
 }
