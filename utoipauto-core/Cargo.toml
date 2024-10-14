@@ -12,9 +12,6 @@ repository.workspace = true
 homepage.workspace = true
 rust-version.workspace = true
 
-[features]
-schema_discovery = []
-
 [dependencies]
 quote.workspace = true
 syn.workspace = true

@@ -6,11 +6,6 @@ use quote::ToTokens;
 use syn::token::Comma;
 use syn::{punctuated::Punctuated, Attribute, GenericParam, Item, ItemFn, ItemImpl, Meta, Token};
 
-#[cfg(feature = "schema_discovery")]
-pub(crate) const SHOULD_PARSE_SCHEMA: bool = true;
-#[cfg(not(feature = "schema_discovery"))]
-pub(crate) const SHOULD_PARSE_SCHEMA: bool = false;
-
 /// Discover everything from a file, will explore folder recursively
 pub fn discover_from_file(
     src_path: String,
@@ -43,6 +38,7 @@ pub fn discover_from_file(
         )
 }
 
+#[allow(unused)]
 enum DiscoverType {
     Fn(String),
     Model(String),
@@ -111,19 +107,19 @@ fn parse_from_attr(
                 .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
                 .expect("Failed to parse derive attribute");
             for nested_meta in nested {
-                if nested_meta.path().segments.len() == 2 {
-                    if nested_meta.path().segments[0].ident == "utoipa" {
-                        if nested_meta.path().segments[1].ident == "ToSchema" && SHOULD_PARSE_SCHEMA {
-                            out.push(DiscoverType::Model(name.to_string()));
-                        } else if nested_meta.path().segments[1].ident == "ToResponse" {
-                            out.push(DiscoverType::Response(name.to_string()));
-                        }
+                if nested_meta.path().segments.len() == 2 && nested_meta.path().segments[0].ident == "utoipa" {
+                    match nested_meta.path().segments[1].ident.to_string().as_str() {
+                        "ToSchema" => out.push(DiscoverType::Model(name.to_string())),
+                        "ToResponse" => out.push(DiscoverType::Response(name.to_string())),
+                        _ => {}
                     }
-                } else if nested_meta.path().is_ident(&params.schema_attribute_name) && SHOULD_PARSE_SCHEMA {
-                    out.push(DiscoverType::Model(name.to_string()));
-                }
-                if nested_meta.path().is_ident(&params.response_attribute_name) {
-                    out.push(DiscoverType::Response(name.to_string()));
+                } else {
+                    if nested_meta.path().is_ident(&params.schema_attribute_name) {
+                        out.push(DiscoverType::Model(name.to_string()));
+                    }
+                    if nested_meta.path().is_ident(&params.response_attribute_name) {
+                        out.push(DiscoverType::Response(name.to_string()));
+                    }
                 }
             }
         }
@@ -137,7 +133,7 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
         .as_ref()
         .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
         .and_then(|impl_name| {
-            if impl_name.eq(params.schema_attribute_name.as_str()) && SHOULD_PARSE_SCHEMA {
+            return if impl_name.eq(params.schema_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(
                     module_base_path,
                     &im.self_ty.to_token_stream().to_string(),
@@ -149,7 +145,7 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
                 ))])
             } else {
                 None
-            }
+            };
         })
         .unwrap_or_default()
 }

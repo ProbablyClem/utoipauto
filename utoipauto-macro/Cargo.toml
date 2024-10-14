@@ -15,9 +15,6 @@ rust-version.workspace = true
 [lib]
 proc-macro = true
 
-[features]
-schema_discovery = ["utoipauto-core/schema_discovery"]
-
 [dependencies]
 utoipauto-core.workspace = true
 

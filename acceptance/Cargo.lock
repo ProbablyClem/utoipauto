@@ -20,7 +20,7 @@ dependencies = [
 name = "generics"
 version = "0.1.0"
 dependencies = [
- "serde_json",
+ "utility",
  "utoipa",
  "utoipauto",
 ]
@@ -77,6 +77,7 @@ name = "responses"
 version = "0.1.0"
 dependencies = [
  "serde_json",
+ "utility",
  "utoipa",
  "utoipauto",
 ]
@@ -137,9 +138,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
 
 [[package]]
+name = "utility"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
 name = "utoipa"
-version = "5.0.0-rc.0"
-source = "git+https://github.com/juhaku/utoipa?rev=7d105161d3f25d3634f1ba0445a98a016a782cc7#7d105161d3f25d3634f1ba0445a98a016a782cc7"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e2b34fc58a72021914a5745832024b2baa638fe771df5a35f3d1b69266bd92c"
 dependencies = [
  "indexmap",
  "serde",
@@ -149,8 +158,9 @@ dependencies = [
 
 [[package]]
 name = "utoipa-gen"
-version = "5.0.0-rc.0"
-source = "git+https://github.com/juhaku/utoipa?rev=7d105161d3f25d3634f1ba0445a98a016a782cc7#7d105161d3f25d3634f1ba0445a98a016a782cc7"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "866f11b33be38a747542f435578a164674b8922d958cc065d7f19319c19d4784"
 dependencies = [
  "proc-macro2",
  "quote",

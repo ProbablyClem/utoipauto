@@ -14,6 +14,12 @@ homepage.workspace = true
 unused = "allow"
 
 [dependencies]
+# Utoipa
 utoipa.workspace = true
 utoipauto.workspace = true
-serde_json = "1.0.128"
+
+# Serde
+serde_json.workspace = true
+
+# Utility
+utility.workspace = true

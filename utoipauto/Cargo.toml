@@ -12,9 +12,6 @@ repository.workspace = true
 homepage.workspace = true
 rust-version.workspace = true
 
-[features]
-schema_discovery = ["utoipauto-macro/schema_discovery"]
-
 [dependencies]
 utoipauto-macro.workspace = true
 
