@@ -95,33 +95,6 @@ The paths receives a String which must respect this structure :
 
 You can add several paths by separating them with a coma `","`.
 
-## Support for generic schemas
-
-We support generic schemas, but with a few drawbacks.
-<br>
-If you want to use generics, you have three ways to do it.
-
-1. use the full path
-
-```rust
-#[aliases(GenericSchema = path::to::Generic<path::to::Schema>)]
-```
-
-2. Import where utoipauto lives
-
-```rust
-use path::to::schema;
-```
-
-3. use `generic_full_path` feature
-
-Please keep in mind that this feature causes more build-time overhead.  
-Higher RAM usage, longer compile times and excessive disk usage (especially on larger projects) are the consequences.
-
-```toml
-utoipauto = { version = "*", feature = ["generic_full_path"] }
-```
-
 ## Usage with workspaces
 
 If you are using a workspace, you must specify the name of the crate in the path.
@@ -174,8 +147,8 @@ Here's an example of how to add all the methods and structs contained in the res
 use utoipauto::utoipauto;
 
 #[utoipauto(
-  paths = "./src/rest"
-  )]
+    paths = "./src/rest"
+)]
 #[derive(OpenApi)]
 #[openapi(
     tags(
@@ -195,8 +168,8 @@ Here's an example of how to add all methods and structs contained in the rest mo
 use utoipauto::utoipauto;
 
 #[utoipauto(
-  paths = "(./src/lib/rest from crate::rest)"
-  )]
+    paths = "(./src/lib/rest from crate::rest)"
+)]
 #[derive(OpenApi)]
 #[openapi(
     tags(
@@ -220,8 +193,8 @@ other_controller::get_users", and a schema "TestDTO".
 use utoipauto::utoipauto;
 
 #[utoipauto(
-  paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
-  )]
+    paths = "./src/rest/test_controller.rs,./src/rest/test2_controller.rs "
+)]
 #[derive(OpenApi)]
 #[openapi(
     paths(
@@ -251,17 +224,17 @@ ex:
 
 ```rust
     /// Get all pets from database
-    ///
-    #[utoipa_ignore]  //<============== this Macro
-    #[utoipa::path(
-        responses(
+///
+#[utoipa_ignore]  //<============== this Macro
+#[utoipa::path(
+    responses(
             (status = 200, description = "List all Pets", body = [ListPetsDTO])
-        )
-    )]
-    #[get("/pets")]
-    async fn get_all_pets(req: HttpRequest, store: web::Data<AppState>) -> impl Responder {
-        // your CODE
-    }
+    )
+)]
+#[get("/pets")]
+async fn get_all_pets(req: HttpRequest, store: web::Data<AppState>) -> impl Responder {
+    // your CODE
+}
 
 ```
 
@@ -273,10 +246,10 @@ ex:
 
 ```rust
     #[utoipa_ignore]  //<============== this Macro
-    #[derive(ToSchema)]
-    struct ModelToIgnore {
-        // your CODE
-    }
+#[derive(ToSchema)]
+struct ModelToIgnore {
+    // your CODE
+}
 
 ```
 
@@ -324,11 +297,3 @@ Contributions are welcomed, feel free to submit a PR or an issue.
 ## Inspiration
 
 Inspired by [utoipa_auto_discovery](https://github.com/rxdiscovery/utoipa_auto_discovery)
-
-```
-
-```
-
-```
-
-```
