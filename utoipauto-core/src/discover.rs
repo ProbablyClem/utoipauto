@@ -133,7 +133,7 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
         .as_ref()
         .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
         .and_then(|impl_name| {
-            return if impl_name.eq(params.schema_attribute_name.as_str()) {
+            if impl_name.eq(params.schema_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(
                     module_base_path,
                     &im.self_ty.to_token_stream().to_string(),
@@ -145,7 +145,7 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
                 ))])
             } else {
                 None
-            };
+            }
         })
         .unwrap_or_default()
 }
