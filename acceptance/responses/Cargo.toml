@@ -1,21 +1,25 @@
 [package]
-name = "utoipauto-core"
+name = "responses"
 authors.workspace = true
 version.workspace = true
 edition.workspace = true
-keywords.workspace = true
+publish.workspace = true
 description.workspace = true
-categories.workspace = true
-license.workspace = true
 readme.workspace = true
+license.workspace = true
 repository.workspace = true
 homepage.workspace = true
-rust-version.workspace = true
+
+[lints.rust]
+unused = "allow"
 
 [dependencies]
-quote.workspace = true
-syn.workspace = true
-proc-macro2.workspace = true
-
-[dev-dependencies]
+# Utoipa
 utoipa.workspace = true
+utoipauto.workspace = true
+
+# Serde
+serde_json.workspace = true
+
+# Utility
+utility.workspace = true

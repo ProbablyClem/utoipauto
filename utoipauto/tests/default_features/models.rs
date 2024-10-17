@@ -1,7 +1,12 @@
-#![allow(dead_code)] // This code is used in the tests
+#![allow(dead_code)]
+
+use std::borrow::Cow;
+use utoipa::openapi::schema::SchemaType;
+use utoipa::openapi::{Response, ResponseBuilder, Type};
+// This code is used in the tests
 use utoipa::{
-    openapi::{ObjectBuilder, RefOr, Response, ResponseBuilder, Schema, SchemaType},
-    ToResponse, ToSchema,
+    openapi::{ObjectBuilder, RefOr, Schema},
+    PartialSchema, ToResponse, ToSchema,
 };
 use utoipauto_macro::utoipa_ignore;
 
@@ -17,24 +22,30 @@ pub struct IgnoredModelSchema;
 // Manual implementation of ToSchema
 pub struct ModelSchemaImpl;
 
-impl<'s> ToSchema<'s> for ModelSchemaImpl {
-    fn schema() -> (&'s str, RefOr<Schema>) {
-        (
-            "ModelSchemaImpl",
-            ObjectBuilder::new().schema_type(SchemaType::String).into(),
-        )
+impl PartialSchema for ModelSchemaImpl {
+    fn schema() -> RefOr<Schema> {
+        ObjectBuilder::new().schema_type(SchemaType::Type(Type::String)).into()
+    }
+}
+
+impl ToSchema for ModelSchemaImpl {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("ModelSchemaImpl")
     }
 }
 
 // Manual implementation of utoipa::ToSchema
 pub struct ModelSchemaImplFullName;
 
-impl<'s> utoipa::ToSchema<'s> for ModelSchemaImplFullName {
-    fn schema() -> (&'s str, RefOr<Schema>) {
-        (
-            "ModelSchemaImplFullName",
-            ObjectBuilder::new().schema_type(SchemaType::String).into(),
-        )
+impl PartialSchema for ModelSchemaImplFullName {
+    fn schema() -> RefOr<Schema> {
+        ObjectBuilder::new().schema_type(SchemaType::Type(Type::String)).into()
+    }
+}
+
+impl utoipa::ToSchema for ModelSchemaImplFullName {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("ModelSchemaImplFullName")
     }
 }
 

@@ -15,9 +15,6 @@ rust-version.workspace = true
 [lib]
 proc-macro = true
 
-[features]
-generic_full_path = ["utoipauto-core/generic_full_path"]
-
 [dependencies]
 utoipauto-core.workspace = true
 
