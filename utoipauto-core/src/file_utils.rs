@@ -59,13 +59,14 @@ fn is_rust_file(path: &Path) -> bool {
 /// Extract the module name from the file path
 /// # Example
 /// ```
+/// # use quote::ToTokens as _;
 /// use utoipauto_core::file_utils::extract_module_name_from_path;
 /// let module_name = extract_module_name_from_path(
 ///    &"./utoipa-auto-macro/tests/controllers/controller1.rs".to_string(),
 /// "crate"
 /// );
 /// assert_eq!(
-///  module_name,
+///  module_name.to_token_stream().to_string().replace(' ', ""),
 /// "crate::controllers::controller1".to_string()
 /// );
 /// ```
