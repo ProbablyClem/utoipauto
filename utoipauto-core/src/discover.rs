@@ -4,6 +4,7 @@ use crate::file_utils::{extract_module_name_from_path, parse_files};
 use crate::token_utils::Parameters;
 use quote::ToTokens;
 use syn::token::Comma;
+use syn::Ident;
 use syn::{punctuated::Punctuated, Attribute, GenericParam, Item, ItemFn, ItemImpl, Meta, Token};
 
 /// Discover everything from a file, will explore folder recursively
@@ -11,19 +12,23 @@ pub fn discover_from_file(
     src_path: String,
     crate_name: String,
     params: &Parameters,
-) -> (Vec<String>, Vec<String>, Vec<String>) {
+) -> (Vec<syn::Path>, Vec<syn::Path>, Vec<syn::Path>) {
     let files = parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
 
     files
         .into_iter()
-        .map(|e| parse_module_items(&extract_module_name_from_path(&e.0, &crate_name), e.1.items, params))
+        .map(|e| parse_module_items(extract_module_name_from_path(&e.0, &crate_name), e.1.items, params))
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
             acc.append(&mut v);
             acc
         })
         .into_iter()
         .fold(
-            (Vec::<String>::new(), Vec::<String>::new(), Vec::<String>::new()),
+            (
+                Vec::<syn::Path>::new(),
+                Vec::<syn::Path>::new(),
+                Vec::<syn::Path>::new(),
+            ),
             |mut acc, v| {
                 match v {
                     DiscoverType::Fn(n) => acc.0.push(n),
@@ -40,14 +45,14 @@ pub fn discover_from_file(
 
 #[allow(unused)]
 enum DiscoverType {
-    Fn(String),
-    Model(String),
-    Response(String),
-    CustomModelImpl(String),
-    CustomResponseImpl(String),
+    Fn(syn::Path),
+    Model(syn::Path),
+    Response(syn::Path),
+    CustomModelImpl(syn::Path),
+    CustomResponseImpl(syn::Path),
 }
 
-fn parse_module_items(module_path: &str, items: Vec<Item>, params: &Parameters) -> Vec<DiscoverType> {
+fn parse_module_items(module_path: syn::Path, items: Vec<Item>, params: &Parameters) -> Vec<DiscoverType> {
     items
         .into_iter()
         .filter(|e| {
@@ -58,25 +63,15 @@ fn parse_module_items(module_path: &str, items: Vec<Item>, params: &Parameters) 
         })
         .map(|v| match v {
             Item::Mod(m) => m.content.map_or(Vec::<DiscoverType>::new(), |cs| {
-                parse_module_items(&build_path(module_path, &m.ident.to_string()), cs.1, params)
+                parse_module_items(build_path(&module_path, &m.ident), cs.1, params)
             }),
             Item::Fn(f) => parse_function(&f, &params.fn_attribute_name)
                 .into_iter()
-                .map(|item| DiscoverType::Fn(build_path(module_path, &item)))
+                .map(|item| DiscoverType::Fn(build_path(&module_path, &item)))
                 .collect(),
-            Item::Struct(s) => parse_from_attr(
-                &s.attrs,
-                &build_path(module_path, &s.ident.to_string()),
-                s.generics.params,
-                params,
-            ),
-            Item::Enum(e) => parse_from_attr(
-                &e.attrs,
-                &build_path(module_path, &e.ident.to_string()),
-                e.generics.params,
-                params,
-            ),
-            Item::Impl(im) => parse_from_impl(&im, module_path, params),
+            Item::Struct(s) => parse_from_attr(&s.attrs, build_path(&module_path, &s.ident), s.generics.params, params),
+            Item::Enum(e) => parse_from_attr(&e.attrs, build_path(&module_path, &e.ident), e.generics.params, params),
+            Item::Impl(im) => parse_from_impl(&im, &module_path, params),
             _ => vec![],
         })
         .fold(Vec::<DiscoverType>::new(), |mut acc, mut v| {
@@ -88,7 +83,7 @@ fn parse_module_items(module_path: &str, items: Vec<Item>, params: &Parameters) 
 /// Search for ToSchema and ToResponse implementations in attr
 fn parse_from_attr(
     a: &Vec<Attribute>,
-    name: &str,
+    name: syn::Path,
     generic_params: Punctuated<GenericParam, Comma>,
     params: &Parameters,
 ) -> Vec<DiscoverType> {
@@ -109,16 +104,16 @@ fn parse_from_attr(
             for nested_meta in nested {
                 if nested_meta.path().segments.len() == 2 && nested_meta.path().segments[0].ident == "utoipa" {
                     match nested_meta.path().segments[1].ident.to_string().as_str() {
-                        "ToSchema" => out.push(DiscoverType::Model(name.to_string())),
-                        "ToResponse" => out.push(DiscoverType::Response(name.to_string())),
+                        "ToSchema" => out.push(DiscoverType::Model(name.clone())),
+                        "ToResponse" => out.push(DiscoverType::Response(name.clone())),
                         _ => {}
                     }
                 } else {
                     if nested_meta.path().is_ident(&params.schema_attribute_name) {
-                        out.push(DiscoverType::Model(name.to_string()));
+                        out.push(DiscoverType::Model(name.clone()));
                     }
                     if nested_meta.path().is_ident(&params.response_attribute_name) {
-                        out.push(DiscoverType::Response(name.to_string()));
+                        out.push(DiscoverType::Response(name.clone()));
                     }
                 }
             }
@@ -128,7 +123,7 @@ fn parse_from_attr(
     out
 }
 
-fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -> Vec<DiscoverType> {
+fn parse_from_impl(im: &ItemImpl, module_base_path: &syn::Path, params: &Parameters) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
         .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
@@ -136,12 +131,12 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
             if impl_name.eq(params.schema_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(
                     module_base_path,
-                    &im.self_ty.to_token_stream().to_string(),
+                    &im.self_ty,
                 ))])
             } else if impl_name.eq(params.response_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomResponseImpl(build_path(
                     module_base_path,
-                    &im.self_ty.to_token_stream().to_string(),
+                    &im.self_ty,
                 ))])
             } else {
                 None
@@ -150,8 +145,8 @@ fn parse_from_impl(im: &ItemImpl, module_base_path: &str, params: &Parameters) -
         .unwrap_or_default()
 }
 
-fn parse_function(f: &ItemFn, fn_attributes_name: &str) -> Vec<String> {
-    let mut fns_name: Vec<String> = vec![];
+fn parse_function(f: &ItemFn, fn_attributes_name: &str) -> Vec<Ident> {
+    let mut fns_name: Vec<Ident> = vec![];
     if should_parse_fn(f) {
         for i in 0..f.attrs.len() {
             if f.attrs[i]
@@ -161,7 +156,7 @@ fn parse_function(f: &ItemFn, fn_attributes_name: &str) -> Vec<String> {
                 .iter()
                 .any(|item| item.ident.eq(fn_attributes_name))
             {
-                fns_name.push(f.sig.ident.to_string());
+                fns_name.push(f.sig.ident.clone());
             }
         }
     }
@@ -182,8 +177,8 @@ fn is_ignored(f: &ItemFn) -> bool {
     })
 }
 
-fn build_path(file_name: &str, fn_name: &str) -> String {
-    format!("{}::{}", file_name, fn_name)
+fn build_path(file_path: &syn::Path, fn_name: impl ToTokens) -> syn::Path {
+    syn::parse_quote!(#file_path::#fn_name)
 }
 
 #[cfg(test)]

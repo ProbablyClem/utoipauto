@@ -23,7 +23,7 @@ pub fn utoipauto(
     let mut openapi_macro = parse_macro_input!(item as syn::ItemStruct);
 
     // Discover all the functions with the #[utoipa] attribute
-    let (uto_paths, uto_models, uto_responses): (String, String, String) = discover(paths, &params);
+    let (uto_paths, uto_models, uto_responses) = discover(paths, &params);
 
     // extract the openapi macro attributes : #[openapi(openapi_macro_attibutes)]
     let openapi_macro_attibutes = &mut openapi_macro.attrs;
