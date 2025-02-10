@@ -42,8 +42,8 @@ pub fn build_new_openapi_attributes(
     uto_responses: &TokenStream,
 ) -> Attribute {
     let paths = extract_paths(&nested_attributes);
-    let schemas = extract_schemas(&nested_attributes);
-    let responses = extract_responses(&nested_attributes);
+    let schemas = extract_components(&nested_attributes, "schemas");
+    let responses = extract_components(&nested_attributes, "responses");
     let remaining_nested_attributes = remove_paths_and_components(nested_attributes);
 
     let uto_paths = match uto_paths.is_empty() {
@@ -67,7 +67,7 @@ pub fn build_new_openapi_attributes(
 }
 
 fn remove_paths_and_components(nested_attributes: Punctuated<Meta, Token![,]>) -> TokenStream {
-    let mut remaining = Vec::with_capacity(nested_attributes.len());
+    let mut remaining = Vec::new();
     for meta in nested_attributes {
         match meta {
             Meta::List(list) if list.path.is_ident("paths") => (),
@@ -82,56 +82,36 @@ fn remove_paths_and_components(nested_attributes: Punctuated<Meta, Token![,]>) -
 }
 
 fn extract_paths(nested_attributes: &Punctuated<Meta, Token![,]>) -> TokenStream {
-    for meta in nested_attributes {
-        if let Meta::List(list) = meta {
-            if list.path.is_ident("paths") {
-                return list.tokens.clone();
-            }
-        }
-    }
-
-    TokenStream::new()
+    nested_attributes
+        .iter()
+        .find_map(|meta| {
+            let Meta::List(list) = meta else { return None };
+            list.path.is_ident("paths").then(|| list.tokens.clone())
+        })
+        .unwrap_or_else(TokenStream::new)
 }
 
-fn extract_schemas(nested_attributes: &Punctuated<Meta, Token![,]>) -> TokenStream {
-    for meta in nested_attributes {
-        if let Meta::List(list) = meta {
-            if list.path.is_ident("components") {
-                let nested = list
-                    .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
-                    .expect("Expected a list of attributes inside components(...)!");
-                for meta in nested {
-                    if let Meta::List(list) = meta {
-                        if list.path.is_ident("schemas") {
-                            return list.tokens;
-                        }
-                    }
-                }
+fn extract_components(nested_attributes: &Punctuated<Meta, Token![,]>, component_kind: &str) -> TokenStream {
+    nested_attributes
+        .iter()
+        .find_map(|meta| {
+            let Meta::List(list) = meta else { return None };
+            if !list.path.is_ident("components") {
+                return None;
             }
-        }
-    }
-    TokenStream::new()
+
+            let nested = list
+                .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
+                .expect("Expected a list of attributes inside components(...)!");
+
+            nested.iter().find_map(|meta| {
+                let Meta::List(list) = meta else { return None };
+                list.path.is_ident(component_kind).then(|| list.tokens.clone())
+            })
+        })
+        .unwrap_or_else(TokenStream::new)
 }
 
-fn extract_responses(nested_attributes: &Punctuated<Meta, Token![,]>) -> TokenStream {
-    for meta in nested_attributes {
-        if let Meta::List(list) = meta {
-            if list.path.is_ident("components") {
-                let nested = list
-                    .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
-                    .expect("Expected a list of attributes inside components(...)!");
-                for meta in nested {
-                    if let Meta::List(list) = meta {
-                        if list.path.is_ident("responses") {
-                            return list.tokens;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    TokenStream::new()
-}
 #[cfg(test)]
 mod test {
     use proc_macro2::TokenStream;
