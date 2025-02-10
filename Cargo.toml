@@ -4,7 +4,7 @@ resolver = "2"
 
 [workspace.package]
 authors = ["ProbablyClem", "RxDiscovery", "DenuxPlays"]
-version = "0.2.0"
+version = "0.3.0-alpha.1"
 edition = "2021"
 keywords = ["utoipa", "openapi", "swagger", "path", "auto"]
 description = "Rust Macros to automate the addition of Paths/Schemas to Utoipa crate, simulating Reflection during the compilation phase"
@@ -21,8 +21,8 @@ rust-version = "1.75.0"
 
 [workspace.dependencies]
 # Core dependencies
-utoipauto-core = { path = "utoipauto-core", version = "0.2" }
-utoipauto-macro = { path = "utoipauto-macro", version = "0.2" }
+utoipauto-core = { path = "utoipauto-core", version = "0.3.0-alpha.1" }
+utoipauto-macro = { path = "utoipauto-macro", version = "0.3.0-alpha.1" }
 
 # Utoipa
 utoipa = { version = "5.0.0", features = ["preserve_path_order"] }

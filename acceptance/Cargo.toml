@@ -15,7 +15,7 @@ homepage = "https://github.com/ProbablyClem/utoipauto"
 
 [workspace.dependencies]
 # Utoipa
-utoipauto = { path = "../utoipauto", version = "0.2" }
+utoipauto = { path = "../utoipauto", version = "0.3.0-alpha.1" }
 utoipa = { version = "5.0.0", features = ["preserve_path_order"] }
 
 # Serde
