@@ -88,7 +88,7 @@ fn parse_from_attr(
     params: &Parameters,
 ) -> Vec<DiscoverType> {
     let mut out: Vec<DiscoverType> = vec![];
-    if !generic_params.is_empty() {
+    if !generic_params.iter().all(|p| matches!(p, GenericParam::Lifetime(_))) {
         return out;
     }
 

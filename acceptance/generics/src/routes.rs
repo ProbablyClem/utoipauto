@@ -1,4 +1,6 @@
-use crate::schemas::{BorrowedResponse, CombinedResponse, NestedResponse, Person, Response};
+use std::collections::HashMap;
+
+use crate::schemas::{BorrowedResponse, CombinedResponse, NestedBorrowedResponse, NestedResponse, Person, Response};
 
 #[utoipa::path(get,
     path = "/persons",
@@ -37,15 +39,29 @@ pub fn get_nested_persons() -> NestedResponse<Person> {
 #[utoipa::path(get,
     path = "/borrowed_persons",
     responses(
-(status = 200, description = "A BorrowedResponse<'static, Person>", content_type = "application/json", body = BorrowedResponse<'static, Person>),
+(status = 200, description = "A BorrowedResponse<'static>", content_type = "application/json", body = BorrowedResponse<'static>),
     )
 )]
-pub fn get_borrowed_persons() -> BorrowedResponse<'static, Person> {
+pub fn get_borrowed_persons() -> BorrowedResponse<'static> {
+    let additional = HashMap::from([("first", &42), ("second", &-3)]);
+    BorrowedResponse {
+        data: "Test",
+        additional,
+    }
+}
+
+#[utoipa::path(get,
+    path = "/nested_borrowed_persons",
+    responses(
+(status = 200, description = "A NestedBorrowedResponse<'static, Person>", content_type = "application/json", body = NestedBorrowedResponse<'static, Person>),
+    )
+)]
+pub fn get_nested_borrowed_persons() -> NestedBorrowedResponse<'static, Person> {
     let person = Box::new(Person {
         name: "John Doe".to_string(),
         age: 30,
     });
-    BorrowedResponse {
+    NestedBorrowedResponse {
         status: 200,
         data: Box::leak(person),
     }
@@ -70,7 +86,7 @@ pub fn get_combined_persons() -> CombinedResponse<'static, Person> {
                 data: person_ref.clone(),
             },
         },
-        borrowed_response: BorrowedResponse {
+        borrowed_response: NestedBorrowedResponse {
             status: 200,
             data: person_ref,
         },
