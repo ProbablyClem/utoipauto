@@ -169,14 +169,14 @@ dependencies = [
 
 [[package]]
 name = "utoipauto"
-version = "0.3.0-alpha.1"
+version = "0.3.0-alpha.2"
 dependencies = [
  "utoipauto-macro",
 ]
 
 [[package]]
 name = "utoipauto-core"
-version = "0.3.0-alpha.1"
+version = "0.3.0-alpha.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -194,7 +194,7 @@ dependencies = [
 
 [[package]]
 name = "utoipauto-macro"
-version = "0.3.0-alpha.1"
+version = "0.3.0-alpha.2"
 dependencies = [
  "proc-macro2",
  "quote",
