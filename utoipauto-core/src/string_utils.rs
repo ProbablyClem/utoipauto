@@ -1,3 +1,5 @@
+use proc_macro2::TokenStream;
+
 use crate::{discover::discover_from_file, token_utils::Parameters};
 
 pub fn rem_first_and_last(value: &str) -> &str {
@@ -89,25 +91,23 @@ fn extract_paths_coma(attributes: String) -> Vec<String> {
 /// Return the list of all the functions with the #[utoipa] attribute
 /// and the list of all the structs with the #[derive(ToSchema)] attribute
 /// and the list of all the structs with the #[derive(ToResponse)] attribute
-pub fn discover(paths: Vec<String>, params: &Parameters) -> (String, String, String) {
-    let mut uto_paths: String = String::new();
-    let mut uto_models: String = String::new();
-    let mut uto_responses: String = String::new();
+pub fn discover(paths: Vec<String>, params: &Parameters) -> (TokenStream, TokenStream, TokenStream) {
+    let mut uto_paths = Vec::new();
+    let mut uto_models = Vec::new();
+    let mut uto_responses = Vec::new();
     for p in paths {
         let path = extract_crate_name(p);
         let (list_fn, list_model, list_reponse) = discover_from_file(path.paths, path.crate_name, params);
-        // We need to add a coma after each path
-        for i in list_fn {
-            uto_paths.push_str(format!("{},", i).as_str());
-        }
-        for i in list_model {
-            uto_models.push_str(format!("{},", i).as_str());
-        }
-        for i in list_reponse {
-            uto_responses.push_str(format!("{},", i).as_str());
-        }
+        uto_paths.extend(list_fn);
+        uto_models.extend(list_model);
+        uto_responses.extend(list_reponse);
     }
-    (uto_paths, uto_models, uto_responses)
+    // We need to add a coma after each path
+    (
+        quote::quote!(#(#uto_paths),*),
+        quote::quote!(#(#uto_models),*),
+        quote::quote!(#(#uto_responses),*),
+    )
 }
 
 #[derive(Debug, PartialEq)]
