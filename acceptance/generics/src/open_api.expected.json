@@ -1,302 +1,303 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "Generic Test Api",
-    "description": "A collection of crates to test utoipauto.",
-    "contact": {
-      "name": "ProbablyClem"
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Generic Test Api",
+        "description": "A collection of crates to test utoipauto.",
+        "contact": {
+            "name": "ProbablyClem"
+        },
+        "license": {
+            "name": "MIT OR Apache-2.0",
+            "identifier": "MIT OR Apache-2.0"
+        },
+        "version": "0.1.0"
     },
-    "license": {
-      "name": "MIT OR Apache-2.0"
-    },
-    "version": "0.1.0"
-  },
-  "paths": {
-    "/persons": {
-      "get": {
-        "tags": [
-          "crate::routes"
-        ],
-        "operationId": "get_persons",
-        "responses": {
-          "200": {
-            "description": "A Response<Person>",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response_Person"
+    "paths": {
+        "/persons": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_persons",
+                "responses": {
+                    "200": {
+                        "description": "A Response<Person>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response_Person"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/nested_persons": {
-      "get": {
-        "tags": [
-          "crate::routes"
-        ],
-        "operationId": "get_nested_persons",
-        "responses": {
-          "200": {
-            "description": "A NestedResponse<Person>",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NestedResponse_Person"
+        },
+        "/nested_persons": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_nested_persons",
+                "responses": {
+                    "200": {
+                        "description": "A NestedResponse<Person>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NestedResponse_Person"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/borrowed_persons": {
-      "get": {
-        "tags": [
-          "crate::routes"
-        ],
-        "operationId": "get_borrowed_persons",
-        "responses": {
-          "200": {
-            "description": "A BorrowedResponse<'static>",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BorrowedResponse"
+        },
+        "/borrowed_persons": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_borrowed_persons",
+                "responses": {
+                    "200": {
+                        "description": "A BorrowedResponse<'static>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BorrowedResponse"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/nested_borrowed_persons": {
-      "get": {
-        "tags": [
-          "crate::routes"
-        ],
-        "operationId": "get_nested_borrowed_persons",
-        "responses": {
-          "200": {
-            "description": "A NestedBorrowedResponse<'static, Person>",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NestedBorrowedResponse_Person"
+        },
+        "/nested_borrowed_persons": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_nested_borrowed_persons",
+                "responses": {
+                    "200": {
+                        "description": "A NestedBorrowedResponse<'static, Person>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NestedBorrowedResponse_Person"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/combined_persons": {
-      "get": {
-        "tags": [
-          "crate::routes"
-        ],
-        "operationId": "get_combined_persons",
-        "responses": {
-          "200": {
-            "description": "A CombinedResponse<'static, Person>",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CombinedResponse_Person"
+        },
+        "/combined_persons": {
+            "get": {
+                "tags": [
+                    "crate::routes"
+                ],
+                "operationId": "get_combined_persons",
+                "responses": {
+                    "200": {
+                        "description": "A CombinedResponse<'static, Person>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CombinedResponse_Person"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "BorrowedResponse": {
-        "type": "object",
-        "required": [
-          "data",
-          "additional"
-        ],
-        "properties": {
-          "additional": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "integer",
-              "format": "int32"
+    },
+    "components": {
+        "schemas": {
+            "BorrowedResponse": {
+                "type": "object",
+                "required": [
+                    "data",
+                    "additional"
+                ],
+                "properties": {
+                    "additional": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "propertyNames": {
+                            "type": "string"
+                        }
+                    },
+                    "data": {
+                        "type": "string"
+                    }
+                }
             },
-            "propertyNames": {
-              "type": "string"
-            }
-          },
-          "data": {
-            "type": "string"
-          }
-        }
-      },
-      "CombinedResponse_Person": {
-        "type": "object",
-        "required": [
-          "nested_response",
-          "borrowed_response"
-        ],
-        "properties": {
-          "borrowed_response": {
-            "$ref": "#/components/schemas/NestedBorrowedResponse_Person"
-          },
-          "nested_response": {
-            "$ref": "#/components/schemas/NestedResponse_Person"
-          }
-        }
-      },
-      "NestedBorrowedResponse_Person": {
-        "type": "object",
-        "required": [
-          "status",
-          "data"
-        ],
-        "properties": {
-          "data": {
-            "type": "object",
-            "required": [
-              "name",
-              "age"
-            ],
-            "properties": {
-              "age": {
-                "type": "integer",
-                "format": "int32",
-                "minimum": 0
-              },
-              "name": {
-                "type": "string"
-              }
-            }
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 0
-          }
-        }
-      },
-      "NestedResponse_Person": {
-        "type": "object",
-        "required": [
-          "response"
-        ],
-        "properties": {
-          "response": {
-            "$ref": "#/components/schemas/Response_Person"
-          }
-        }
-      },
-      "Person": {
-        "type": "object",
-        "required": [
-          "name",
-          "age"
-        ],
-        "properties": {
-          "age": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 0
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "Response_Person": {
-        "type": "object",
-        "required": [
-          "status",
-          "data"
-        ],
-        "properties": {
-          "data": {
-            "type": "object",
-            "required": [
-              "name",
-              "age"
-            ],
-            "properties": {
-              "age": {
-                "type": "integer",
-                "format": "int32",
-                "minimum": 0
-              },
-              "name": {
-                "type": "string"
-              }
-            }
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 0
-          }
-        }
-      }
-    },
-    "responses": {
-      "BorrowedResponse": {
-        "description": "",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "data",
-                "additional"
-              ],
-              "properties": {
-                "additional": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "propertyNames": {
-                    "type": "string"
-                  }
-                },
-                "data": {
-                  "type": "string"
+            "CombinedResponse_Person": {
+                "type": "object",
+                "required": [
+                    "nested_response",
+                    "borrowed_response"
+                ],
+                "properties": {
+                    "borrowed_response": {
+                        "$ref": "#/components/schemas/NestedBorrowedResponse_Person"
+                    },
+                    "nested_response": {
+                        "$ref": "#/components/schemas/NestedResponse_Person"
+                    }
                 }
-              }
-            }
-          }
-        }
-      },
-      "Person": {
-        "description": "",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "name",
-                "age"
-              ],
-              "properties": {
-                "age": {
-                  "type": "integer",
-                  "format": "int32",
-                  "minimum": 0
-                },
-                "name": {
-                  "type": "string"
+            },
+            "NestedBorrowedResponse_Person": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "age"
+                        ],
+                        "properties": {
+                            "age": {
+                                "type": "integer",
+                                "format": "int32",
+                                "minimum": 0
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "status": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    }
                 }
-              }
+            },
+            "NestedResponse_Person": {
+                "type": "object",
+                "required": [
+                    "response"
+                ],
+                "properties": {
+                    "response": {
+                        "$ref": "#/components/schemas/Response_Person"
+                    }
+                }
+            },
+            "Person": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "age"
+                ],
+                "properties": {
+                    "age": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Response_Person": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "data"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "age"
+                        ],
+                        "properties": {
+                            "age": {
+                                "type": "integer",
+                                "format": "int32",
+                                "minimum": 0
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "status": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    }
+                }
             }
-          }
+        },
+        "responses": {
+            "BorrowedResponse": {
+                "description": "",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "data",
+                                "additional"
+                            ],
+                            "properties": {
+                                "additional": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "propertyNames": {
+                                        "type": "string"
+                                    }
+                                },
+                                "data": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Person": {
+                "description": "",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "age"
+                            ],
+                            "properties": {
+                                "age": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "minimum": 0
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

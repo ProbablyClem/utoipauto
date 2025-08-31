@@ -19,8 +19,8 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use crate::ApiDoc;
-    use utoipa::OpenApi;
     use utility::assert_json_eq;
+    use utoipa::OpenApi;
 
     pub(crate) const EXPECTED_OPEN_API: &str = include_str!("open_api.expected.json");
     #[test]
