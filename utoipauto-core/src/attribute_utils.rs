@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use syn::{punctuated::Punctuated, Attribute, Meta, Token};
+use syn::{Attribute, Meta, Token, punctuated::Punctuated};
 
 pub fn update_openapi_macro_attributes(
     macro_attibutes: &mut Vec<Attribute>,
