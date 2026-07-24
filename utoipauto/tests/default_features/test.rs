@@ -55,6 +55,20 @@ fn test_module_import_path() {
     assert_eq!(ModuleApiDocs::openapi().paths.paths.len(), 2)
 }
 
+/// Discover from a module root, excluding one of its controllers
+#[utoipauto(
+    paths = "( crate::controllers => ./utoipauto/tests/default_features/controllers)",
+    exclude = ["**/controller{2,3}.rs"]
+)]
+#[derive(OpenApi)]
+#[openapi(info(title = "Percentage API", version = "1.0.0"))]
+pub struct ExcludedModuleApiDocs {}
+
+#[test]
+fn test_exclude_pattern() {
+    assert_eq!(ExcludedModuleApiDocs::openapi().paths.paths.len(), 1)
+}
+
 /// Discover from the crate root
 #[utoipauto(paths = "./utoipauto/tests/default_features")]
 #[derive(OpenApi)]
