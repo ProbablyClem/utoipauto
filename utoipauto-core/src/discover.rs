@@ -3,9 +3,9 @@ use std::vec;
 use crate::file_utils::{extract_module_name_from_path, parse_files};
 use crate::token_utils::Parameters;
 use quote::ToTokens;
-use syn::token::Comma;
 use syn::Ident;
-use syn::{punctuated::Punctuated, Attribute, GenericParam, Item, ItemFn, ItemImpl, Meta, Token};
+use syn::token::Comma;
+use syn::{Attribute, GenericParam, Item, ItemFn, ItemImpl, Meta, Token, punctuated::Punctuated};
 
 /// Discover everything from a file, will explore folder recursively
 pub fn discover_from_file(

@@ -5,8 +5,8 @@ use utoipa::openapi::schema::SchemaType;
 use utoipa::openapi::{Response, ResponseBuilder, Type};
 // This code is used in the tests
 use utoipa::{
-    openapi::{ObjectBuilder, RefOr, Schema},
     PartialSchema, ToResponse, ToSchema,
+    openapi::{ObjectBuilder, RefOr, Schema},
 };
 use utoipauto_macro::utoipa_ignore;
 
