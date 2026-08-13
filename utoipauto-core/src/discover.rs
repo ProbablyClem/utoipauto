@@ -1,6 +1,6 @@
 use std::vec;
 
-use crate::file_utils::{extract_module_name_from_path, parse_files};
+use crate::file_utils::{build_exclude_set, extract_module_name_from_path, parse_files};
 use crate::token_utils::Parameters;
 use quote::ToTokens;
 use syn::Ident;
@@ -13,7 +13,9 @@ pub fn discover_from_file(
     crate_name: String,
     params: &Parameters,
 ) -> (Vec<syn::Path>, Vec<syn::Path>, Vec<syn::Path>) {
-    let files = parse_files(&src_path).unwrap_or_else(|_| panic!("Failed to parse file {}", src_path));
+    let excludes = build_exclude_set(&params.exclude);
+    let files =
+        parse_files(&src_path, &excludes).unwrap_or_else(|e| panic!("Failed to parse file {}: {}", src_path, e));
 
     files
         .into_iter()

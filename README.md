@@ -253,6 +253,38 @@ struct ModelToIgnore {
 
 ```
 
+## Exclude files from scanning
+
+You can exclude files and directories from discovery with the `exclude`
+attribute, which takes a list of glob patterns.
+
+```rust
+#[utoipauto(paths = "./src", exclude = ["**/generated/**", "**/*_test.rs"])]
+#[derive(OpenApi)]
+#[openapi(tags())]
+pub struct ApiDoc;
+```
+
+Patterns are matched against each candidate path and support `*`, `**`, `?`,
+and brace alternation such as `**/*_{test,gen}.rs` (see the
+[`globset`](https://docs.rs/globset) syntax).
+
+`exclude` defaults to `["**/._*"]`. Those are AppleDouble sidecar files that
+macOS writes next to sources on filesystems without extended-attribute support
+(exFAT, FAT32, many network shares); they mirror the `.rs` extension but hold a
+binary payload, so scanning them fails. Passing `exclude` replaces the default,
+so include `**/._*` yourself if you still want those skipped:
+
+```rust
+#[utoipauto(exclude = ["**/._*", "**/generated/**"])]
+```
+
+Passing an empty list disables exclusion entirely:
+
+```rust
+#[utoipauto(exclude = [])]
+```
+
 ### Custom path detection
 
 By default, this macro will look for function with the `#[utoipa::path(...)]` attribute, but you can also specify a
