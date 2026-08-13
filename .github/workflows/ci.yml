@@ -14,8 +14,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        rust: [ "1.85.0", "stable", "nightly" ]
+        rust: [ "1.88.0", "stable", "nightly" ]
     steps:
       - uses: actions/checkout@v4
       - name: install toolchain
@@ -39,6 +40,7 @@ jobs:
       run:
         working-directory: ./acceptance
     strategy:
+      fail-fast: false
       matrix:
         rust: [ "stable", "nightly" ]
     steps:
@@ -79,5 +81,5 @@ jobs:
           components: clippy
       - name: add cargo caching
         uses: Swatinem/rust-cache@v2
-      - name: run formater
+      - name: run clippy
         run: cargo clippy -- -D warnings

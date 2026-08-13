@@ -32,15 +32,13 @@ fn extract_attribute(name: &str, stream: proc_macro2::TokenStream) -> Option<Str
     let mut has_value = false;
 
     for token in stream {
-        if has_value {
-            if let proc_macro2::TokenTree::Literal(lit) = token {
-                return Some(get_content(lit));
-            }
+        if has_value && let proc_macro2::TokenTree::Literal(lit) = token {
+            return Some(get_content(lit));
         }
-        if let proc_macro2::TokenTree::Ident(ident) = token {
-            if ident.to_string().eq(name) {
-                has_value = true;
-            }
+        if let proc_macro2::TokenTree::Ident(ident) = token
+            && ident.to_string().eq(name)
+        {
+            has_value = true;
         }
     }
     None
