@@ -128,7 +128,7 @@ fn parse_from_attr(
 fn parse_from_impl(im: &ItemImpl, module_base_path: &syn::Path, params: &Parameters) -> Vec<DiscoverType> {
     im.trait_
         .as_ref()
-        .and_then(|trt| trt.1.segments.last().map(|p| p.ident.to_string()))
+        .and_then(|trt| trt.0.segments.last().map(|p| p.ident.to_string()))
         .and_then(|impl_name| {
             if impl_name.eq(params.schema_attribute_name.as_str()) {
                 Some(vec![DiscoverType::CustomModelImpl(build_path(
