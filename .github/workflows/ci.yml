@@ -18,7 +18,7 @@ jobs:
       matrix:
         rust: [ "1.88.0", "stable", "nightly" ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: install toolchain
         uses: dtolnay/rust-toolchain@master # Needed to always have access to the latest releases. DO NOT REPLACE WITH STABLE!
         with:
@@ -60,7 +60,7 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: install toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -74,7 +74,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: install toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
